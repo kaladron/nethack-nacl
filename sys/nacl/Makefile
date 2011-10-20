@@ -31,7 +31,7 @@ OBJHOST = $(top_srcdir)/outhost
 GENHDRS = $(INCL)/date.h $(INCL)/onames.h $(INCL)/pm.h
 GENSRCS = $(SRC)/monstr.c
 
-OBJS = \
+OBJS ?= \
        $(patsubst %.c,%.o,$(notdir $(wildcard $(SRC)/*.c))) \
        $(patsubst %.cc,%.o,$(notdir $(wildcard $(NACL_SRC)/*.cc))) \
        $(patsubst %.cc,%.o,$(notdir $(wildcard $(NACL_WIN)/*.cc)))

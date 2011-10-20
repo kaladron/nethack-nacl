@@ -18,3 +18,5 @@
 #define Rand()  rand()
 
 #define STRNCMPI
+
+#undef TTY_GRAPHICS
