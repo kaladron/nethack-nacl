@@ -162,6 +162,10 @@ typedef xchar	boolean;		/* 0 or 1 */
 #include "tosconf.h"
 #endif
 
+#ifdef __native_client__
+#include "naclconf.h"
+#endif
+
 #ifdef AMIGA
 #include "amiconf.h"
 #endif

@@ -21,6 +21,12 @@
 # endif
 #endif
 
+#ifdef __native_client__
+# undef UNIX
+# define NEED_VARARGS
+# define USE_STDARG
+#endif
+
 #ifdef __TURBOC__
 # define __MSC		/* increase Borland C compatibility in libraries */
 #endif

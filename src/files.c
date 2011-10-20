@@ -1483,7 +1483,7 @@ fopen_config_file(filename)
 const char *filename;
 {
 	FILE *fp;
-#if defined(UNIX) || defined(VMS)
+#if defined(UNIX) || defined(VMS) || defined(__native_client__)
 	char	tmp_config[BUFSZ];
 	char *envp;
 #endif
@@ -2043,7 +2043,7 @@ STATIC_OVL FILE *
 fopen_wizkit_file()
 {
 	FILE *fp;
-#if defined(VMS) || defined(UNIX)
+#if defined(VMS) || defined(UNIX) || defined(__native_client__)
 	char	tmp_wizkit[BUFSZ];
 #endif
 	char *envp;
