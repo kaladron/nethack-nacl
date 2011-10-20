@@ -7,6 +7,8 @@
 #include <ppapi/cpp/module.h>
 #include <pthread.h>
 #include <stdio.h>
+#include <ppapi/cpp/instance.h>
+#include "nacl-mounts/base/MainThreadRunner.h"
 #include "nacl-mounts/base/UrlLoaderJob.h"
 #include "nacl-mounts/console/JSPipeMount.h"
 #include "nacl-mounts/console/JSPostMessageBridge.h"
