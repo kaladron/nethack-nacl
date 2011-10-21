@@ -44,8 +44,6 @@ void nacl_curs(winid wid, int x, int y) {
 }
 
 void nacl_putstr(winid wid, int attr, const char *text) {
-  snprintf(buf, sizeof(buf), "[%d,%d,%d,'%s']", NACL_PUTSTR,  ..);
-  
 }
 
 void nacl_display_file(const char *filename,BOOLEAN_P must_exist) {
