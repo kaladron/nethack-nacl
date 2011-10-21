@@ -5,13 +5,13 @@
  */
 
 #include <ppapi/cpp/module.h>
+#include <fcntl.h>
 #include <pthread.h>
 #include <stdio.h>
+#include <sys/stat.h>
 #include <ppapi/cpp/instance.h>
 #include "nacl-mounts/base/MainThreadRunner.h"
 #include "nacl-mounts/base/UrlLoaderJob.h"
-#include "nacl-mounts/console/JSPipeMount.h"
-#include "nacl-mounts/console/JSPostMessageBridge.h"
 
 
 extern "C" {
@@ -68,33 +68,14 @@ static void *nethack_init(void *arg) {
 class NethackInstance : public pp::Instance {
  public:
   explicit NethackInstance(PP_Instance instance) : pp::Instance(instance) {
-    jspipe_ = NULL;
-    jsbridge_ = NULL;
   }
 
   virtual ~NethackInstance() {
-    if (jspipe_) delete jspipe_;
-    if (jsbridge_) delete jsbridge_;
     if (runner_) delete runner_;
   }
 
   virtual bool Init(uint32_t argc, const char* argn[], const char* argv[]) {
     runner_ = new MainThreadRunner(this);
-    jsbridge_ = new JSPostMessageBridge(runner_);
-    jspipe_ = new JSPipeMount();
-    jspipe_->set_outbound_bridge(jsbridge_);
-    // Replace stdin, stdout, stderr with js console.
-    mount("jspipe", "/jspipe", 0, jspipe_);
-    close(0);
-    close(1);
-    close(2);
-    int fd;
-    fd = open("/jspipe/0", O_RDONLY);
-    assert(fd == 0);
-    fd = open("/jspipe/1", O_WRONLY);
-    assert(fd == 1);
-    fd = open("/jspipe/2", O_WRONLY);
-    assert(fd == 2);
 
     pthread_create(&nethack_thread_, NULL, nethack_init, runner_);
     return true;
@@ -102,13 +83,10 @@ class NethackInstance : public pp::Instance {
 
   virtual void HandleMessage(const pp::Var& message) {
     std::string msg = message.AsString();
-    jspipe_->Receive(msg.c_str(), msg.size());
   }
 
  private:
   pthread_t nethack_thread_;
-  JSPipeMount *jspipe_;
-  JSPostMessageBridge *jsbridge_;
   MainThreadRunner *runner_;
 };
 
