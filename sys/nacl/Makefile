@@ -86,17 +86,23 @@ WRAPFUNC = \
 
 LDWRAP = $(foreach x, $(WRAPFUNC), -Xlinker --wrap -Xlinker $(x))
 
-all: $(NETHACK32) $(NETHACK64)
+PUBLISH_FILES = \
+  $(NETHACK32) \
+  $(NETHACK64) \
+  $(OBJPUBLISH)/index.html \
+  $(OBJPUBLISH)/nethack.nmf
 
-$(NETHACK32): $(HOSTBINS) $(OBJ32S)
+all: $(PUBLISH_FILES)
+
+$(NETHACK32): $(HOSTBINS) $(OBJ32S) $(OBJPUBLISH)
 	i686-nacl-g++ $(LDFLAGS) $(LDWRAP) \
         -Wl,--start-group $(LIBS) $(OBJ32S) -Wl,--end-group -o $@
 
-$(NETHACK64): $(HOSTBINS) $(OBJ64S)
+$(NETHACK64): $(HOSTBINS) $(OBJ64S) $(OBJPUBLISH)
 	x86_64-nacl-g++ $(LDFLAGS) $(LDWRAP) \
         -Wl,--start-group $(LIBS) $(OBJ64S) -Wl,--end-group -o $@
 
-$(OBJ32) $(OBJ64) $(OBJHOST):
+$(OBJ32) $(OBJ64) $(OBJHOST) $(OBJPUBLISH):
 	mkdir -p $@
 
 $(OBJHOST)/makedefs:: $(OBJHOST)/makedefs.o $(OBJHOST)/monst.o $(OBJHOST)/objects.o
@@ -132,7 +138,11 @@ $(OBJPUBLISH)/nethack.nmf: $(NACL_WIN)/nethack.nmf
 	touch $@
 
 clean:
-	rm -rf $(OBJ32) $(OBJ64) $(OBJHOST) $(GENHDRS) $(GENSRCS)
+	rm -rf $(OBJ32) $(OBJ64) $(OBJHOST) $(OBJPUBLISH) $(GENHDRS) $(GENSRCS)
+
+http:
+	./httpd.py
+
 
 $(GENHDRS) $(GENSRCS): $(OBJHOST)/makedefs
 	cd $(OBJHOST) && ./makedefs -o

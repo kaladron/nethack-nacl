@@ -59,6 +59,8 @@ static void *nethack_init(void *arg) {
     close(fh);
   }
 
+  fprintf(stderr, "started!!!");
+
   const char *argv[] = {"nethack"};
   nethack_main(1, const_cast<char **>(argv));
 
@@ -79,12 +81,13 @@ class NethackInstance : public pp::Instance {
   virtual bool Init(uint32_t argc, const char* argn[], const char* argv[]) {
     runner_ = new MainThreadRunner(this);
 
-    pthread_create(&nethack_thread_, NULL, nethack_init, runner_);
+    MainThreadRunner::PseudoThreadFork(nethack_init, runner_);
     return true;
   }
 
   virtual void HandleMessage(const pp::Var& message) {
     std::string msg = message.AsString();
+    NaClMessage::SetReply(msg);
   }
 
  private:

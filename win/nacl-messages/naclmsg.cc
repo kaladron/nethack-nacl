@@ -2,9 +2,15 @@
 // Author: jeffbailey@google.com (Jeff Bailey)
 
 #include "naclmsg.h"
+#include <stdio.h>
 #include <string>
 #include <sstream>
 #include <ppapi/cpp/var.h>
+#include "nacl-mounts/base/MainThreadRunner.h"
+
+
+NaClMessage::NaClMessage() : data_("[") {
+}
 
 
 NaClMessage& NaClMessage::operator<<(int value) {
@@ -41,6 +47,7 @@ NaClMessage& NaClMessage::operator<<(const std::string& value) {
 
 NaClMessage& NaClMessage::operator<<(const EndOfMessage& value) {
   data_ += "]";
+  fprintf(stderr, "PostMessage: %s\n", data_.c_str());
   instance_->PostMessage(pp::Var(data_));
   data_ = "[";
   return *this;
@@ -50,4 +57,15 @@ void NaClMessage::SetInstance(pp::Instance* instance) {
   instance_ = instance;
 }
 
+void NaClMessage::SetReply(const std::string& reply) {
+  reply_ = reply;
+  MainThreadRunner::PseudoThreadResume();
+}
+
+const std::string& NaClMessage::GetReply() {
+  MainThreadRunner::PseudoThreadBlock();
+  return reply_;
+}
+
 pp::Instance* NaClMessage::instance_ = 0;
+std::string NaClMessage::reply_;

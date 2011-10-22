@@ -3,6 +3,7 @@
 
 #include "naclbind.h"
 #include "naclmsg.h"
+#include <stdio.h>
 
 
 static EndOfMessage eom;
@@ -14,7 +15,7 @@ void nacl_init_nhwindows(int* argc, char** argv) {
   for (int i = 0; i < *argc; ++i) {
     msg << argv[i];
   }
-  msg<< eom;
+  msg << eom;
 }
 
 void nacl_player_selection(void) {
@@ -23,6 +24,8 @@ void nacl_player_selection(void) {
 
 void nacl_askname(void) {
   NaClMessage() << NACL_MSG_ASKNAME << eom;
+  std::string name = NaClMessage::GetReply();
+  strcpy(plname, name.c_str());
 }
 
 void nacl_get_nh_event(void) {

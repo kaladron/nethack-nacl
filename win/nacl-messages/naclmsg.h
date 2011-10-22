@@ -58,13 +58,18 @@ class EndOfMessage {
 
 class NaClMessage {
  public:
+  NaClMessage();
   NaClMessage& operator<<(int value);
   NaClMessage& operator<<(const std::string& value);
   NaClMessage& operator<<(const EndOfMessage& value);
   
   static void SetInstance(pp::Instance* instance);
 
+  static void SetReply(const std::string& reply);
+  static const std::string& GetReply();
+
  private:
   std::string data_;
   static pp::Instance* instance_;
+  static std::string reply_;
 };

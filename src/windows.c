@@ -40,6 +40,9 @@ extern struct window_procs Gnome_procs;
 #ifdef MSWIN_GRAPHICS
 extern struct window_procs mswin_procs;
 #endif
+#ifdef __native_client__
+extern struct window_procs Nacl_procs;
+#endif
 
 STATIC_DCL void FDECL(def_raw_print, (const char *s));
 
@@ -77,6 +80,9 @@ struct win_choices {
 #endif
 #ifdef GNOME_GRAPHICS
     { &Gnome_procs, 0 },
+#endif
+#ifdef __native_client__
+    { &Nacl_procs, 0 },
 #endif
 #ifdef MSWIN_GRAPHICS
     { &mswin_procs, 0 },
