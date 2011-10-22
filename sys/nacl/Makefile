@@ -90,7 +90,8 @@ PUBLISH_FILES = \
   $(NETHACK32) \
   $(NETHACK64) \
   $(OBJPUBLISH)/index.html \
-  $(OBJPUBLISH)/nethack.nmf
+  $(OBJPUBLISH)/nethack.nmf \
+  $(OBJPUBLISH)/nethack.sar
 
 all: $(PUBLISH_FILES)
 
@@ -132,6 +133,9 @@ $(OBJPUBLISH)/index.html: $(NACL_WIN)/index.html
 $(OBJPUBLISH)/nethack.nmf: $(NACL_WIN)/nethack.nmf
 	cp $< $@
 
+# TODO: Generate this.
+$(OBJPUBLISH)/nethack.sar: $(top_srcdir)/nethack.sar
+	cp $< $@
 
 %/stamp:
 	mkdir -p $(@D)
