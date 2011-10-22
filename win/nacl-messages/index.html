@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Nethack</title>
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache" />
+    <META HTTP-EQUIV="Expires" CONTENT="-1" />
+  </head>
+  <body>
+<script type="text/javascript">
+//<![CDATA[
+
+var NACL_MSG_INIT_NHWINDOWS = 0;
+var NACL_MSG_PLAYER_SELECTION = 1;
+var NACL_MSG_ASKNAME = 2;
+var NACL_MSG_GET_NH_EVENT = 3;
+var NACL_MSG_EXIT_NHWINDOWS = 4;
+var NACL_MSG_SUSPEND_NHWINDOWS = 5;
+var NACL_MSG_RESUME_NHWINDOWS = 6;
+var NACL_MSG_CREATE_NHWINDOW = 7;
+var NACL_MSG_CREATE_NHWINDOW_BY_ID = 8;
+var NACL_MSG_CLEAR_NHWINDOW = 9;
+var NACL_MSG_DISPLAY_NHWINDOW = 10;
+var NACL_MSG_DESTROY_NHWINDOW = 11;
+var NACL_MSG_CURS = 12;
+var NACL_MSG_PUTSTR = 13;
+var NACL_MSG_DISPLAY_FILE = 14;
+var NACL_MSG_START_MENU = 15;
+var NACL_MSG_ADD_MENU = 16;
+var NACL_MSG_END_MENU = 17;
+var NACL_MSG_SELECT_MENU = 18;
+var NACL_MSG_UPDATE_INVENTORY = 19;
+var NACL_MSG_MARK_SYNCH = 20;
+var NACL_MSG_WAIT_SYNCH = 21;
+var NACL_MSG_CLIPAROUND = 22;
+var NACL_MSG_CLIPAROUND_PROPER = 23;
+var NACL_MSG_PRINT_GLYPH = 24;
+var NACL_MSG_RAW_PRINT = 25;
+var NACL_MSG_RAW_PRINT_BOLD = 26;
+var NACL_MSG_NHGETCH = 27;
+var NACL_MSG_NH_POSKEY = 28;
+var NACL_MSG_NHBELL = 29;
+var NACL_MSG_DOPREV_MESSAGE = 30;
+var NACL_MSG_YN_FUNCTION = 31;
+var NACL_MSG_GETLIN = 32;
+var NACL_MSG_GET_EXT_CMD = 33;
+var NACL_MSG_NUMBER_PAD = 34;
+var NACL_MSG_DELAY_OUTPUT = 35;
+var NACL_MSG_START_SCREEN = 36;
+var NACL_MSG_END_SCREEN = 37;
+var NACL_MSG_OUTRIP = 38;
+var NACL_MSG_DELETE_NHWINDOW_BY_REFERENCE = 39;
+
+var MessageLookup = {};
+MessageLookup[NACL_MSG_INIT_NHWINDOWS] = 'NACL_MSG_INIT_NHWINDOWS';
+MessageLookup[NACL_MSG_PLAYER_SELECTION] = 'NACL_MSG_PLAYER_SELECTION';
+MessageLookup[NACL_MSG_ASKNAME] = 'NACL_MSG_ASKNAME';
+MessageLookup[NACL_MSG_GET_NH_EVENT] = 'NACL_MSG_GET_NH_EVENT';
+MessageLookup[NACL_MSG_EXIT_NHWINDOWS] = 'NACL_MSG_EXIT_NHWINDOWS';
+MessageLookup[NACL_MSG_SUSPEND_NHWINDOWS] = 'NACL_MSG_SUSPEND_NHWINDOWS';
+MessageLookup[NACL_MSG_RESUME_NHWINDOWS] = 'NACL_MSG_RESUME_NHWINDOWS';
+MessageLookup[NACL_MSG_CREATE_NHWINDOW] = 'NACL_MSG_CREATE_NHWINDOW';
+MessageLookup[NACL_MSG_CREATE_NHWINDOW_BY_ID] =
+    'NACL_MSG_CREATE_NHWINDOW_BY_ID';
+MessageLookup[NACL_MSG_CLEAR_NHWINDOW] = 'NACL_MSG_CLEAR_NHWINDOW';
+MessageLookup[NACL_MSG_DISPLAY_NHWINDOW] = 'NACL_MSG_DISPLAY_NHWINDOW';
+MessageLookup[NACL_MSG_DESTROY_NHWINDOW] = 'NACL_MSG_DESTROY_NHWINDOW';
+MessageLookup[NACL_MSG_CURS] = 'NACL_MSG_CURS';
+MessageLookup[NACL_MSG_PUTSTR] = 'NACL_MSG_PUTSTR';
+MessageLookup[NACL_MSG_DISPLAY_FILE] = 'NACL_MSG_DISPLAY_FILE';
+MessageLookup[NACL_MSG_START_MENU] = 'NACL_MSG_START_MENU';
+MessageLookup[NACL_MSG_ADD_MENU] = 'NACL_MSG_ADD_MENU';
+MessageLookup[NACL_MSG_END_MENU] = 'NACL_MSG_END_MENU';
+MessageLookup[NACL_MSG_SELECT_MENU] = 'NACL_MSG_SELECT_MENU';
+MessageLookup[NACL_MSG_UPDATE_INVENTORY] = 'NACL_MSG_UPDATE_INVENTORY';
+MessageLookup[NACL_MSG_MARK_SYNCH] = 'NACL_MSG_MARK_SYNCH';
+MessageLookup[NACL_MSG_WAIT_SYNCH] = 'NACL_MSG_WAIT_SYNCH';
+MessageLookup[NACL_MSG_CLIPAROUND] = 'NACL_MSG_CLIPAROUND';
+MessageLookup[NACL_MSG_CLIPAROUND_PROPER] = 'NACL_MSG_CLIPAROUND_PROPER';
+MessageLookup[NACL_MSG_PRINT_GLYPH] = 'NACL_MSG_PRINT_GLYPH';
+MessageLookup[NACL_MSG_RAW_PRINT] = 'NACL_MSG_RAW_PRINT';
+MessageLookup[NACL_MSG_RAW_PRINT_BOLD] = 'NACL_MSG_RAW_PRINT_BOLD';
+MessageLookup[NACL_MSG_NHGETCH] = 'NACL_MSG_NHGETCH';
+MessageLookup[NACL_MSG_NH_POSKEY] = 'NACL_MSG_NH_POSKEY';
+MessageLookup[NACL_MSG_NHBELL] = 'NACL_MSG_NHBELL';
+MessageLookup[NACL_MSG_DOPREV_MESSAGE] = 'NACL_MSG_DOPREV_MESSAGE';
+MessageLookup[NACL_MSG_YN_FUNCTION] = 'NACL_MSG_YN_FUNCTION';
+MessageLookup[NACL_MSG_GETLIN] = 'NACL_MSG_GETLIN';
+MessageLookup[NACL_MSG_GET_EXT_CMD] = 'NACL_MSG_GET_EXT_CMD';
+MessageLookup[NACL_MSG_NUMBER_PAD] = 'NACL_MSG_NUMBER_PAD';
+MessageLookup[NACL_MSG_DELAY_OUTPUT] = 'NACL_MSG_DELAY_OUTPUT';
+MessageLookup[NACL_MSG_START_SCREEN] = 'NACL_MSG_START_SCREEN';
+MessageLookup[NACL_MSG_END_SCREEN] = 'NACL_MSG_END_SCREEN';
+MessageLookup[NACL_MSG_OUTRIP] = 'NACL_MSG_OUTRIP';
+MessageLookup[NACL_MSG_DELETE_NHWINDOW_BY_REFERENC] =
+   'NACL_MSG_DELETE_NHWINDOW_BY_REFERENCE';
+
+function handleMessage(msg) {
+  var nh = document.getElementById('nethack');
+  var data = eval(msg.data);
+  switch (data[0]) {
+    case NACL_MSG_ASKNAME:
+      nh.postMessage('bob');
+      break;
+
+    default:
+      alert(MessageLookup[data[0]] + ' ' + data.slice(1));
+  }
+}
+
+function moduleDidLoad(e) {
+  var module = document.getElementById('nethack');
+  module.addEventListener('message', handleMessage);
+}
+
+//]]>
+</script>
+
+<h1>Nethack</h1>
+<table><tr><td>
+</td></tr></table>
+<p>
+  <div id="listener">
+    <script type="text/javascript">
+      document.getElementById('listener').addEventListener(
+          'load', moduleDidLoad, true);
+    </script>
+  <embed name="nacl_module"
+         id="nethack"
+         width=0 height=0
+         src="nethack.nmf"
+         type="application/x-nacl" />
+</p>
+
+</body>
+</html>
