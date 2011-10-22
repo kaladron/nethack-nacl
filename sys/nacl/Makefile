@@ -27,6 +27,7 @@ VPATH = $(SRC) $(UTIL) $(NACL_SRC) $(NACL_WIN)
 OBJ32 = $(top_srcdir)/out32
 OBJ64 = $(top_srcdir)/out64
 OBJHOST = $(top_srcdir)/outhost
+OBJPUBLISH = $(top_srcdir)/publish
 
 GENHDRS = $(INCL)/date.h $(INCL)/onames.h $(INCL)/pm.h
 GENSRCS = $(SRC)/monstr.c
@@ -40,8 +41,8 @@ OBJ32S = $(addprefix $(OBJ32)/,$(OBJS))
 OBJ64S = $(addprefix $(OBJ64)/,$(OBJS))
 
 HOSTBINS := $(OBJHOST)/makedefs
-NETHACK32 := $(OBJ32)/nethack_x86-32.nexe
-NETHACK64 := $(OBJ64)/nethack_x86-64.nexe
+NETHACK32 := $(OBJPUBLISH)/nethack_x86-32.nexe
+NETHACK64 := $(OBJPUBLISH)/nethack_x86-64.nexe
 
 CFLAGS = -g -O2 -w
 LDFLAGS =
@@ -118,6 +119,13 @@ $(OBJ64)/%.o: %.c | $(OBJ64) $(GENHDRS)
 
 $(OBJ64)/%.o: %.cc | $(OBJ64) $(GENHDRS)
 	x86_64-nacl-g++ $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
+
+$(OBJPUBLISH)/index.html: $(NACL_WIN)/index.html
+	cp $< $@
+
+$(OBJPUBLISH)/nethack.nmf: $(NACL_WIN)/nethack.nmf
+	cp $< $@
+
 
 %/stamp:
 	mkdir -p $(@D)
