@@ -2,14 +2,18 @@
 // Author: jeffbailey@google.com (Jeff Bailey)
 
 #include "naclbind.h"
+#include "naclmsg.h"
 
 void nacl_init_nhwindows(int* argc, char** argv) {
+  NaClMessage() << NACL_MSG_INIT_NHWINDOWS << eom; /// ????
 }
 
 void nacl_player_selection(void) {
+  NaClMessage() << NACL_MSG_PLAYER_SELECTION << eom;
 }
 
 void nacl_askname(void) {
+  NaClMessage() << NACL_MSG_ASKNAME << eom;
 }
 
 void nacl_get_nh_event(void) {
