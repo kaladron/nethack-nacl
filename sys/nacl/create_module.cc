@@ -12,6 +12,7 @@
 #include <ppapi/cpp/instance.h>
 #include "nacl-mounts/base/MainThreadRunner.h"
 #include "nacl-mounts/base/UrlLoaderJob.h"
+#include "../../win/nacl-messages/naclmsg.h"
 
 
 extern "C" {
@@ -68,6 +69,7 @@ static void *nethack_init(void *arg) {
 class NethackInstance : public pp::Instance {
  public:
   explicit NethackInstance(PP_Instance instance) : pp::Instance(instance) {
+    NaClMessage::SetInstance(this);
   }
 
   virtual ~NethackInstance() {

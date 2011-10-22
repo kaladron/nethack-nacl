@@ -6,7 +6,7 @@
 
 enum NaClMessageKind {
   NACL_MSG_INIT_NHWINDOWS=0,
-  NACL_MSG_PLAYER_SELETION,
+  NACL_MSG_PLAYER_SELECTION,
   NACL_MSG_ASKNAME,
   NACL_MSG_GET_NH_EVENT,
   NACL_MSG_EXIT_NHWINDOWS,
@@ -49,13 +49,11 @@ enum NaClMessageKind {
 
 
 class EndOfMessage {
+ public:
   EndOfMessage() { junk = 0; }
  private:
   int junk; 
 };
-
-
-static EndOfMessage eom;
 
 
 class NaClMessage {
@@ -64,9 +62,9 @@ class NaClMessage {
   NaClMessage& operator<<(const std::string& value);
   NaClMessage& operator<<(const EndOfMessage& value);
   
-  static void SetInstance(pp::Instance *instance);
+  static void SetInstance(pp::Instance* instance);
 
  private:
   std::string data_;
-  static pp::Instance instance_;
+  static pp::Instance* instance_;
 };
