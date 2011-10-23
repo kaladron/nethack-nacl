@@ -27,6 +27,7 @@ VPATH = $(SRC) $(UTIL) $(NACL_SRC) $(NACL_WIN)
 OBJ32 = $(top_srcdir)/out32
 OBJ64 = $(top_srcdir)/out64
 OBJHOST = $(top_srcdir)/outhost
+OBJPUBLISH = $(top_srcdir)/publish
 
 GENHDRS = $(INCL)/date.h $(INCL)/onames.h $(INCL)/pm.h
 GENSRCS = $(SRC)/monstr.c
@@ -40,8 +41,8 @@ OBJ32S = $(addprefix $(OBJ32)/,$(OBJS))
 OBJ64S = $(addprefix $(OBJ64)/,$(OBJS))
 
 HOSTBINS := $(OBJHOST)/makedefs
-NETHACK32 := $(OBJ32)/nethack_x86-32.nexe
-NETHACK64 := $(OBJ64)/nethack_x86-64.nexe
+NETHACK32 := $(OBJPUBLISH)/nethack_x86-32.nexe
+NETHACK64 := $(OBJPUBLISH)/nethack_x86-64.nexe
 
 CFLAGS = -g -O2 -w
 LDFLAGS =
@@ -85,17 +86,24 @@ WRAPFUNC = \
 
 LDWRAP = $(foreach x, $(WRAPFUNC), -Xlinker --wrap -Xlinker $(x))
 
-all: $(NETHACK32) $(NETHACK64)
+PUBLISH_FILES = \
+  $(NETHACK32) \
+  $(NETHACK64) \
+  $(OBJPUBLISH)/index.html \
+  $(OBJPUBLISH)/nethack.nmf \
+  $(OBJPUBLISH)/nethack.sar
 
-$(NETHACK32): $(HOSTBINS) $(OBJ32S)
+all: $(PUBLISH_FILES)
+
+$(NETHACK32): $(HOSTBINS) $(OBJ32S) $(OBJPUBLISH)
 	i686-nacl-g++ $(LDFLAGS) $(LDWRAP) \
         -Wl,--start-group $(LIBS) $(OBJ32S) -Wl,--end-group -o $@
 
-$(NETHACK64): $(HOSTBINS) $(OBJ64S)
+$(NETHACK64): $(HOSTBINS) $(OBJ64S) $(OBJPUBLISH)
 	x86_64-nacl-g++ $(LDFLAGS) $(LDWRAP) \
         -Wl,--start-group $(LIBS) $(OBJ64S) -Wl,--end-group -o $@
 
-$(OBJ32) $(OBJ64) $(OBJHOST):
+$(OBJ32) $(OBJ64) $(OBJHOST) $(OBJPUBLISH):
 	mkdir -p $@
 
 $(OBJHOST)/makedefs:: $(OBJHOST)/makedefs.o $(OBJHOST)/monst.o $(OBJHOST)/objects.o
@@ -119,12 +127,26 @@ $(OBJ64)/%.o: %.c | $(OBJ64) $(GENHDRS)
 $(OBJ64)/%.o: %.cc | $(OBJ64) $(GENHDRS)
 	x86_64-nacl-g++ $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
 
+$(OBJPUBLISH)/index.html: $(NACL_WIN)/index.html
+	cp $< $@
+
+$(OBJPUBLISH)/nethack.nmf: $(NACL_WIN)/nethack.nmf
+	cp $< $@
+
+# TODO: Generate this.
+$(OBJPUBLISH)/nethack.sar: $(top_srcdir)/nethack.sar
+	cp $< $@
+
 %/stamp:
 	mkdir -p $(@D)
 	touch $@
 
 clean:
-	rm -rf $(OBJ32) $(OBJ64) $(OBJHOST) $(GENHDRS) $(GENSRCS)
+	rm -rf $(OBJ32) $(OBJ64) $(OBJHOST) $(OBJPUBLISH) $(GENHDRS) $(GENSRCS)
+
+http:
+	./httpd.py
+
 
 $(GENHDRS) $(GENSRCS): $(OBJHOST)/makedefs
 	cd $(OBJHOST) && ./makedefs -o
