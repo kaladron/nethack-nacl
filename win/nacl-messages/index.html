@@ -91,8 +91,10 @@ MessageLookup[NACL_MSG_DELAY_OUTPUT] = 'NACL_MSG_DELAY_OUTPUT';
 MessageLookup[NACL_MSG_START_SCREEN] = 'NACL_MSG_START_SCREEN';
 MessageLookup[NACL_MSG_END_SCREEN] = 'NACL_MSG_END_SCREEN';
 MessageLookup[NACL_MSG_OUTRIP] = 'NACL_MSG_OUTRIP';
-MessageLookup[NACL_MSG_DELETE_NHWINDOW_BY_REFERENC] =
+MessageLookup[NACL_MSG_DELETE_NHWINDOW_BY_REFERENCE] =
    'NACL_MSG_DELETE_NHWINDOW_BY_REFERENCE';
+
+var win_num = 1;
 
 function handleMessage(msg) {
   var nh = document.getElementById('nethack');
@@ -100,6 +102,17 @@ function handleMessage(msg) {
   switch (data[0]) {
     case NACL_MSG_ASKNAME:
       nh.postMessage('bob');
+      break;
+
+    case NACL_MSG_CREATE_NHWINDOW:
+      nh.postMessage('' + win_num);
+      win_num++;
+      break;
+
+    case NACL_MSG_RAW_PRINT:
+      // Make raw print synchronous for now to aid crash debugging.
+      alert(MessageLookup[data[0]] + ' ' + data.slice(1));
+      nh.postMessage('ack');
       break;
 
     default:
