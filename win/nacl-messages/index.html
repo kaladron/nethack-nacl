@@ -98,6 +98,7 @@ var win_num = 1;
 
 function handleMessage(msg) {
   var nh = document.getElementById('nethack');
+  console.log(msg.data);
   var data = eval(msg.data);
   switch (data[0]) {
     case NACL_MSG_ASKNAME:
@@ -111,12 +112,12 @@ function handleMessage(msg) {
 
     case NACL_MSG_RAW_PRINT:
       // Make raw print synchronous for now to aid crash debugging.
-      alert(MessageLookup[data[0]] + ' ' + data.slice(1));
+      console.log(MessageLookup[data[0]] + ' ' + data.slice(1));
       nh.postMessage('ack');
       break;
 
     default:
-      alert(MessageLookup[data[0]] + ' ' + data.slice(1));
+      console.log(MessageLookup[data[0]] + ' ' + data.slice(1));
   }
 }
 
