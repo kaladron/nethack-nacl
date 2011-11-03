@@ -32,6 +32,8 @@ static void *nethack_init(void *arg) {
   /* Blank out USER and LOGNAME. */
   setenv("USER", "", 1);
   setenv("LOGNAME", "", 1);
+  /* Indicate where we decompress things. */
+  setenv("NETHACKDIR", "/usr/games/lib/nethackdir", 1);
 
   mkdir("/usr", 0777);
   mkdir("/usr/games", 0777);
@@ -49,6 +51,8 @@ static void *nethack_init(void *arg) {
   }
 
   simple_tar_extract("/nethack.sar");
+
+  chdir("lib/nethackdir");
 
   // Setup config file.
   {
