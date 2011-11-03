@@ -39,6 +39,9 @@ static std::string EscapeString(const std::string& s) {
 }
 
 NaClMessage& NaClMessage::operator<<(const std::string& value) {
+  if (data_.size() > 1) {
+    data_ += ",";
+  }
   data_ += "\"";
   data_ += EscapeString(value);
   data_ += "\"";
