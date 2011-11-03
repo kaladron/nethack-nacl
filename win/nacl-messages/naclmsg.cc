@@ -35,7 +35,7 @@ static std::string EscapeString(const std::string& s) {
       ret += *pos;
     }
   }
-  return s;
+  return ret;
 }
 
 NaClMessage& NaClMessage::operator<<(const std::string& value) {
