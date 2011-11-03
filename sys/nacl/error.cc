@@ -11,6 +11,8 @@ error VA_DECL(const char *, s)
   char buf[BUFSZ];
   VA_START(s);
   VA_INIT(s, const char *);
+  Vprintf(s,VA_ARGS);
+  (void) putchar('\n');
   VA_END();
   exit(EXIT_FAILURE);
 }

@@ -22,7 +22,7 @@ static int locknum = 0;
 extern struct passwd *FDECL(getpwuid,(uid_t));
 extern struct passwd *FDECL(getpwnam,(const char *));
 #ifdef CHDIR
-  //static void FDECL(chdirx, (const char *,BOOLEAN_P));
+  static void FDECL(chdirx, (const char *,BOOLEAN_P));
 #endif /* CHDIR */
 static boolean NDECL(whoami);
 static void FDECL(process_options, (int, char **));
@@ -129,8 +129,7 @@ nethack_main(int argc, char*argv[]) {
 	     */
 	    if (!strncmp(argv[1], "-s", 2) && strncmp(argv[1], "-style", 6)) {
 #ifdef CHDIR
-              //chdirx(dir,0);
-		chdir(dir);
+              chdirx(dir,0);
 #endif
 		prscore(argc, argv);
 		exit(EXIT_SUCCESS);
@@ -143,8 +142,7 @@ nethack_main(int argc, char*argv[]) {
 	 * we can find the tile file.
 	 */
 #ifdef CHDIR
-	//chdirx(dir,1);
-	//chdir(dir);
+	chdirx(dir,1);
 #endif
 
         fprintf(stderr, "FFF222\n");
@@ -157,7 +155,7 @@ nethack_main(int argc, char*argv[]) {
         fprintf(stderr, "FFF333\n");
 	initoptions();
         fprintf(stderr, "FFF444\n");
-	//init_nhwindows(&argc,argv);
+	init_nhwindows(&argc,argv);
         fprintf(stderr, "FFF555\n");
 	exact_username = whoami();
 #ifdef _M_UNIX
@@ -431,7 +429,7 @@ process_options(int argc, char *argv[])
 
 #ifdef CHDIR
 static void
-chdirx(const char *dir, boolean wr)
+chdirx(const char *dir, BOOLEAN_P wr)
 {
 	if (dir					/* User specified directory? */
 # ifdef HACKDIR
