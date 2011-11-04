@@ -26,11 +26,20 @@ OBJ32 = $(top_srcdir)/obj32
 OBJ64 = $(top_srcdir)/obj64
 OBJHOST = $(top_srcdir)/objhost
 OBJPUBLISH = $(top_srcdir)/publish
+OBJRESOURCE = $(top_srcdir)/resource
 
 # Yo dawg, look here!
 VPATH = $(SRC) $(UTIL) $(NACL_SRC) $(NACL_WIN)
 
-# TODO(jeffbailey): Clean up includes/dgn_comp.h
+CLEANFILES = $(DAT)/data \
+	$(DAT)/dungeon \
+	$(DAT)/dungeon.pdf \
+	$(DAT)/options \
+	$(DAT)/oracles \
+	$(DAT)/quest.dat \
+	$(INCL)/dgn_comp.h \
+	$(INCL)/lev_comp.h \
+	stamp.sp_lev
 
 GENHDRS = $(INCL)/date.h $(INCL)/onames.h $(INCL)/pm.h
 GENSRCS = $(SRC)/monstr.c
@@ -127,7 +136,7 @@ $(NETHACK64): $(MAKEDEFS) $(OBJ64S) $(OBJPUBLISH)
 	x86_64-nacl-g++ $(LDFLAGS) $(LDWRAP) \
         -Wl,--start-group $(LIBS) $(OBJ64S) -Wl,--end-group -o $@
 
-$(OBJ32) $(OBJ64) $(OBJHOST) $(OBJPUBLISH):
+$(OBJ32) $(OBJ64) $(OBJHOST) $(OBJPUBLISH) $(OBJRESOURCE):
 	mkdir -p $@
 
 $(OBJHOST)/makedefs: $(OBJHOST)/makedefs.o $(OBJHOST)/monst.o $(OBJHOST)/objects.o
@@ -166,10 +175,10 @@ $(OBJ64)/%.o: %.c | $(OBJ64) $(GENHDRS)
 $(OBJ64)/%.o: %.cc | $(OBJ64) $(GENHDRS)
 	x86_64-nacl-g++ $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
 
-$(OBJHOST)/stamp.sp_lev: $(HOSTBINS)
-	cd $(OBJHOST) && \
+$(OBJHOST)/stamp.sp_lev: $(HOSTBINS) $(OBJRESOURCE)
+	cd $(OBJRESOURCE) && \
 	for x in $(DESFILES); do \
-	  ./lev_comp ../dat/$${x}; \
+	  ../objhost/lev_comp ../dat/$${x}; \
 	done
 	touch $(notdir $@)
 
@@ -180,25 +189,31 @@ $(OBJPUBLISH)/nethack.nmf: $(NACL_WIN)/nethack.nmf
 	cp $< $@
 
 # TODO: Generate this.
-$(OBJPUBLISH)/nethack.sar: $(top_srcdir)/nethack.sar
+$(OBJPUBLISH)/nethack.sar: $(top_srcdir)/nethack.sar $(OBJRESOURCE)/nhdat
 	cp $< $@
+
+$(OBJRESOURCE)/nhdat: $(OBJHOST)/stamp.sp_lev $(DAT)/dungeon
+	touch $@
 
 %/stamp:
 	mkdir -p $(@D)
 	touch $@
 
 clean:
-	rm -rf $(OBJ32) $(OBJ64) $(OBJHOST) $(OBJPUBLISH) $(GENHDRS) $(GENSRCS)
+	rm -rf $(OBJ32) $(OBJ64) $(OBJHOST) $(OBJPUBLISH) $(OBJRESOURCE) $(GENHDRS) $(GENSRCS) $(CLEANFILES)
 
 http:
 	./httpd.py
-
 
 $(GENHDRS) $(GENSRCS): $(MAKEDEFS)
 	cd $(OBJHOST) && ./makedefs -o
 	cd $(OBJHOST) && ./makedefs -p
 	cd $(OBJHOST) && ./makedefs -v
 	cd $(OBJHOST) && ./makedefs -M
+
+$(DAT)/dungeon: $(MAKEDEFS) $(HOSTBINS) $(DAT)/dungeon.def
+	cd $(DAT) && ../objhost/makedefs -e
+	$(OBJHOST)/dgn_comp $(DAT)/dungeon.pdf
 
 $(SRC)/monst.c $(SRC)/objects.c:
 	@
