@@ -64,7 +64,8 @@ DESFILES = $(notdir $(wildcard $(DAT)/*.des))
 OBJ32S = $(addprefix $(OBJ32)/,$(OBJS))
 OBJ64S = $(addprefix $(OBJ64)/,$(OBJS))
 
-HOSTBINS := $(OBJHOST)/makedefs $(OBJHOST)/dgn_comp $(OBJHOST)/lev_comp
+MAKEDEFS := $(OBJHOST)/makedefs
+HOSTBINS := $(OBJHOST)/dgn_comp $(OBJHOST)/lev_comp
 NETHACK32 := $(OBJPUBLISH)/nethack_x86-32.nexe
 NETHACK64 := $(OBJPUBLISH)/nethack_x86-64.nexe
 
@@ -118,11 +119,11 @@ PUBLISH_FILES = \
 
 all: $(PUBLISH_FILES)
 
-$(NETHACK32): $(HOSTBINS) $(OBJ32S) $(OBJPUBLISH)
+$(NETHACK32): $(MAKEDEFS) $(OBJ32S) $(OBJPUBLISH)
 	i686-nacl-g++ $(LDFLAGS) $(LDWRAP) \
         -Wl,--start-group $(LIBS) $(OBJ32S) -Wl,--end-group -o $@
 
-$(NETHACK64): $(HOSTBINS) $(OBJ64S) $(OBJPUBLISH)
+$(NETHACK64): $(MAKEDEFS) $(OBJ64S) $(OBJPUBLISH)
 	x86_64-nacl-g++ $(LDFLAGS) $(LDWRAP) \
         -Wl,--start-group $(LIBS) $(OBJ64S) -Wl,--end-group -o $@
 
@@ -193,7 +194,7 @@ http:
 	./httpd.py
 
 
-$(GENHDRS) $(GENSRCS): $(OBJHOST)/makedefs
+$(GENHDRS) $(GENSRCS): $(MAKEDEFS)
 	cd $(OBJHOST) && ./makedefs -o
 	cd $(OBJHOST) && ./makedefs -p
 	cd $(OBJHOST) && ./makedefs -v
