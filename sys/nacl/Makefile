@@ -21,13 +21,16 @@ NACL_SRC = $(top_srcdir)/sys/nacl
 # Nacl Windows
 NACL_WIN = $(top_srcdir)/win/nacl-messages
 
+# Objects
+OBJ32 = $(top_srcdir)/obj32
+OBJ64 = $(top_srcdir)/obj64
+OBJHOST = $(top_srcdir)/objhost
+OBJPUBLISH = $(top_srcdir)/publish
+
+# Yo dawg, look here!
 VPATH = $(SRC) $(UTIL) $(NACL_SRC) $(NACL_WIN)
 
-# Objects
-OBJ32 = $(top_srcdir)/out32
-OBJ64 = $(top_srcdir)/out64
-OBJHOST = $(top_srcdir)/outhost
-OBJPUBLISH = $(top_srcdir)/publish
+# TODO(jeffbailey): Clean up includes/dgn_comp.h
 
 GENHDRS = $(INCL)/date.h $(INCL)/onames.h $(INCL)/pm.h
 GENSRCS = $(SRC)/monstr.c
@@ -37,17 +40,36 @@ OBJS ?= \
        $(patsubst %.cc,%.o,$(notdir $(wildcard $(NACL_SRC)/*.cc))) \
        $(patsubst %.cc,%.o,$(notdir $(wildcard $(NACL_WIN)/*.cc)))
 
+DGNCOMPOBJS = $(addprefix $(OBJHOST)/, \
+	dgn_comp.y.o \
+	dgn_comp.l.o \
+	dgn_main.o \
+	alloc.o \
+	panic.o)
+
+LEVCOMPOBJS = $(addprefix $(OBJHOST)/, \
+	lev_comp.y.o \
+	lev_comp.l.o \
+	lev_main.o \
+	alloc.o \
+	decl.o \
+	drawing.o \
+	monst.o \
+	objects.o \
+	panic.o)
+
+DESFILES = $(notdir $(wildcard $(DAT)/*.des))
+
 OBJ32S = $(addprefix $(OBJ32)/,$(OBJS))
 OBJ64S = $(addprefix $(OBJ64)/,$(OBJS))
 
-HOSTBINS := $(OBJHOST)/makedefs
+HOSTBINS := $(OBJHOST)/makedefs $(OBJHOST)/dgn_comp $(OBJHOST)/lev_comp
 NETHACK32 := $(OBJPUBLISH)/nethack_x86-32.nexe
 NETHACK64 := $(OBJPUBLISH)/nethack_x86-64.nexe
 
 CFLAGS = -g -O2 -w
 LDFLAGS =
 LIBS = -lnacl-mounts -lppapi -lppapi_cpp
-#CPPFLAGS = -DSTRNCMPI
 INCLUDES = -I$(INCL)
 
 # newlib requires certain functions to be marked as wrapped to the linker.
@@ -106,13 +128,28 @@ $(NETHACK64): $(HOSTBINS) $(OBJ64S) $(OBJPUBLISH)
 $(OBJ32) $(OBJ64) $(OBJHOST) $(OBJPUBLISH):
 	mkdir -p $@
 
-$(OBJHOST)/makedefs:: $(OBJHOST)/makedefs.o $(OBJHOST)/monst.o $(OBJHOST)/objects.o
+$(OBJHOST)/makedefs: $(OBJHOST)/makedefs.o $(OBJHOST)/monst.o $(OBJHOST)/objects.o
 	gcc $^ -o $@
 
-$(OBJHOST)/%.o: $(UTIL)/%.c | $(OBJHOST)
+$(OBJHOST)/dgn_comp: $(DGNCOMPOBJS)
+	gcc $^ -o $@
+
+$(OBJHOST)/lev_comp: $(LEVCOMPOBJS)
+	gcc $^ -o $@
+
+$(OBJHOST)/%.y.c: %.y | $(OBJHOST) $(GENHDRS)
+	bison -y --defines=$(INCL)/$*.h $< -o $@
+
+$(OBJHOST)/%.l.c: %.l | $(OBJHOST) $(GENHDRS)
+	flex -o $@ $<
+
+$(OBJHOST)/%.y.o: $(OBJHOST)/%.y.c | $(OBJHOST)
 	gcc $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
 
-$(OBJHOST)/%.o: $(SRC)/%.c | $(OBJHOST)
+$(OBJHOST)/%.l.o: $(OBJHOST)/%.l.c | $(OBJHOST)
+	gcc $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
+
+$(OBJHOST)/%.o: %.c | $(OBJHOST)
 	gcc $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJ32)/%.o: %.c | $(OBJ32) $(GENHDRS)
@@ -126,6 +163,13 @@ $(OBJ64)/%.o: %.c | $(OBJ64) $(GENHDRS)
 
 $(OBJ64)/%.o: %.cc | $(OBJ64) $(GENHDRS)
 	x86_64-nacl-g++ $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
+
+$(OBJHOST)/stamp.sp_lev: $(HOSTBINS)
+	cd $(OBJHOST) && \
+	for x in $(DESFILES); do \
+	  ./lev_comp ../dat/$${x}; \
+	done
+	touch $(notdir $@)
 
 $(OBJPUBLISH)/index.html: $(NACL_WIN)/index.html
 	cp $< $@
@@ -161,5 +205,4 @@ $(SRC)/%.c: $(GENHDRS)
 	@
 
 .SUFFIXES:
-.SUFFIXES: .c .o
 .PHONY: all clean
