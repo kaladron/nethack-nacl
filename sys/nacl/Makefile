@@ -39,7 +39,21 @@ CLEANFILES = $(DAT)/data \
 	$(DAT)/quest.dat \
 	$(INCL)/dgn_comp.h \
 	$(INCL)/lev_comp.h \
-	stamp.sp_lev
+	$(OBJHOST)/stamp.sp_lev
+
+GENFILES = $(DAT)/data \
+	$(DAT)/oracles \
+	$(DAT)/quest.dat \
+	$(DAT)/rumors \
+	$(DAT)/help \
+	$(DAT)/hh \
+	$(DAT)/cmdhelp \
+	$(DAT)/history \
+	$(DAT)/opthelp \
+	$(DAT)/wizhelp \
+	$(DAT)/dungeon \
+	$(DAT)/license \
+	$(OBJHOST)/stamp.sp_lev
 
 GENHDRS = $(INCL)/date.h $(INCL)/onames.h $(INCL)/pm.h
 GENSRCS = $(SRC)/monstr.c
@@ -66,6 +80,12 @@ LEVCOMPOBJS = $(addprefix $(OBJHOST)/, \
 	drawing.o \
 	monst.o \
 	objects.o \
+	panic.o)
+
+DLBMAINOBJS = $(addprefix $(OBJHOST)/, \
+	dlb_main.o \
+	dlb.o \
+	alloc.o \
 	panic.o)
 
 DESFILES = $(notdir $(wildcard $(DAT)/*.des))
@@ -124,7 +144,7 @@ PUBLISH_FILES = \
   $(NETHACK64) \
   $(OBJPUBLISH)/index.html \
   $(OBJPUBLISH)/nethack.nmf \
-  $(OBJPUBLISH)/nethack.sar
+  $(OBJPUBLISH)/nethack.tar
 
 all: $(PUBLISH_FILES)
 
@@ -140,6 +160,9 @@ $(OBJ32) $(OBJ64) $(OBJHOST) $(OBJPUBLISH) $(OBJRESOURCE):
 	mkdir -p $@
 
 $(OBJHOST)/makedefs: $(OBJHOST)/makedefs.o $(OBJHOST)/monst.o $(OBJHOST)/objects.o
+	gcc $^ -o $@
+
+$(OBJHOST)/dlb_main: $(DLBMAINOBJS)
 	gcc $^ -o $@
 
 $(OBJHOST)/dgn_comp: $(DGNCOMPOBJS)
@@ -180,7 +203,7 @@ $(OBJHOST)/stamp.sp_lev: $(HOSTBINS) $(OBJRESOURCE)
 	for x in $(DESFILES); do \
 	  ../objhost/lev_comp ../dat/$${x}; \
 	done
-	touch $(notdir $@)
+	touch $@
 
 $(OBJPUBLISH)/index.html: $(NACL_WIN)/index.html
 	cp $< $@
@@ -188,11 +211,10 @@ $(OBJPUBLISH)/index.html: $(NACL_WIN)/index.html
 $(OBJPUBLISH)/nethack.nmf: $(NACL_WIN)/nethack.nmf
 	cp $< $@
 
-# TODO: Generate this.
-$(OBJPUBLISH)/nethack.sar: $(top_srcdir)/nethack.sar $(OBJRESOURCE)/nhdat
-	cp $< $@
+$(OBJPUBLISH)/nethack.tar: $(OBJRESOURCE)/nhdat | $(OBJPUBLISH)
+	cd $(OBJRESOURCE) && tar -cf ../publish/nethack.sar *
 
-$(OBJRESOURCE)/nhdat: $(OBJHOST)/stamp.sp_lev $(DAT)/dungeon
+$(OBJRESOURCE)/nhdat: $(OBJHOST)/dlb_main $(GENFILES)
 	touch $@
 
 %/stamp:
@@ -210,6 +232,18 @@ $(GENHDRS) $(GENSRCS): $(MAKEDEFS)
 	cd $(OBJHOST) && ./makedefs -p
 	cd $(OBJHOST) && ./makedefs -v
 	cd $(OBJHOST) && ./makedefs -M
+
+$(DAT)/data: $(MAKEDEFS)
+	cd $(OBJHOST) && ./makedefs -d
+
+$(DAT)/rumors: $(MAKEDEFS)
+	cd $(OBJHOST) && ./makedefs -r
+
+$(DAT)/quest.dat: $(MAKEDEFS)
+	cd $(OBJHOST) && ./makedefs -q
+
+$(DAT)/oracles: $(MAKEDEFS)
+	cd $(OBJHOST) && ./makedefs -h
 
 $(DAT)/dungeon: $(MAKEDEFS) $(HOSTBINS) $(DAT)/dungeon.def
 	cd $(DAT) && ../objhost/makedefs -e
