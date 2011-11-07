@@ -90,11 +90,17 @@ DLBMAINOBJS = $(addprefix $(OBJHOST)/, \
 
 NHRESOURCES = $(addprefix $(OBJRESOURCE)/, \
 	nhdat \
+	cmdhelp \
 	data \
 	dungeon \
+	hh \
+	history \
+	license \
+	oracles \
+	opthelp \
 	rumors \
 	quest.dat \
-	oracles) \
+	wizhelp) \
 	$(OBJHOST)/stamp.sp_lev
 
 DESFILES = $(notdir $(wildcard $(DAT)/*.des))
