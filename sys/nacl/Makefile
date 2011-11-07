@@ -56,7 +56,7 @@ GENFILES = $(DAT)/data \
 	$(OBJHOST)/stamp.sp_lev
 
 GENHDRS = $(INCL)/date.h $(INCL)/onames.h $(INCL)/pm.h
-GENSRCS = $(SRC)/monstr.c
+#GENSRCS = $(SRC)/monstr.c
 
 OBJS ?= \
        $(patsubst %.c,%.o,$(notdir $(GENSRCS))) \
@@ -107,6 +107,7 @@ HOSTBINS := $(OBJHOST)/dgn_comp $(OBJHOST)/lev_comp
 NETHACK32 := $(OBJPUBLISH)/nethack_x86-32.nexe
 NETHACK64 := $(OBJPUBLISH)/nethack_x86-64.nexe
 
+HOST_CFLAGS = -g -O2 -w -m32
 CFLAGS = -g -O2 -w
 CXXFLAGS = -g -O2 -Wall -Werror
 LDFLAGS =
@@ -170,16 +171,16 @@ $(OBJ32) $(OBJ64) $(OBJHOST) $(OBJPUBLISH) $(OBJRESOURCE):
 	mkdir -p $@
 
 $(OBJHOST)/makedefs: $(OBJHOST)/makedefs.o $(OBJHOST)/monst.o $(OBJHOST)/objects.o
-	gcc $^ -o $@
+	gcc $(HOST_CFLAGS) $^ -o $@
 
 $(OBJHOST)/dlb_main: $(DLBMAINOBJS)
-	gcc $^ -o $@
+	gcc $(HOST_CFLAGS) $^ -o $@
 
 $(OBJHOST)/dgn_comp: $(DGNCOMPOBJS)
-	gcc $^ -o $@
+	gcc $(HOST_CFLAGS) $^ -o $@
 
 $(OBJHOST)/lev_comp: $(LEVCOMPOBJS)
-	gcc $^ -o $@
+	gcc $(HOST_CFLAGS) $^ -o $@
 
 $(OBJHOST)/%.y.c: %.y | $(OBJHOST) $(GENHDRS)
 	bison -y --defines=$(INCL)/$*.h $< -o $@
@@ -188,25 +189,25 @@ $(OBJHOST)/%.l.c: %.l | $(OBJHOST) $(GENHDRS)
 	flex -o $@ $<
 
 $(OBJHOST)/%.y.o: $(OBJHOST)/%.y.c | $(OBJHOST)
-	gcc $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
+	gcc $(HOST_CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJHOST)/%.l.o: $(OBJHOST)/%.l.c | $(OBJHOST)
-	gcc $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
+	gcc $(HOST_CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJHOST)/%.o: %.c | $(OBJHOST)
-	gcc $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
+	gcc $(HOST_CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJ32)/%.o: %.c | $(OBJ32) $(GENHDRS)
-	i686-nacl-gcc $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
+	i686-nacl-gcc $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJ32)/%.o: %.cc | $(OBJ32) $(GENHDRS)
-	i686-nacl-g++ $(CXXFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
+	i686-nacl-g++ $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJ64)/%.o: %.c | $(OBJ64) $(GENHDRS)
-	x86_64-nacl-gcc $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
+	x86_64-nacl-gcc $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJ64)/%.o: %.cc | $(OBJ64) $(GENHDRS)
-	x86_64-nacl-g++ $(CXXFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
+	x86_64-nacl-g++ $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJHOST)/stamp.sp_lev: $(HOSTBINS) $(OBJRESOURCE)
 	cd $(OBJRESOURCE) && \
