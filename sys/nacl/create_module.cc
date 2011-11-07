@@ -14,6 +14,7 @@
 #include "nacl-mounts/base/UrlLoaderJob.h"
 #include "../../win/nacl-messages/naclmsg.h"
 
+#define TARFILE "nethack.tar"
 
 extern "C" {
 int nethack_main(int argc, char *argv[]);
@@ -41,16 +42,16 @@ static void *nethack_init(void *arg) {
 
   {
     UrlLoaderJob *job = new UrlLoaderJob;
-    job->set_url("nethack.sar");
+    job->set_url(TARFILE);
     std::vector<char> data;
     job->set_dst(&data);
     runner->RunJob(job);
-    int fh = open("/nethack.sar", O_CREAT | O_WRONLY);
+    int fh = open("/" TARFILE, O_CREAT | O_WRONLY);
     write(fh, &data[0], data.size());
     close(fh);
   }
 
-  simple_tar_extract("/nethack.sar");
+  simple_tar_extract("/" TARFILE);
 
   chdir("lib/nethackdir");
 

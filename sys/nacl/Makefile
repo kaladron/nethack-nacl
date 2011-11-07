@@ -108,6 +108,7 @@ NETHACK32 := $(OBJPUBLISH)/nethack_x86-32.nexe
 NETHACK64 := $(OBJPUBLISH)/nethack_x86-64.nexe
 
 CFLAGS = -g -O2 -w
+CXXFLAGS = -g -O2 -Wall -Werror
 LDFLAGS =
 LIBS = -lnacl-mounts -lppapi -lppapi_cpp
 INCLUDES = -I$(INCL)
@@ -199,13 +200,13 @@ $(OBJ32)/%.o: %.c | $(OBJ32) $(GENHDRS)
 	i686-nacl-gcc $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJ32)/%.o: %.cc | $(OBJ32) $(GENHDRS)
-	i686-nacl-g++ $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
+	i686-nacl-g++ $(CXXFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJ64)/%.o: %.c | $(OBJ64) $(GENHDRS)
 	x86_64-nacl-gcc $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJ64)/%.o: %.cc | $(OBJ64) $(GENHDRS)
-	x86_64-nacl-g++ $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
+	x86_64-nacl-g++ $(CXXFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJHOST)/stamp.sp_lev: $(HOSTBINS) $(OBJRESOURCE)
 	cd $(OBJRESOURCE) && \

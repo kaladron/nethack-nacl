@@ -54,7 +54,7 @@ nethack_main(int argc, char*argv[]) {
 	   running from finder --sam */
 #define MAC_PATH_VALUE ".app/Contents/MacOS/"
 	char mac_cwd[1024], *mac_exe = argv[0], *mac_tmp;
-	int arg0_len = strlen(mac_exe), mac_tmp_len, mac_lhs_len=0;
+	unsigned int arg0_len = strlen(mac_exe), mac_tmp_len, mac_lhs_len=0;
         fprintf(stderr, "AAAAAAAAAAAAA\n");
 	getcwd(mac_cwd, 1024);
         fprintf(stderr, "BBBBBBBBBBBBB\n");
@@ -198,7 +198,7 @@ nethack_main(int argc, char*argv[]) {
         fprintf(stderr, "IIIIIIIIIII222\n");
 	} else if (exact_username) {
 		/* guard against user names with hyphens in them */
-		int len = strlen(plname);
+		unsigned int len = strlen(plname);
 		/* append the current role, if any, so that last dash is ours */
 		if (++len < sizeof plname)
 			(void)strncat(strcat(plname, "-"),
@@ -330,7 +330,7 @@ process_options(int argc, char *argv[])
 #ifdef WIZARD
 			{
 			  char *user;
-			  int uid;
+			  unsigned int uid;
 			  struct passwd *pw = (struct passwd *)0;
 
 			  uid = getuid();
