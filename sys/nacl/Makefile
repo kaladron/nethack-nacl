@@ -88,6 +88,15 @@ DLBMAINOBJS = $(addprefix $(OBJHOST)/, \
 	alloc.o \
 	panic.o)
 
+NHRESOURCES = $(addprefix $(OBJRESOURCE)/, \
+	nhdat \
+	data \
+	dungeon \
+	rumors \
+	quest.dat \
+	oracles) \
+	$(OBJHOST)/stamp.sp_lev
+
 DESFILES = $(notdir $(wildcard $(DAT)/*.des))
 
 OBJ32S = $(addprefix $(OBJ32)/,$(OBJS))
@@ -211,8 +220,8 @@ $(OBJPUBLISH)/index.html: $(NACL_WIN)/index.html
 $(OBJPUBLISH)/nethack.nmf: $(NACL_WIN)/nethack.nmf
 	cp $< $@
 
-$(OBJPUBLISH)/nethack.tar: $(OBJRESOURCE)/nhdat | $(OBJPUBLISH)
-	cd $(OBJRESOURCE) && tar -cf ../publish/nethack.sar *
+$(OBJPUBLISH)/nethack.tar: $(NHRESOURCES) | $(OBJPUBLISH)
+	cd $(OBJRESOURCE) && tar -cf ../publish/nethack.tar *
 
 $(OBJRESOURCE)/nhdat: $(OBJHOST)/dlb_main $(GENFILES)
 	touch $@
@@ -248,6 +257,9 @@ $(DAT)/oracles: $(MAKEDEFS)
 $(DAT)/dungeon: $(MAKEDEFS) $(HOSTBINS) $(DAT)/dungeon.def
 	cd $(DAT) && ../objhost/makedefs -e
 	$(OBJHOST)/dgn_comp $(DAT)/dungeon.pdf
+
+$(OBJRESOURCE)/%: $(DAT)/%
+	cp $< $@
 
 $(SRC)/monst.c $(SRC)/objects.c:
 	@
