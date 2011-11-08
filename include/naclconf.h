@@ -20,3 +20,8 @@
 #define STRNCMPI
 
 #undef TTY_GRAPHICS
+
+// TODO(bradnelson): figure out why this causes stuckage.
+#undef INSURANCE
+
+#define PORT_ID "nacl"
