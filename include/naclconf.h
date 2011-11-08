@@ -20,3 +20,5 @@
 #define STRNCMPI
 
 #undef TTY_GRAPHICS
+
+#define PORT_ID "nacl"

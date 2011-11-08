@@ -38,7 +38,9 @@ static void *nethack_init(void *arg) {
 
   mkdir("/usr", 0777);
   mkdir("/usr/games", 0777);
-  chdir("/usr/games");
+  mkdir("/usr/games/lib", 0777);
+  mkdir("/usr/games/lib/nethackdir", 0777);
+  chdir("/usr/games/lib/nethackdir");
 
   {
     UrlLoaderJob *job = new UrlLoaderJob;
@@ -52,8 +54,6 @@ static void *nethack_init(void *arg) {
   }
 
   simple_tar_extract("/" TARFILE);
-
-  chdir("lib/nethackdir");
 
   // Setup config file.
   {
