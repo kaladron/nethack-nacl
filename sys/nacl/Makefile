@@ -160,6 +160,7 @@ PUBLISH_FILES = \
   $(NETHACK32) \
   $(NETHACK64) \
   $(OBJPUBLISH)/index.html \
+  $(OBJPUBLISH)/x11tiles.png \
   $(OBJPUBLISH)/nethack.nmf \
   $(OBJPUBLISH)/nethack.tar
 
@@ -222,10 +223,7 @@ $(OBJHOST)/stamp.sp_lev: $(HOSTBINS) $(OBJRESOURCE)
 	done
 	touch $@
 
-$(OBJPUBLISH)/index.html: $(NACL_WIN)/index.html
-	cp $< $@
-
-$(OBJPUBLISH)/nethack.nmf: $(NACL_WIN)/nethack.nmf
+$(OBJPUBLISH)/%: $(NACL_WIN)/%
 	cp $< $@
 
 $(OBJPUBLISH)/nethack.tar: $(NHRESOURCES) | $(OBJPUBLISH)
