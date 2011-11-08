@@ -113,7 +113,7 @@ HOSTBINS := $(OBJHOST)/dgn_comp $(OBJHOST)/lev_comp
 NETHACK32 := $(OBJPUBLISH)/nethack_x86-32.nexe
 NETHACK64 := $(OBJPUBLISH)/nethack_x86-64.nexe
 
-HOST_CFLAGS = -g -O2 -w -m32
+HOST_CFLAGS = -g -O2 -w -m32 -D__native_client__
 CFLAGS = -g -O2 -w
 CXXFLAGS = -g -O2 -Wall -Werror
 LDFLAGS =
