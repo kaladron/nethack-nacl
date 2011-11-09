@@ -4,6 +4,7 @@
 #include "naclbind.h"
 #include "naclmsg.h"
 #include <stdio.h>
+#include <sstream>
 
 
 static EndOfMessage eom;
@@ -252,9 +253,8 @@ void nacl_askname(void) {
 }
 
 void nacl_get_nh_event(void) {
-  NaClMessage() << NACL_MSG_GET_NH_EVENT << eom;
-  //std::string event = NaClMessage::GetReply();
-  // TODO: decode event.
+  // No need to send (meant for spinning run-loops).
+  // NaClMessage() << NACL_MSG_GET_NH_EVENT << eom;
 }
 
 void nacl_exit_nhwindows(const char *str) {
@@ -321,7 +321,8 @@ void nacl_end_menu(winid wid, const char *prompt) {
 }
 
 int  nacl_select_menu(winid wid, int how, MENU_ITEM_P **selected) {
-  // TODO!!!!
+  NaClMessage() << NACL_MSG_SELECT_MENU << wid << how << eom;
+  NaClMessage::GetReply();
   return 0;
 }
 
@@ -363,14 +364,23 @@ void nacl_raw_print_bold(const char *str) {
   NaClMessage() << NACL_MSG_RAW_PRINT_BOLD << str << eom;
 }
 
-int  nacl_nhgetch(void) {
+int nacl_nhgetch(void) {
   NaClMessage() << NACL_MSG_NHGETCH << eom;
-  return 0;
+  std::stringstream reply(NaClMessage::GetReply());
+  int ret;
+  reply >> ret;
+  return ret;
 }
 
-int  nacl_nh_poskey(int *x, int *y, int *mod) {
-  // TODO
-  return 0;
+int nacl_nh_poskey(int *x, int *y, int *mod) {
+  NaClMessage() << NACL_MSG_NH_POSKEY << eom;
+  std::stringstream reply(NaClMessage::GetReply());
+  int ret;
+  reply >> ret;
+  reply >> *x;
+  reply >> *y;
+  reply >> *mod;
+  return ret;
 }
 
 void nacl_nhbell(void) {
@@ -385,16 +395,21 @@ int nacl_doprev_message(void) {
 char nacl_yn_function(const char *question, const char *choices,
                       CHAR_P def) {
   NaClMessage() << NACL_MSG_YN_FUNCTION << question << choices << def << eom;
-  return 0;
+  std::stringstream reply(NaClMessage::GetReply());
+  int ret;
+  reply >> ret;
+  return ret;
 }
 
 void nacl_getlin(const char *question, char *input) {
   NaClMessage() << NACL_MSG_GETLIN << question << eom;
   // TODO store to input.
+  NaClMessage::GetReply();
 }
 
 int nacl_get_ext_cmd(void) {
   NaClMessage() << NACL_MSG_GET_EXT_CMD << eom;
+  NaClMessage::GetReply();
   return 0;
 }
 
@@ -419,5 +434,6 @@ void nacl_outrip(winid wid, int how) {
 }
 
 void nacl_delete_nhwindow_by_reference(void *menuWin) {
+  NaClMessage() << NACL_MSG_DELETE_NHWINDOW_BY_REFERENCE << eom;
   // TODO
 }

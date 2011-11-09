@@ -103,6 +103,9 @@ var win_num = 1;
 
 var ctx;
 
+var event_buffer = [];
+var awaiting_input = false;
+
 var DISPLAY_SQUARE = 16;
 var TILE_SQUARE = 16;
 var TILES_PER_ROW = 40;
@@ -577,6 +580,16 @@ var glyph2tile = [
 1012];
 
 
+function processInput() {
+  if (awaiting_input && event_buffer.length > 0) {
+    awaiting_input = false;
+    var event = event_buffer[0];
+    event_buffer = event_buffer.slice(1);
+    var nh = document.getElementById('nethack');
+    nh.postMessage(event.join(' '));
+  }
+}
+
 function handleMessage(msg) {
   var nh = document.getElementById('nethack');
   console.log(msg.data);
@@ -593,6 +606,7 @@ function handleMessage(msg) {
 
     case NACL_MSG_RAW_PRINT:
       // Make raw print synchronous for now to aid crash debugging.
+
       console.log(MessageLookup[data[0]] + ' ' + data.slice(1));
       nh.postMessage('ack');
       break;
@@ -602,6 +616,12 @@ function handleMessage(msg) {
       putGlyph(data[2], data[3], data[4]);
       break;
 
+    case NACL_MSG_NH_POSKEY:
+    case NACL_MSG_YN_FUNCTION:
+    case NACL_MSG_NHGETCH:
+      awaiting_input = true;
+      processInput();
+      break;
 
     default:
       console.log(MessageLookup[data[0]] + ' ' + data.slice(1));
@@ -618,6 +638,34 @@ function init() {
 function moduleDidLoad(e) {
   var module = document.getElementById('nethack');
   module.addEventListener('message', handleMessage);
+
+  document.onkeypress = function(evt) {
+    var ch = evt.which;
+    if (ch == undefined) ch = evt.keyCode;
+    event_buffer.push([ch, 0, 0, 0]);
+    processInput();
+    return false;
+  };
+  document.onkeydown = function(evt) {
+    // TODO
+    if (evt.keyCode == 8) return false;
+    return true;
+  };
+  document.onkeyup = function(evt) {
+    // TODO
+    if (evt.keyCode == 8) return false;
+    return true;
+  };
+
+  canvas.onmousedown = function(evt) {
+    var x = evt.pageX - canvas.offsetLeft;
+    var y = evt.pageY - canvas.offsetTop;
+    x = Math.floor(x / TILE_SQUARE);
+    y = Math.floor(y / TILE_SQUARE);
+    event_buffer.push([0, x, y, 0]);
+    processInput();
+    return true;
+  };
 }
 
 function putGlyph(x, y, glyph) {
