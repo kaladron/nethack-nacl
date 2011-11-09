@@ -253,7 +253,7 @@ void nacl_askname(void) {
 
 void nacl_get_nh_event(void) {
   NaClMessage() << NACL_MSG_GET_NH_EVENT << eom;
-  std::string event = NaClMessage::GetReply();
+  //std::string event = NaClMessage::GetReply();
   // TODO: decode event.
 }
 

@@ -20,6 +20,8 @@ SRC   = $(top_srcdir)/src
 NACL_SRC = $(top_srcdir)/sys/nacl
 # Nacl Windows
 NACL_WIN = $(top_srcdir)/win/nacl-messages
+# Win Share
+WIN_SHARE = $(top_srcdir)/win/share
 
 # Objects
 OBJ32 = $(top_srcdir)/obj32
@@ -29,7 +31,9 @@ OBJPUBLISH = $(top_srcdir)/publish
 OBJRESOURCE = $(top_srcdir)/resource
 
 # Yo dawg, look here!
-VPATH = $(SRC) $(UTIL) $(NACL_SRC) $(NACL_WIN)
+VPATH = $(SRC) $(UTIL) $(NACL_SRC) $(NACL_WIN) $(WIN_SHARE)
+
+# TODO(jeffbailey): Clean src/monstr.c and src/tile.c
 
 CLEANFILES = $(DAT)/data \
 	$(DAT)/dungeon \
@@ -109,7 +113,7 @@ OBJ32S = $(addprefix $(OBJ32)/,$(OBJS))
 OBJ64S = $(addprefix $(OBJ64)/,$(OBJS))
 
 MAKEDEFS := $(OBJHOST)/makedefs
-HOSTBINS := $(OBJHOST)/dgn_comp $(OBJHOST)/lev_comp
+HOSTBINS := $(OBJHOST)/dgn_comp $(OBJHOST)/lev_comp $(OBJHOST)/tilemap
 NETHACK32 := $(OBJPUBLISH)/nethack_x86-32.nexe
 NETHACK64 := $(OBJPUBLISH)/nethack_x86-64.nexe
 
@@ -187,6 +191,9 @@ $(OBJHOST)/dgn_comp: $(DGNCOMPOBJS)
 	gcc $(HOST_CFLAGS) $^ -o $@
 
 $(OBJHOST)/lev_comp: $(LEVCOMPOBJS)
+	gcc $(HOST_CFLAGS) $^ -o $@
+
+$(OBJHOST)/tilemap: $(OBJHOST)/tilemap.o
 	gcc $(HOST_CFLAGS) $^ -o $@
 
 $(OBJHOST)/%.y.c: %.y | $(OBJHOST) $(GENHDRS)
