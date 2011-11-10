@@ -394,7 +394,13 @@ int nacl_doprev_message(void) {
 
 char nacl_yn_function(const char *question, const char *choices,
                       CHAR_P def) {
-  NaClMessage() << NACL_MSG_YN_FUNCTION << question << choices << def << eom;
+  std::string choices_str;
+
+  if (choices) {
+    choices_str = choices;  
+  }
+  NaClMessage() << NACL_MSG_YN_FUNCTION <<
+                   question << choices_str << def << eom;
   std::stringstream reply(NaClMessage::GetReply());
   int ret;
   reply >> ret;
