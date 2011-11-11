@@ -166,6 +166,10 @@ PUBLISH_FILES = \
   $(OBJPUBLISH)/index.html \
   $(OBJPUBLISH)/mapbg.png \
   $(OBJPUBLISH)/x11tiles.png \
+  $(OBJPUBLISH)/icon_16.png \
+  $(OBJPUBLISH)/icon_48.png \
+  $(OBJPUBLISH)/icon_128.png \
+  $(OBJPUBLISH)/manifest.json \
   $(OBJPUBLISH)/nethack.nmf \
   $(OBJPUBLISH)/nethack.tar
 
