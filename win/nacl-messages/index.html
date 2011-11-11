@@ -112,6 +112,7 @@ MessageLookup[NACL_MSG_DELETE_NHWINDOW_BY_REFERENCE] =
 
 var win_num = 1;
 
+var canvas;
 var ctx;
 
 var event_buffer = [];
@@ -610,6 +611,13 @@ function handleMessage(msg) {
       nh.postMessage('bob');
       break;
 
+    // Args: Window number
+    case NACL_MSG_CLEAR_NHWINDOW:
+      if (data[1] == '3') {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      break;
+
     case NACL_MSG_CREATE_NHWINDOW:
       nh.postMessage('' + win_num);
       win_num++;
@@ -659,7 +667,7 @@ function handleMessage(msg) {
 }
 
 function init() {
-  var canvas = document.getElementById('canvas');
+  canvas = document.getElementById('canvas');
   ctx = canvas.getContext("2d");  
   canvas.setAttribute('width', '1280');
   canvas.setAttribute('height', '336');
