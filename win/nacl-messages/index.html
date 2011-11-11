@@ -9,6 +9,13 @@ image.src = "x11tiles.png";
     <title>Nethack</title>
     <META HTTP-EQUIV="Pragma" CONTENT="no-cache" />
     <META HTTP-EQUIV="Expires" CONTENT="-1" />
+<style>
+#textwindow {
+  height: 10em;
+  width: 60%;
+  overflow-y: scroll;
+}
+</style>
   </head>
   <body onload="init()">
 <script type="text/javascript">
@@ -604,16 +611,35 @@ function handleMessage(msg) {
       win_num++;
       break;
 
+    // Args: Window, X, Y, glyph
+    case NACL_MSG_PRINT_GLYPH:
+      putGlyph(data[2], data[3], data[4]);
+      break;
+
+    // Args: Window, Attribute, Text
+    case NACL_MSG_PUTSTR:
+      putStr(data[1], data[2], data[3]);
+      break;
+
     case NACL_MSG_RAW_PRINT:
       // Make raw print synchronous for now to aid crash debugging.
-
+      putStr(0, 0, data[1]);
       console.log(MessageLookup[data[0]] + ' ' + data.slice(1));
       nh.postMessage('ack');
       break;
 
-    case NACL_MSG_PRINT_GLYPH:
-      // Args: Window, X, Y, glyph
-      putGlyph(data[2], data[3], data[4]);
+    case NACL_MSG_RAW_PRINT_BOLD:
+      // Make raw print synchronous for now to aid crash debugging.
+      putStr(0, 0, data[1]);
+      console.log(MessageLookup[data[0]] + ' ' + data.slice(1));
+      nh.postMessage('ack');
+      break;
+
+    case NACL_MSG_YN_FUNCTION:
+      // Make raw print synchronous for now to aid crash debugging.
+      putStr(0, 0, data[1]);
+      awaiting_input = true;
+      processInput();
       break;
 
     case NACL_MSG_NH_POSKEY:
@@ -669,7 +695,6 @@ function moduleDidLoad(e) {
 }
 
 function putGlyph(x, y, glyph) {
-  console.log(x, y, glyph);
   glyph = glyph2tile[glyph];
   glyph_x = glyph % TILES_PER_ROW;
   glyph_y = Math.floor(glyph / TILES_PER_ROW);
@@ -682,6 +707,24 @@ function putGlyph(x, y, glyph) {
                 y * DISPLAY_SQUARE,
                 DISPLAY_SQUARE,
                 DISPLAY_SQUARE);
+}
+
+function putStr(win, attr, text) {
+  var textWindow = document.getElementById('textwindow');
+  
+  var newDiv = document.createElement('div');
+  var textNode = document.createTextNode(text);
+  newDiv.appendChild(textNode);
+  textWindow.appendChild(newDiv);
+
+  // Limit Scrollback
+  var SCROLLBUFFER_SIZE = 2500;
+
+  if (textWindow.children.length > SCROLLBUFFER_SIZE) {
+    textWindow.removeChild(textWindow.firstChild);
+  }
+
+  textWindow.scrollTop = textWindow.scrollHeight;
 }
 
 //]]>
@@ -701,6 +744,8 @@ function putGlyph(x, y, glyph) {
            width=0 height=0
            src="nethack.nmf"
            type="application/x-nacl" />
+  </div>
+  <div id="textwindow">
   </div>
   <div id="map"><canvas style="width: 1280px; height: 336px; " id="canvas"></canvas></div>
 </p>
