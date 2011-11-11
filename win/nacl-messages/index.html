@@ -115,6 +115,8 @@ var win_num = 1;
 var canvas;
 var ctx;
 
+var trace = false;
+
 var event_buffer = [];
 var awaiting_input = false;
 
@@ -604,7 +606,7 @@ function processInput() {
 
 function handleMessage(msg) {
   var nh = document.getElementById('nethack');
-  console.log(msg.data);
+  if (trace) {console.log(msg.data);};
   var data = eval(msg.data);
   switch (data[0]) {
     case NACL_MSG_ASKNAME:
@@ -633,17 +635,17 @@ function handleMessage(msg) {
       putStr(data[1], data[2], data[3]);
       break;
 
+    // Args: String
     case NACL_MSG_RAW_PRINT:
       // Make raw print synchronous for now to aid crash debugging.
       putStr(0, 0, data[1]);
-      console.log(MessageLookup[data[0]] + ' ' + data.slice(1));
       nh.postMessage('ack');
       break;
 
+    // Args: String
     case NACL_MSG_RAW_PRINT_BOLD:
       // Make raw print synchronous for now to aid crash debugging.
       putStr(0, 0, data[1]);
-      console.log(MessageLookup[data[0]] + ' ' + data.slice(1));
       nh.postMessage('ack');
       break;
 
