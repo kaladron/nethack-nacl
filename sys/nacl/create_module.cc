@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <ppapi/cpp/instance.h>
+#include "nacl-mounts/AppEngine/AppEngineMount.h"
 #include "nacl-mounts/base/MainThreadRunner.h"
 #include "nacl-mounts/base/UrlLoaderJob.h"
 #include "../../win/nacl-messages/naclmsg.h"
@@ -40,6 +41,11 @@ static void *nethack_init(void *arg) {
   mkdir("/usr/games", 0777);
   mkdir("/usr/games/lib", 0777);
   mkdir("/usr/games/lib/nethackdir", 0777);
+  mkdir("/usr/games/lib/nethackdir/save", 0777);
+  AppEngineMount* aem = new AppEngineMount(
+      runner, "http://naclhack.appspot.com/_file");
+  int ret = mount("AppEngine", "/usr/games/lib/nethackdir/save", 0, aem);
+  assert(ret == 0);                                             
   chdir("/usr/games/lib/nethackdir");
 
   {
