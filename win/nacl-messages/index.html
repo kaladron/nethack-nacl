@@ -656,6 +656,14 @@ function handleMessage(msg) {
       processInput();
       break;
 
+    case NACL_MSG_SELECT_MENU:
+      // TODO: make this actually select from a menu.
+      // Should return a count of items selected, followed by their
+      // identifiers (as ints).
+      // -1 indicates cancel (doing that for now).
+      nh.postMessage('-1');
+      break;
+
     case NACL_MSG_NH_POSKEY:
     case NACL_MSG_YN_FUNCTION:
     case NACL_MSG_NHGETCH:

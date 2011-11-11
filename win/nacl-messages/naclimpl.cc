@@ -3,6 +3,8 @@
 
 #include "naclbind.h"
 #include "naclmsg.h"
+#include "wintype.h"
+#include <assert.h>
 #include <stdio.h>
 #include <sstream>
 
@@ -311,19 +313,35 @@ void nacl_add_menu(winid wid, int glyph, const ANY_P * identifier,
                    CHAR_P accelerator, CHAR_P group_accel, int attr, 
                    const char *str, BOOLEAN_P presel) {
   NaClMessage() << NACL_MSG_START_MENU << wid << glyph
-                << (const char*)identifier
+                << *(int*)identifier
                 << accelerator << group_accel << attr
                 << str << presel << eom;
 }
 
 void nacl_end_menu(winid wid, const char *prompt) {
-  NaClMessage() << NACL_MSG_END_MENU << wid << prompt << eom;
+  std::string prompt_str;
+  if (prompt) {
+    prompt_str = prompt;
+  }
+  NaClMessage() << NACL_MSG_END_MENU << wid << prompt_str << eom;
 }
 
-int  nacl_select_menu(winid wid, int how, MENU_ITEM_P **selected) {
+int nacl_select_menu(winid wid, int how, MENU_ITEM_P **selected) {
   NaClMessage() << NACL_MSG_SELECT_MENU << wid << how << eom;
-  NaClMessage::GetReply();
-  return 0;
+  std::stringstream reply(NaClMessage::GetReply());
+  int ret;
+  reply >> ret;
+  if (ret < 0) return ret;
+  *selected = (MENU_ITEM_P*)calloc(ret, sizeof(MENU_ITEM_P));
+  assert(*selected);
+  assert(sizeof(anything) == sizeof(int));
+  for (int i = 0; i < ret; ++i) {
+    int item;
+    reply >> item;
+    memcpy(&(*selected)[i].item, &item, sizeof(int));
+    (*selected)[i].count = -1;
+  }
+  return ret;
 }
 
 /* No need for message_menu -- we'll use genl_message_menu instead */   
