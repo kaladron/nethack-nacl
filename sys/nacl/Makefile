@@ -164,6 +164,7 @@ PUBLISH_FILES = \
   $(NETHACK32) \
   $(NETHACK64) \
   $(OBJPUBLISH)/index.html \
+  $(OBJPUBLISH)/mapbg.png \
   $(OBJPUBLISH)/x11tiles.png \
   $(OBJPUBLISH)/nethack.nmf \
   $(OBJPUBLISH)/nethack.tar
