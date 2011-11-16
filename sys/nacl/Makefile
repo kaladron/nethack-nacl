@@ -165,6 +165,7 @@ PUBLISH_FILES = \
   $(NETHACK64) \
   $(OBJPUBLISH)/index.html \
   $(OBJPUBLISH)/mapbg.png \
+  $(OBJPUBLISH)/absurd128.png \
   $(OBJPUBLISH)/x11tiles.png \
   $(OBJPUBLISH)/icon_16.png \
   $(OBJPUBLISH)/icon_48.png \

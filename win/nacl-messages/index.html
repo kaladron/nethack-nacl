@@ -5,6 +5,7 @@
 var image = new Image();
 
 image.src = "x11tiles.png";
+//image.src = "absurd128.png";
 </script>
     <title>Nethack</title>
     <META HTTP-EQUIV="Pragma" CONTENT="no-cache" />
@@ -121,9 +122,16 @@ var event_buffer = [];
 var awaiting_input = false;
 
 var DISPLAY_SQUARE = 16;
+//var DISPLAY_SQUARE = 32;
 var TILE_SQUARE = 16;
+//var TILE_SQUARE = 128;
 var TILES_PER_ROW = 40;
 
+var height = 24;
+var width = 80;
+
+var pixheight = height * DISPLAY_SQUARE;
+var pixwidth = width * DISPLAY_SQUARE;
 
 var glyph2tile = [
  0,
@@ -679,8 +687,10 @@ function handleMessage(msg) {
 function init() {
   canvas = document.getElementById('canvas');
   ctx = canvas.getContext("2d");  
-  canvas.setAttribute('width', '1280');
-  canvas.setAttribute('height', '336');
+  canvas.setAttribute('width', pixwidth.toString());
+  canvas.setAttribute('height', pixheight.toString());
+  canvas.style.width = pixwidth.toString() + "px";
+  canvas.style.height = pixheight.toString() + "px";
 }
 
 function moduleDidLoad(e) {
@@ -769,7 +779,7 @@ function putStr(win, attr, text) {
   </div>
   <div id="textwindow">
   </div>
-  <div id="map"><canvas style="width: 1280px; height: 336px; " id="canvas"></canvas></div>
+  <div id="map"><canvas id="canvas"></canvas></div>
 </p>
 
 </body>
