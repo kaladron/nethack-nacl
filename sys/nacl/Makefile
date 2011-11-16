@@ -164,6 +164,7 @@ PUBLISH_FILES = \
   $(NETHACK32) \
   $(NETHACK64) \
   $(OBJPUBLISH)/index.html \
+  $(OBJPUBLISH)/nethack.js \
   $(OBJPUBLISH)/mapbg.png \
   $(OBJPUBLISH)/absurd128.png \
   $(OBJPUBLISH)/x11tiles.png \
@@ -238,6 +239,9 @@ $(OBJHOST)/stamp.sp_lev: $(HOSTBINS) $(OBJRESOURCE)
 
 $(OBJPUBLISH)/%: $(NACL_WIN)/%
 	cp $< $@
+
+$(NACL_WIN)/%.js: $(NACL_WIN)/%.dart
+	frogsh --compile-only --out=$@ $<
 
 $(OBJPUBLISH)/nethack.tar: $(NHRESOURCES) | $(OBJPUBLISH)
 	cd $(OBJRESOURCE) && tar -cf ../publish/nethack.tar *
