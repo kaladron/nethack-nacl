@@ -664,6 +664,11 @@ function handleMessage(msg) {
       processInput();
       break;
 
+    // Args: window, glyph, id, accell, group_accell, attr, str, presel
+    case NACL_MSG_ADD_MENU:
+      putStr(0, 0, data[7]);
+      break;
+
     case NACL_MSG_SELECT_MENU:
       // TODO: make this actually select from a menu.
       // Should return a count of items selected, followed by their

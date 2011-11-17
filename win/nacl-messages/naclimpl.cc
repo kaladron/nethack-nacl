@@ -312,7 +312,7 @@ void nacl_start_menu(winid wid) {
 void nacl_add_menu(winid wid, int glyph, const ANY_P * identifier,
                    CHAR_P accelerator, CHAR_P group_accel, int attr, 
                    const char *str, BOOLEAN_P presel) {
-  NaClMessage() << NACL_MSG_START_MENU << wid << glyph
+  NaClMessage() << NACL_MSG_ADD_MENU << wid << glyph
                 << *(int*)identifier
                 << accelerator << group_accel << attr
                 << str << presel << eom;
