@@ -10,7 +10,6 @@ image.src = "x11tiles.png";
     <title>Nethack</title>
     <META HTTP-EQUIV="Pragma" CONTENT="no-cache" />
     <META HTTP-EQUIV="Expires" CONTENT="-1" />
-<script src="nethack.js"></script>
 <style>
 #textwindow {
   height: 10em;
@@ -665,6 +664,11 @@ function handleMessage(msg) {
       processInput();
       break;
 
+    // Args: window, glyph, id, accell, group_accell, attr, str, presel
+    case NACL_MSG_ADD_MENU:
+      putStr(0, 0, data[7]);
+      break;
+
     case NACL_MSG_SELECT_MENU:
       // TODO: make this actually select from a menu.
       // Should return a count of items selected, followed by their
@@ -688,10 +692,6 @@ function handleMessage(msg) {
 function init() {
   canvas = document.getElementById('canvas');
   ctx = canvas.getContext("2d");  
-  canvas.setAttribute('width', pixwidth.toString());
-  canvas.setAttribute('height', pixheight.toString());
-  canvas.style.width = pixwidth.toString() + "px";
-  canvas.style.height = pixheight.toString() + "px";
 }
 
 function moduleDidLoad(e) {
@@ -781,6 +781,7 @@ function putStr(win, attr, text) {
   <div id="textwindow">
   </div>
   <div id="map"><canvas id="canvas"></canvas></div>
+  <script src="nethack.js"></script>
 </p>
 
 </body>
