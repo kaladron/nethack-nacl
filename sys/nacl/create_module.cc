@@ -36,6 +36,8 @@ static void *nethack_init(void *arg) {
   setenv("LOGNAME", "", 1);
   /* Indicate where we decompress things. */
   setenv("NETHACKDIR", "/usr/games/lib/nethackdir", 1);
+  /* Set location of config file. */
+  setenv("NETHACKOPTIONS", "/myhome/NetHack.cnf", 1);
 
   mkdir("/usr", 0777);
   mkdir("/usr/games", 0777);
@@ -64,8 +66,8 @@ static void *nethack_init(void *arg) {
   // Setup config file.
   {
     mkdir("/myhome", 0777);
-    int fh = open("/myhome/.nethackrc", O_CREAT | O_WRONLY);
-    const char config[] = "OPTIONS=color\n";
+    int fh = open("/myhome/NetHack.cnf", O_CREAT | O_WRONLY);
+    const char config[] = "OPTIONS=color\nOPTIONS=pickup_types:$\n";
     write(fh, config, sizeof(config) - 1);
     close(fh);
   }
