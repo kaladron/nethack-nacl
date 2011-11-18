@@ -428,7 +428,8 @@ char nacl_yn_function(const char *question, const char *choices,
 void nacl_getlin(const char *question, char *input) {
   NaClMessage() << NACL_MSG_GETLIN << question << eom;
   // TODO store to input.
-  NaClMessage::GetReply();
+  std::string reply = NaClMessage::GetReply();
+  strcpy(input, reply.c_str());
 }
 
 int nacl_get_ext_cmd(void) {
