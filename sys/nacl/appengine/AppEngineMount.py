@@ -65,6 +65,7 @@ class FileHandlingPage(webapp.RequestHandler):
     if method == 'read':
       filename = self.request.get(u'filename')
       assert filename
+      logging.info('reading %s' % filename)
       k = FileKey(filename, user)
       f = File.get(k)
       if f:
@@ -79,6 +80,7 @@ class FileHandlingPage(webapp.RequestHandler):
       filename = self.request.get(u'filename')
       assert filename
       assert data
+      logging.info('writing %s size=%d' % (filename, len(data)))
       def create_or_update(filename, data, owner):
         k = FileKey(filename, user)
         f = File.get(k)
