@@ -164,6 +164,7 @@ PUBLISH_FILES = \
   $(NETHACK32) \
   $(NETHACK64) \
   $(OBJPUBLISH)/index.html \
+  $(OBJPUBLISH)/nethack.css \
   $(OBJPUBLISH)/nethack.js \
   $(OBJPUBLISH)/mapbg.png \
   $(OBJPUBLISH)/absurd128.png \
@@ -242,6 +243,8 @@ $(OBJPUBLISH)/%: $(NACL_WIN)/%
 
 $(NACL_WIN)/%.js: $(NACL_WIN)/%.dart
 	frogsh --compile-only --out=$@ $<
+	sed -i -e 's/nethackEmbed.postMessage\$$1/nethackEmbed._ptr.postMessage/' $@
+	sed -i -e 's/textWindow.scrollHeight/textWindow._ptr.scrollHeight/' $@
 
 $(OBJPUBLISH)/nethack.tar: $(NHRESOURCES) | $(OBJPUBLISH)
 	cd $(OBJRESOURCE) && tar -cf ../publish/nethack.tar *
