@@ -8,6 +8,8 @@ extern "C" {
 #include "hack.h"
 #include "dlb.h"
 #include "patchlevel.h"
+
+extern short glyph2tile[]; /* from tile.c */
 }
 
 /* Some prototypes */

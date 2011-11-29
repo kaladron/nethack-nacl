@@ -133,8 +133,8 @@ void pm(out) {
 int TILES_PER_ROW = 40;
 int TILE_SQUARE = 16;
 
-void putGlyph(int x, int y, int glyph) {
-  int tile = GLYPH2TILE[glyph];
+void putGlyph(int x, int y, int tile) {
+  //int tile = GLYPH2TILE[glyph];
   int tile_x = tile % TILES_PER_ROW;
   int tile_y = (tile / TILES_PER_ROW).floor();
 

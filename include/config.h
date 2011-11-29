@@ -82,6 +82,10 @@
 #endif
 #endif
 
+#ifdef __native_client__
+# define NACL_GRAPHICS
+#endif
+
 #ifdef QT_GRAPHICS
 # define DEFAULT_WC_TILED_MAP   /* Default to tiles if users doesn't say wc_ascii_map */
 # define USER_SOUNDS		/* Use sounds */

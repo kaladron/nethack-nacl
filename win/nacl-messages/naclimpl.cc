@@ -312,7 +312,7 @@ void nacl_start_menu(winid wid) {
 void nacl_add_menu(winid wid, int glyph, const ANY_P * identifier,
                    CHAR_P accelerator, CHAR_P group_accel, int attr, 
                    const char *str, BOOLEAN_P presel) {
-  NaClMessage() << NACL_MSG_ADD_MENU << wid << glyph
+  NaClMessage() << NACL_MSG_ADD_MENU << wid << glyph2tile[glyph]
                 << *(int*)identifier
                 << accelerator << group_accel << attr
                 << str << presel << eom;
@@ -369,7 +369,8 @@ void nacl_cliparound_proper(winid wid, int x, int y) {
 }
 
 void nacl_print_glyph(winid wid, XCHAR_P x, XCHAR_P y, int glyph) {
-  NaClMessage() << NACL_MSG_PRINT_GLYPH << wid << x << y << glyph << eom;
+  NaClMessage() << NACL_MSG_PRINT_GLYPH << wid << x << y
+                << glyph2tile[glyph] << eom;
 }
 
 void nacl_raw_print(const char *str) {
