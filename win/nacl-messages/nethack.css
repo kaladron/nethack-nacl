@@ -1,0 +1,10 @@
+#textwindow {
+  height: 10em;
+  width: 60%;
+  overflow-y: scroll;
+}
+
+#map {
+  background-image: url('mapbg.png');
+}
+
