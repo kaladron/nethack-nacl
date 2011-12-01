@@ -60,7 +60,7 @@ GENFILES = $(DAT)/data \
 	$(OBJHOST)/stamp.sp_lev
 
 GENHDRS = $(INCL)/date.h $(INCL)/onames.h $(INCL)/pm.h
-#GENSRCS = $(SRC)/monstr.c
+#GENSRCS = $(SRC)/monstr.c $(SRC)/tile.c
 
 OBJS ?= \
        $(patsubst %.c,%.o,$(notdir $(GENSRCS))) \
@@ -262,7 +262,7 @@ clean:
 http:
 	./httpd.py
 
-$(GENHDRS) $(GENSRCS): $(MAKEDEFS)
+$(GENHDRS): $(MAKEDEFS)
 	cd $(OBJHOST) && ./makedefs -o
 	cd $(OBJHOST) && ./makedefs -p
 	cd $(OBJHOST) && ./makedefs -v
@@ -289,6 +289,9 @@ $(OBJRESOURCE)/%: $(DAT)/%
 
 $(SRC)/monst.c $(SRC)/objects.c:
 	@
+
+$(SRC)/tile.c: $(OBJHOST)/tilemap $(INCL)/pm.h
+	cd $(OBJHOST) && ./tilemap
 
 $(SRC)/%.c: $(GENHDRS)
 	@
