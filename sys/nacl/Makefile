@@ -158,7 +158,7 @@ WRAPFUNC = \
 	   setuid \
 	   signal \
 	   stat \
-           tgetch \
+	   tgetch \
 	   unlink \
 	   write
 
@@ -170,6 +170,8 @@ PUBLISH_FILES = \
   $(OBJPUBLISH)/index.html \
   $(OBJPUBLISH)/nethack.css \
   $(OBJPUBLISH)/nethack.js \
+  $(OBJPUBLISH)/nethack.html \
+  $(OBJPUBLISH)/console.js \
   $(OBJPUBLISH)/mapbg.png \
   $(OBJPUBLISH)/absurd128.png \
   $(OBJPUBLISH)/x11tiles.png \

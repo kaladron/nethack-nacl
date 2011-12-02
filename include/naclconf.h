@@ -18,6 +18,7 @@
 #define Rand()  rand()
 
 #define STRNCMPI
+#define TEXTCOLOR
 
 // TODO(bradnelson): figure out why this causes stuckage.
 #undef INSURANCE

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Nethack</title>
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache" />
+    <META HTTP-EQUIV="Expires" CONTENT="-1" />
+    <style type="text/css">
+div.console
+{
+  color:rgb(0,255,0);
+  background-color:rgb(0,0,0);
+  font-family: "Courier New"
+               Courier
+               "Andale Mono"
+               "Fixed"
+               "Lucidatypewriter"
+               monospace;
+}
+    </style>
+  </head>
+  <body onload="init()">
+<script type="text/javascript" src="console.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+
+/**
+ * Create the console, and wait for nacl module to load.
+ */ 
+
+var term;
+
+function init() {
+  // Setup console.
+  term = new console.Console('console', 'nethack');
+  term.nethackKeyboard();
+
+  // Show loading message.
+  term.write('Loading...');
+}
+
+function moduleDidLoad(e) {
+  term.attach();
+}
+
+//]]>
+</script>
+
+<h1>Nethack</h1>
+<table><tr><td>
+<div id="console" class="console"></div>
+</td></tr></table>
+<p>
+  <div id="listener">
+    <script type="text/javascript">
+      document.getElementById('listener').addEventListener(
+          'load', moduleDidLoad, true);
+    </script>
+  <embed name="nacl_module"
+         id="nethack"
+         width=0 height=0
+         src="nethack.nmf"
+         type="application/x-nacl" />
+</p>
+
+<p>
+<a href="http://www.nethack.org">Nethack.org</a><br>
+<a href="http://commondatastorage.googleapis.com/nativeclient-mirror/nacl/nethack-343-src.tgz">original&nbsp;source</a><br>
+<a href="http://naclports.googlecode.com/">patches and build scripts</a><br>
+<a href="http://code.google.com/chrome/nativeclient/">Native Client SDK</a><br>
+</p>
+
+</body>
+</html>
