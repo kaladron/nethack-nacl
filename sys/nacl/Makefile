@@ -20,6 +20,8 @@ SRC   = $(top_srcdir)/src
 NACL_SRC = $(top_srcdir)/sys/nacl
 # Nacl Windows
 NACL_WIN = $(top_srcdir)/win/nacl-messages
+# TTY Windows
+TTY_WIN = $(top_srcdir)/win/tty
 # Win Share
 WIN_SHARE = $(top_srcdir)/win/share
 
@@ -31,7 +33,7 @@ OBJPUBLISH = $(top_srcdir)/publish
 OBJRESOURCE = $(top_srcdir)/resource
 
 # Yo dawg, look here!
-VPATH = $(SRC) $(UTIL) $(NACL_SRC) $(NACL_WIN) $(WIN_SHARE)
+VPATH = $(SRC) $(UTIL) $(NACL_SRC) $(NACL_WIN) $(TTY_WIN) $(WIN_SHARE)
 
 # TODO(jeffbailey): Clean src/monstr.c and src/tile.c
 
@@ -65,6 +67,7 @@ GENHDRS = $(INCL)/date.h $(INCL)/onames.h $(INCL)/pm.h
 OBJS ?= \
        $(patsubst %.c,%.o,$(notdir $(GENSRCS))) \
        $(patsubst %.c,%.o,$(notdir $(wildcard $(SRC)/*.c))) \
+       $(patsubst %.c,%.o,$(notdir $(wildcard $(TTY_WIN)/*.c))) \
        $(patsubst %.cc,%.o,$(notdir $(wildcard $(NACL_SRC)/*.cc))) \
        $(patsubst %.cc,%.o,$(notdir $(wildcard $(NACL_WIN)/*.cc)))
 
@@ -155,6 +158,7 @@ WRAPFUNC = \
 	   setuid \
 	   signal \
 	   stat \
+           tgetch \
 	   unlink \
 	   write
 

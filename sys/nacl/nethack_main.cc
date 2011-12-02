@@ -87,7 +87,8 @@ nethack_main(int argc, char*argv[]) {
 
         fprintf(stderr, "DDDDDDDDDDDDD\n");
 	//choose_windows(DEFAULT_WINDOW_SYS);
-	choose_windows("Nacl");
+	//choose_windows("Nacl");
+        choose_windows("tty");
         fprintf(stderr, "EEEEEEEEEEEEE\n");
 
 #ifdef CHDIR			/* otherwise no chdir() */
