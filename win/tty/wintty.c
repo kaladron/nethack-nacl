@@ -118,7 +118,7 @@ struct DisplayDesc *ttyDisplay;	/* the tty display descriptor */
 
 extern void FDECL(cmov, (int,int)); /* from termcap.c */
 extern void FDECL(nocmov, (int,int)); /* from termcap.c */
-#if defined(UNIX) || defined(VMS)
+#if defined(UNIX) || defined(VMS) || defined(__native_client__)
 static char obuf[BUFSIZ];	/* BUFSIZ is defined in stdio.h */
 #endif
 
@@ -269,8 +269,9 @@ char** argv;
      *  tty_startup() must be called before initoptions()
      *    due to ordering of graphics settings
      */
-#if defined(UNIX) || defined(VMS)
-    setbuf(stdout,obuf);
+#if defined(UNIX) || defined(VMS) || defined(__native_client__)
+    //setbuf(stdout,obuf);
+    setvbuf(stdout, obuf, _IONBF, BUFSIZ);
 #endif
     gettty();
 
@@ -705,7 +706,7 @@ tty_askname()
 			}
 			continue;
 		}
-#if defined(UNIX) || defined(VMS)
+#if defined(UNIX) || defined(VMS) || defined(__native_client__)
 		if(c != '-' && c != '@')
 		if(c < 'A' || (c > 'Z' && c < 'a') || c > 'z') c = '_';
 #endif

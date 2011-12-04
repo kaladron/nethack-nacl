@@ -55,9 +55,7 @@ nethack_main(int argc, char*argv[]) {
 #define MAC_PATH_VALUE ".app/Contents/MacOS/"
 	char mac_cwd[1024], *mac_exe = argv[0], *mac_tmp;
 	unsigned int arg0_len = strlen(mac_exe), mac_tmp_len, mac_lhs_len=0;
-        fprintf(stderr, "AAAAAAAAAAAAA\n");
 	getcwd(mac_cwd, 1024);
-        fprintf(stderr, "BBBBBBBBBBBBB\n");
 	if(mac_exe[0] == '/' && !strcmp(mac_cwd, "/")) {
 	    if((mac_exe = strrchr(mac_exe, '/')))
 		mac_exe++;
@@ -78,18 +76,15 @@ nethack_main(int argc, char*argv[]) {
 		free(mac_tmp);
 	    }
 	}
-        fprintf(stderr, "CCCCCCCCCCCCCC\n");
 #endif
 
 	hname = argv[0];
 	hackpid = getpid();
 	//(void) umask(0777 & ~FCMASK);
 
-        fprintf(stderr, "DDDDDDDDDDDDD\n");
 	//choose_windows(DEFAULT_WINDOW_SYS);
 	//choose_windows("Nacl");
         choose_windows("tty");
-        fprintf(stderr, "EEEEEEEEEEEEE\n");
 
 #ifdef CHDIR			/* otherwise no chdir() */
 	/*
@@ -102,7 +97,6 @@ nethack_main(int argc, char*argv[]) {
 	dir = nh_getenv("NETHACKDIR");
 	if (!dir) dir = nh_getenv("HACKDIR");
 #endif
-        fprintf(stderr, "FFFFFFFFFFFFFFFF\n");
 	if(0 && argc > 1) {
 #ifdef CHDIR
 	    if (!strncmp(argv[1], "-d", 2) && argv[1][2] != 'e') {
@@ -136,7 +130,6 @@ nethack_main(int argc, char*argv[]) {
 		exit(EXIT_SUCCESS);
 	    }
 	}
-        fprintf(stderr, "FFF1111\n");
 
 	/*
 	 * Change directories before we initialize the window system so
@@ -146,18 +139,14 @@ nethack_main(int argc, char*argv[]) {
 	chdirx(dir,1);
 #endif
 
-        fprintf(stderr, "FFF222\n");
 #ifdef _M_UNIX
 	check_sco_console();
 #endif
 #ifdef __linux__
 	check_linux_console();
 #endif
-        fprintf(stderr, "FFF333\n");
 	initoptions();
-        fprintf(stderr, "FFF444\n");
 	init_nhwindows(&argc,argv);
-        fprintf(stderr, "FFF555\n");
 	exact_username = whoami();
 #ifdef _M_UNIX
 	init_sco_cons();
@@ -175,9 +164,7 @@ nethack_main(int argc, char*argv[]) {
         //	(void) signal(SIGXCPU, (SIG_RET_TYPE) hangup);
 #endif
 
-        fprintf(stderr, "GGGGGGGGGGG\n");
 	process_options(argc, argv);	/* command line options */
-        fprintf(stderr, "HHHHHHHHHH\n");
 
 #ifdef DEF_PAGER
 	if(!(catmore = nh_getenv("HACKPAGER")) && !(catmore = nh_getenv("PAGER")))
@@ -191,12 +178,9 @@ nethack_main(int argc, char*argv[]) {
 		Strcpy(plname, "wizard");
 	else
 #endif
-        fprintf(stderr, "IIIIIIIIIII\n");
 	if(!*plname || !strncmp(plname, "player", 4)
 		    || !strncmp(plname, "games", 4)) {
-        fprintf(stderr, "IIIIIIIIIII111\n");
 		askname();
-        fprintf(stderr, "IIIIIIIIIII222\n");
 	} else if (exact_username) {
 		/* guard against user names with hyphens in them */
 		unsigned int len = strlen(plname);
@@ -208,7 +192,6 @@ nethack_main(int argc, char*argv[]) {
 	plnamesuffix();		/* strip suffix from name; calls askname() */
 				/* again if suffix was whole name */
 				/* accepts any suffix */
-        fprintf(stderr, "JJJJJJJJJJJJJ\n");
 #ifdef WIZARD
 	if(!wizard) {
 #endif
@@ -228,9 +211,7 @@ nethack_main(int argc, char*argv[]) {
 	}
 #endif /* WIZARD */
 
-        fprintf(stderr, "KKKKKKKKK\n");
 	dlb_init();	/* must be before newgame() */
-        fprintf(stderr, "LLLLLLLLLL\n");
 
 	/*
 	 * Initialization of the boundaries of the mazes
@@ -247,12 +228,9 @@ nethack_main(int argc, char*argv[]) {
 	 *  Initialize the vision system.  This must be before mklev() on a
 	 *  new game or before a level restore on a saved game.
 	 */
-        fprintf(stderr, "MMMMMMMMM\n");
 	vision_init();
-        fprintf(stderr, "NNNNNNNNN\n");
 
 	display_gamewindows();
-        fprintf(stderr, "OOOOOOOOO\n");
 
 	if ((fd = restore_saved_game()) >= 0) {
 #ifdef WIZARD
@@ -293,20 +271,13 @@ nethack_main(int argc, char*argv[]) {
 	} else {
 not_recovered:
 		player_selection();
-                fprintf(stderr, "OOOOO1\n");
 		newgame();
-                fprintf(stderr, "OOOOO2\n");
 		wd_message();
-                fprintf(stderr, "OOOOO3\n");
 
 		flags.move = 0;
-                fprintf(stderr, "OOOOO4\n");
 		set_wear();
-                fprintf(stderr, "OOOOO5\n");
 		(void) pickup(1);
-                fprintf(stderr, "OOOOO6\n");
 	}
-        fprintf(stderr, "PPPPPPPPP\n");
 
 	moveloop();
 	exit(EXIT_SUCCESS);

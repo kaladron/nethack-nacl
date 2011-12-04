@@ -20,6 +20,11 @@
 #define STRNCMPI
 #define TEXTCOLOR
 
+#define TIMED_DELAY    /* usleep() */
+#define msleep(k) sleep((k)/1000)
+
+#define POSIX_TYPES
+
 // TODO(bradnelson): figure out why this causes stuckage.
 #undef INSURANCE
 

@@ -74,8 +74,6 @@ static void *nethack_init(void *arg) {
     close(fh);
   }
 
-  fprintf(stderr, "started!!!");
-
   const char *argv[] = {"nethack"};
   nethack_main(1, const_cast<char **>(argv));
 
@@ -103,7 +101,7 @@ class NethackInstance : public pp::Instance {
     // This is only needed for tty.
     jsbridge_ = new JSPostMessageBridge(runner_);
     jspipe_ = new JSPipeMount();
-    jspipe_->set_using_pseudo_thread(true);
+    //jspipe_->set_using_pseudo_thread(true);
     jspipe_->set_outbound_bridge(jsbridge_);
     // Replace stdin, stdout, stderr with js console.
     mount("jspipe", "/jspipe", 0, jspipe_);
@@ -118,7 +116,8 @@ class NethackInstance : public pp::Instance {
     fd = open("/jspipe/2", O_WRONLY);
     assert(fd == 2);
     
-    MainThreadRunner::PseudoThreadFork(nethack_init, runner_);
+    //MainThreadRunner::PseudoThreadFork(nethack_init, runner_);
+    pthread_create(&nethack_thread_, NULL, nethack_init, runner_);
     return true;
   }
 
