@@ -2,7 +2,7 @@
 #import('dart:json');
 
 #source('nacl_msg.dart');
-#source('nacl_glyph.dart');
+#source('xtermconsole.dart');
 
 class x11tiles {
   String src = "x11tiles.png";

@@ -98,6 +98,17 @@ class NethackInstance : public pp::Instance {
   virtual bool Init(uint32_t argc, const char* argn[], const char* argv[]) {
     runner_ = new MainThreadRunner(this);
 
+    const char**argnwalk = argn;
+    const char**argvwalk = argv;
+    fprintf(stderr, "%d\n", argc);
+    uint32_t argcwalk = 0;
+    while (argcwalk < argc) {
+      fprintf(stderr, "argn: %s, argv: %s\n", *argnwalk, *argvwalk);
+      argnwalk++;
+      argvwalk++;
+      argcwalk++;
+    }
+
     // This is only needed for tty.
     jsbridge_ = new JSPostMessageBridge(runner_);
     jspipe_ = new JSPipeMount();
