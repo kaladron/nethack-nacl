@@ -270,8 +270,7 @@ char** argv;
      *    due to ordering of graphics settings
      */
 #if defined(UNIX) || defined(VMS) || defined(__native_client__)
-    //setbuf(stdout,obuf);
-    setvbuf(stdout, obuf, _IONBF, BUFSIZ);
+    setbuf(stdout,obuf);
 #endif
     gettty();
 

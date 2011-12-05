@@ -133,7 +133,6 @@ WRAPFUNC = \
 	   chdir \
 	   chmod \
 	   close \
-	   fflush \
 	   fstat \
 	   getcwd \
 	   getdents \
