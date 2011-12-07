@@ -55,11 +55,13 @@ function moduleDidLoad(e) {
       document.getElementById('listener').addEventListener(
           'load', moduleDidLoad, true);
     </script>
-  <embed name="nacl_module"
-         id="nethack"
-         width=0 height=0
-         src="nethack.nmf"
-         type="application/x-nacl" />
+  <object data="nethack.nmf"
+          id="nethack"
+          width="0" height="0"
+          src="nethack.nmf"
+          type="application/x-nacl">
+    <param name="windowtype" value="tty"> 
+  </object>
 </p>
 
 <p>

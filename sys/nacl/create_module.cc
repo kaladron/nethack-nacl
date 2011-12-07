@@ -23,6 +23,7 @@ extern "C" {
 int nethack_main(int argc, char *argv[]);
 int mount(const char *type, const char *dir, int flags, void *data);
 int simple_tar_extract(const char *path);
+char *windowtype;
 }
 
 
@@ -104,40 +105,46 @@ class NethackInstance : public pp::Instance {
     uint32_t argcwalk = 0;
     while (argcwalk < argc) {
       fprintf(stderr, "argn: %s, argv: %s\n", *argnwalk, *argvwalk);
+      // TODO(jeffbailey): This should copy every key/value pair into opts.
+      if (!strcmp(*argnwalk, "windowtype")) {
+        windowtype = strdup(*argvwalk);
+      }
       argnwalk++;
       argvwalk++;
       argcwalk++;
     }
 
-    // This is only needed for tty.
-    jsbridge_ = new JSPostMessageBridge(runner_);
-    jspipe_ = new JSPipeMount();
-    //jspipe_->set_using_pseudo_thread(true);
-    jspipe_->set_outbound_bridge(jsbridge_);
-    // Replace stdin, stdout, stderr with js console.
-    mount("jspipe", "/jspipe", 0, jspipe_);
-    close(0);
-    close(1);
-    close(2);
-    int fd;
-    fd = open("/jspipe/0", O_RDONLY);
-    assert(fd == 0);
-    fd = open("/jspipe/1", O_WRONLY);
-    assert(fd == 1);
-    fd = open("/jspipe/2", O_WRONLY);
-    assert(fd == 2);
+    if (!strcmp(windowtype,"tty")) {
+      // This is only needed for tty.
+      jsbridge_ = new JSPostMessageBridge(runner_);
+      jspipe_ = new JSPipeMount();
+      //jspipe_->set_using_pseudo_thread(true);
+      jspipe_->set_outbound_bridge(jsbridge_);
+      // Replace stdin, stdout, stderr with js console.
+      mount("jspipe", "/jspipe", 0, jspipe_);
+      close(0);
+      close(1);
+      close(2);
+      int fd;
+      fd = open("/jspipe/0", O_RDONLY);
+      assert(fd == 0);
+      fd = open("/jspipe/1", O_WRONLY);
+      assert(fd == 1);
+      fd = open("/jspipe/2", O_WRONLY);
+      assert(fd == 2);
+    }
     
-    //MainThreadRunner::PseudoThreadFork(nethack_init, runner_);
-    pthread_create(&nethack_thread_, NULL, nethack_init, runner_);
+    MainThreadRunner::PseudoThreadFork(nethack_init, runner_);
+    //pthread_create(&nethack_thread_, NULL, nethack_init, runner_);
     return true;
   }
 
   virtual void HandleMessage(const pp::Var& message) {
     std::string msg = message.AsString();
-    if (0) { // nacl-message
-      NaClMessage::SetReply(msg);
-    } else {
+    if (!strcmp(windowtype,"tty")) {
       jspipe_->Receive(msg.c_str(), msg.size());
+    } else {
+      NaClMessage::SetReply(msg);
     }
   }
 

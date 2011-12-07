@@ -41,6 +41,8 @@ static void NDECL(wd_message);
 static boolean wiz_error_flag = FALSE;
 #endif
 
+extern char* windowtype;
+
 int
 nethack_main(int argc, char*argv[]) {
 	register int fd;
@@ -84,7 +86,7 @@ nethack_main(int argc, char*argv[]) {
 
 	//choose_windows(DEFAULT_WINDOW_SYS);
 	//choose_windows("Nacl");
-        choose_windows("tty");
+        choose_windows(windowtype);
 
 #ifdef CHDIR			/* otherwise no chdir() */
 	/*

@@ -14,14 +14,22 @@ int width = 80;
 int DISPLAY_SQUARE = 16;
 int SCROLLBUFFER_SIZE = 2500;
 
+String windowtype = "Nacl";
+
 void initNetHack(evt) {
-  nethackEmbed = new Element.tag('embed');
+  ParamElement param = new Element.tag('param');
+  param.name = "windowtype";
+  param.value = windowtype;
+
+  nethackEmbed = new Element.tag('object');
   nethackEmbed.width = 0;
   nethackEmbed.height = 0;
   nethackEmbed.on.load.add(setupKeyListener);
   nethackEmbed.on['message'].add(handleMessage);
-  nethackEmbed.src = "nethack.nmf";
+  nethackEmbed.data = "nethack.nmf";
   nethackEmbed.type = "application/x-nacl";
+  nethackEmbed.nodes.add(param);
+
   DivElement listener = document.query("#listener");
   listener.nodes.add(nethackEmbed);
 }
@@ -171,7 +179,7 @@ bool mouseNav(MouseEvent evt) {
 }
 
 int win_num = 1;
-EmbedElement nethackEmbed;
+ObjectElement nethackEmbed;
 CanvasElement canvas;
 CanvasRenderingContext2D ctx;
 ImageElement image;

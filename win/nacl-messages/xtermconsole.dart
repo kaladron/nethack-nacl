@@ -1,5 +1,3 @@
-#import('dart:html');
-
 class XtermConsole {
   HashMap<int, String> colorTable;
   DivElement xterm;
@@ -17,9 +15,4 @@ class XtermConsole {
     colorTable[6] = '#00ffff';
     colorTable[7] = '#ffffff';
   } 
-}
-
-main () {
-  DivElement game = document.query('#game');
-  XtermConsole x = new XtermConsole(game);
 }
