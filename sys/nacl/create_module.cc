@@ -134,8 +134,11 @@ class NethackInstance : public pp::Instance {
       assert(fd == 2);
     }
     
-    MainThreadRunner::PseudoThreadFork(nethack_init, runner_);
-    //pthread_create(&nethack_thread_, NULL, nethack_init, runner_);
+    if (!strcmp(windowtype,"tty")) {
+      pthread_create(&nethack_thread_, NULL, nethack_init, runner_);
+    } else {
+      MainThreadRunner::PseudoThreadFork(nethack_init, runner_);
+    }
     return true;
   }
 
