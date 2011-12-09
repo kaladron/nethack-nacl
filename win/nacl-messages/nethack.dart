@@ -21,7 +21,22 @@ class GnomeLike {
     int pixheight = HEIGHT * DISPLAY_SQUARE;
     int pixwidth = WIDTH * DISPLAY_SQUARE;
 
+    DivElement game = document.query("#game");
+    textWindow = new Element.tag("div");
+    textWindow.id = "textwindow";
+
     canvas = document.query("#canvas");
+
+    DivElement map = new Element.tag("div");
+    map.id = "map";
+
+    canvas = new Element.tag("canvas");
+
+    map.nodes.add(canvas);
+
+    game.nodes.add(textWindow);
+    game.nodes.add(map);
+
     ctx = canvas.getContext("2d");
     canvas.width = pixwidth;
     canvas.height = pixheight;
