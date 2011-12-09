@@ -247,7 +247,7 @@ $(OBJPUBLISH)/%: $(NACL_WIN)/%
 	cp $< $@
 
 $(NACL_WIN)/%.js: $(NACL_WIN)/%.dart
-	frogsh --compile-only --out=$@ $<
+	minfrog --compile-only --out=$@ $<
 	sed -i -e 's/nethackEmbed.postMessage\$$1/nethackEmbed._ptr.postMessage/' $@
 	sed -i -e 's/textWindow.scrollHeight/textWindow._ptr.scrollHeight/' $@
 
