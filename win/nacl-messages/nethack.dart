@@ -17,7 +17,7 @@ class GnomeLike {
 
   String windowtype = "Nacl";
 
-  void graphicsSetup() {
+  void setup() {
     int pixheight = HEIGHT * DISPLAY_SQUARE;
     int pixwidth = WIDTH * DISPLAY_SQUARE;
 
@@ -30,35 +30,17 @@ class GnomeLike {
     canvas.on.mouseDown.add(mouseNav);
 
     image = new Element.tag('img');
-    image.on.load.add(initNetHack);
     image.src = "x11tiles.png";
 
     eventBuffer = new Queue<List<String>>();
     textWindow = document.query("#textwindow");
+    setupKeyListener();
   }  
 
-  void initNetHack(evt) {
-    ParamElement param = new Element.tag('param');
-    param.name = "windowtype";
-    param.value = windowtype;
-  
-    nethackEmbed = new Element.tag('object');
-    nethackEmbed.width = 0;
-    nethackEmbed.height = 0;
-    nethackEmbed.on.load.add(setupKeyListener);
-    nethackEmbed.on['message'].add(handleMessage);
-    nethackEmbed.data = "nethack.nmf";
-    nethackEmbed.type = "application/x-nacl";
-    nethackEmbed.nodes.add(param);
-  
-    DivElement listener = document.query("#listener");
-    listener.nodes.add(nethackEmbed);
-  }
-  
   Queue<List<String>> eventBuffer;
   bool awaitingInput = false;
   
-  void setupKeyListener(evt) {
+  void setupKeyListener() {
     document.on.keyPress.add((evt) {
       int ch = evt.which;
       //if (ch == undefined) ch = evt.keyCode;
@@ -200,14 +182,35 @@ class GnomeLike {
   }
   
   int win_num = 1;
-  ObjectElement nethackEmbed;
   CanvasElement canvas;
   CanvasRenderingContext2D ctx;
   ImageElement image;
   DivElement textWindow;
 }
 
+ObjectElement nethackEmbed;
+
+void initNethack(GnomeLike game) {
+  ParamElement param = new Element.tag('param');
+  param.name = "windowtype";
+  param.value = game.windowtype;
+
+  nethackEmbed = new Element.tag('object');
+  nethackEmbed.width = 0;
+  nethackEmbed.height = 0;
+  //nethackEmbed.on.load.add(game.setup);
+  nethackEmbed.on['message'].add(game.handleMessage);
+  nethackEmbed.data = "nethack.nmf";
+  nethackEmbed.type = "application/x-nacl";
+  nethackEmbed.nodes.add(param);
+
+  DivElement listener = document.query("#listener");
+  listener.nodes.add(nethackEmbed);
+}
+  
+
 main() {
   GnomeLike game = new GnomeLike();
-  game.graphicsSetup();  
+  initNethack(game);
+  game.setup();
 }
