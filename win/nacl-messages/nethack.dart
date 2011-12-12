@@ -9,13 +9,25 @@ class x11tiles {
   int TILE_SQUARE = 16;
 }
 
-class GnomeLike {
+class GnomeLike implements NethackUi {
   int HEIGHT = 24;
   int WIDTH = 80;
   int DISPLAY_SQUARE = 16;
   int SCROLLBUFFER_SIZE = 2500;
 
   String windowtype = "Nacl";
+
+  Queue<List<String>> eventBuffer;
+  bool awaitingInput = false;
+  
+  int TILES_PER_ROW = 40;
+  int TILE_SQUARE = 16;
+  
+  int win_num = 1;
+  CanvasElement canvas;
+  CanvasRenderingContext2D ctx;
+  ImageElement image;
+  DivElement textWindow;
 
   void setup() {
     int pixheight = HEIGHT * DISPLAY_SQUARE;
@@ -52,9 +64,6 @@ class GnomeLike {
     setupKeyListener();
   }  
 
-  Queue<List<String>> eventBuffer;
-  bool awaitingInput = false;
-  
   void setupKeyListener() {
     document.on.keyPress.add((evt) {
       int ch = evt.which;
@@ -156,9 +165,6 @@ class GnomeLike {
     nethackEmbed.postMessage(out);
   }
   
-  int TILES_PER_ROW = 40;
-  int TILE_SQUARE = 16;
-  
   void putGlyph(int x, int y, int tile) {
     //int tile = GLYPH2TILE[glyph];
     int tile_x = tile % TILES_PER_ROW;
@@ -195,17 +201,18 @@ class GnomeLike {
     });
     return true;
   }
-  
-  int win_num = 1;
-  CanvasElement canvas;
-  CanvasRenderingContext2D ctx;
-  ImageElement image;
-  DivElement textWindow;
 }
+
+interface NethackUi {
+  void setup();
+
+  String get windowtype();
+}
+
 
 ObjectElement nethackEmbed;
 
-void initNethack(GnomeLike game) {
+void initNethack(NethackUi game) {
   ParamElement param = new Element.tag('param');
   param.name = "windowtype";
   param.value = game.windowtype;
@@ -213,7 +220,6 @@ void initNethack(GnomeLike game) {
   nethackEmbed = new Element.tag('object');
   nethackEmbed.width = 0;
   nethackEmbed.height = 0;
-  //nethackEmbed.on.load.add(game.setup);
   nethackEmbed.on['message'].add(game.handleMessage);
   nethackEmbed.data = "nethack.nmf";
   nethackEmbed.type = "application/x-nacl";
@@ -225,7 +231,7 @@ void initNethack(GnomeLike game) {
   
 
 main() {
-  GnomeLike game = new GnomeLike();
+  NethackUi game = new GnomeLike();
   initNethack(game);
   game.setup();
 }
