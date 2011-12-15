@@ -8,6 +8,10 @@
 #include <stdio.h>
 #include <sstream>
 
+extern "C" {
+  #include "func_tab.h"
+};
+
 
 static EndOfMessage eom;
 
@@ -434,7 +438,13 @@ void nacl_getlin(const char *question, char *input) {
 }
 
 int nacl_get_ext_cmd(void) {
-  NaClMessage() << NACL_MSG_GET_EXT_CMD << eom;
+  NaClMessage msgBuilder = NaClMessage();
+  msgBuilder << NACL_MSG_GET_EXT_CMD;
+  for (struct ext_func_tab* itr = extcmdlist; itr->ef_txt != 0; itr++) {
+    if (itr->ef_txt[0] == '?') continue;
+    msgBuilder << itr->ef_txt << itr->ef_desc;
+  }
+  msgBuilder << eom;
   NaClMessage::GetReply();
   return 0;
 }

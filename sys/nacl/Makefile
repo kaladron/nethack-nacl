@@ -246,6 +246,9 @@ $(OBJHOST)/stamp.sp_lev: $(HOSTBINS) $(OBJRESOURCE)
 $(OBJPUBLISH)/%: $(NACL_WIN)/%
 	cp $< $@
 
+$(NACL_WIN)/nethack.dart: $(NACL_WIN)/gnomelike.dart $(NACL_WIN)/nacl_msg.dart
+	touch $@
+
 $(NACL_WIN)/%.js: $(NACL_WIN)/%.dart
 	minfrog --compile-only --out=$@ $<
 	sed -i -e 's/nethackEmbed.postMessage\$$1/nethackEmbed._ptr.postMessage/' $@
