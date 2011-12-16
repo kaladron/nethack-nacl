@@ -1,0 +1,12 @@
+TODO items:
+
+ - NaCl Latency
+ - Popup for # commands
+ - Control modifier for keyboard
+ - Get dungeon size from game at init
+ - Attribute panel
+ - Msg for choose_windows
+ - Pack all argn command line parameters into options
+ - Clean out cruft from nethack_main
+ - Port the console to dart.
+
