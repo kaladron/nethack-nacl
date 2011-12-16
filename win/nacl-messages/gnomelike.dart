@@ -74,7 +74,9 @@ class GnomeLike { //implements NethackUi {
   }
   
   void handleMessage(var msg) {
-    var data = JSON.parse(msg.data);
+    var prefix = 'JSPipeMount:3:';
+    if (!msg.data.startsWith(prefix)) return;
+    var data = JSON.parse(msg.data.substring(prefix.length));
     print(data);
     switch (data[0]) {
       case NaclMsg.NACL_MSG_ASKNAME:
@@ -151,7 +153,7 @@ class GnomeLike { //implements NethackUi {
   }
   
   void pm(out) {
-    nethackEmbed.postMessage(out);
+    nethackEmbed.postMessage('JSPipeMount:3:' + out);
   }
   
   void putGlyph(int x, int y, int tile) {
