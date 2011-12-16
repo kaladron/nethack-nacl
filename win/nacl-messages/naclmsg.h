@@ -65,11 +65,9 @@ class NaClMessage {
   
   static void SetInstance(pp::Instance* instance);
 
-  static void SetReply(const std::string& reply);
-  static const std::string& GetReply();
+  static const std::string GetReply();
 
  private:
   std::string data_;
   static pp::Instance* instance_;
-  static std::string reply_;
 };
