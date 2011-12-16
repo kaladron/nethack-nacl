@@ -61,6 +61,10 @@ GENFILES = $(DAT)/data \
 	$(DAT)/license \
 	$(OBJHOST)/stamp.sp_lev
 
+DARTFILES = $(NACL_WIN)/gnomelike.dart \
+	$(NACL_WIN)/nacl_msg.dart \
+	$(NACL_WIN)/xtermconsole.dart
+
 GENHDRS = $(INCL)/date.h $(INCL)/onames.h $(INCL)/pm.h
 #GENSRCS = $(SRC)/monstr.c $(SRC)/tile.c
 
@@ -246,7 +250,7 @@ $(OBJHOST)/stamp.sp_lev: $(HOSTBINS) $(OBJRESOURCE)
 $(OBJPUBLISH)/%: $(NACL_WIN)/%
 	cp $< $@
 
-$(NACL_WIN)/nethack.dart: $(NACL_WIN)/gnomelike.dart $(NACL_WIN)/nacl_msg.dart
+$(NACL_WIN)/nethack.dart: $(DARTFILES)
 	touch $@
 
 $(NACL_WIN)/%.js: $(NACL_WIN)/%.dart

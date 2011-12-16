@@ -438,6 +438,8 @@ void nacl_getlin(const char *question, char *input) {
 }
 
 int nacl_get_ext_cmd(void) {
+  // TODO(jeffbailey): Confirm that extcmdlist is static and send
+  // it over in an init message rather than every time a # is hit.
   NaClMessage msgBuilder = NaClMessage();
   msgBuilder << NACL_MSG_GET_EXT_CMD;
   for (struct ext_func_tab* itr = extcmdlist; itr->ef_txt != 0; itr++) {
