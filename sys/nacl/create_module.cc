@@ -18,6 +18,7 @@
 #include "../../win/nacl-messages/naclmsg.h"
 
 #define TARFILE "nethack.tar"
+#define USE_PSEUDO_THREADS
 
 extern "C" {
 int nethack_main(int argc, char *argv[]);
@@ -114,41 +115,36 @@ class NethackInstance : public pp::Instance {
       argcwalk++;
     }
 
-    if (!strcmp(windowtype,"tty")) {
-      // This is only needed for tty.
-      jsbridge_ = new JSPostMessageBridge(runner_);
-      jspipe_ = new JSPipeMount();
-      //jspipe_->set_using_pseudo_thread(true);
-      jspipe_->set_outbound_bridge(jsbridge_);
-      // Replace stdin, stdout, stderr with js console.
-      mount("jspipe", "/jspipe", 0, jspipe_);
-      close(0);
-      close(1);
-      close(2);
-      int fd;
-      fd = open("/jspipe/0", O_RDONLY);
-      assert(fd == 0);
-      fd = open("/jspipe/1", O_WRONLY);
-      assert(fd == 1);
-      fd = open("/jspipe/2", O_WRONLY);
-      assert(fd == 2);
-    }
+    jsbridge_ = new JSPostMessageBridge(runner_);
+    jspipe_ = new JSPipeMount();
+    jspipe_->set_outbound_bridge(jsbridge_);
+#ifdef USE_PSEUDO_THREADS
+    jspipe_->set_using_pseudo_thread(true);
+#endif
+    // Replace stdin, stdout with js console.
+    mount("jspipe", "/jspipe", 0, jspipe_);
+    close(0);
+    close(1);
+    int fd;
+    fd = open("/jspipe/0", O_RDONLY);
+    assert(fd == 0);
+    fd = open("/jspipe/1", O_WRONLY);
+    assert(fd == 1);
+    // Open pipe for messages.
+    fd = open("/jspipe/3", O_RDWR);
+    assert(fd == 3);
     
-    if (!strcmp(windowtype,"tty")) {
-      pthread_create(&nethack_thread_, NULL, nethack_init, runner_);
-    } else {
-      MainThreadRunner::PseudoThreadFork(nethack_init, runner_);
-    }
+#ifdef USE_PSEUDO_THREADS
+    MainThreadRunner::PseudoThreadFork(nethack_init, runner_);
+#else
+    pthread_create(&nethack_thread_, NULL, nethack_init, runner_);
+#endif
     return true;
   }
 
   virtual void HandleMessage(const pp::Var& message) {
     std::string msg = message.AsString();
-    if (!strcmp(windowtype,"tty")) {
-      jspipe_->Receive(msg.c_str(), msg.size());
-    } else {
-      NaClMessage::SetReply(msg);
-    }
+    jspipe_->Receive(msg.c_str(), msg.size());
   }
 
  private:
