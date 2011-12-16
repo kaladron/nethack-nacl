@@ -138,6 +138,10 @@ class GnomeLike { //implements NethackUi {
         pm('-1');
         break;
   
+      // Args: Pair<Cmd, Desc>*
+      case NACL_MSG_GET_EXT_CMD:
+        break;
+
       case NaclMsg.NACL_MSG_NH_POSKEY:
       case NaclMsg.NACL_MSG_NHGETCH:
         awaitingInput = true;
