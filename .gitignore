@@ -1,0 +1,23 @@
+# Generated directories
+obj32
+obj64
+objhost
+publish
+resource
+
+# Generated files
+dat/data
+dat/dungeon
+dat/dungeon.pdf
+dat/options
+dat/oracles
+dat/quest.dat
+dat/rumors
+include/date.h
+include/dgn_comp.h
+include/lev_comp.h
+include/onames.h
+include/pm.h
+src/monstr.c
+src/tile.c
+
