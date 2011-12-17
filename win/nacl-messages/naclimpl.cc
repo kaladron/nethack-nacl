@@ -6,6 +6,7 @@
 #include "wintype.h"
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <sstream>
 
 extern "C" {
@@ -447,8 +448,7 @@ int nacl_get_ext_cmd(void) {
     msgBuilder << itr->ef_txt << itr->ef_desc;
   }
   msgBuilder << eom;
-  NaClMessage::GetReply();
-  return 0;
+  return atoi(NaClMessage::GetReply().c_str());
 }
 
 void nacl_number_pad(int state) {
