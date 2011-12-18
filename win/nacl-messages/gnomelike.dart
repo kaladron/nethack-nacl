@@ -54,10 +54,24 @@ class GnomeLike { //implements NethackUi {
   }  
 
   void setupKeyListener() {
+    document.on.keyDown.add((KeyboardEvent evt) {
+      if (evt.ctrlKey == false) {
+        return;
+      }
+
+      evt.preventDefault();
+
+      if (evt.which == 17) {
+        return;
+      }
+
+      eventBuffer.add([evt.which & 0x1F, 0, 0, 0]);
+      processInput();
+      return false;
+    });
+
     document.on.keyPress.add((evt) {
-      int ch = evt.which;
-      //if (ch == undefined) ch = evt.keyCode;
-      eventBuffer.add([ch, 0, 0, 0]);
+      eventBuffer.add([evt.which, 0, 0, 0]);
       processInput();
       return false;
     });

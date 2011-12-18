@@ -257,6 +257,7 @@ $(NACL_WIN)/%.js: $(NACL_WIN)/%.dart
 	minfrog --compile-only --out=$@ $<
 	sed -i -e 's/nethackEmbed.postMessage\$$1/nethackEmbed._ptr.postMessage/' $@
 	sed -i -e 's/textWindow.scrollHeight/textWindow._ptr.scrollHeight/' $@
+	sed -i -e 's/_ptr.preventDefault\$$0/_ptr.preventDefault/' $@
 
 $(OBJPUBLISH)/nethack.tar: $(NHRESOURCES) | $(OBJPUBLISH)
 	cd $(OBJRESOURCE) && tar -cf ../publish/nethack.tar *
