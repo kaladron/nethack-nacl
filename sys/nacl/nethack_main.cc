@@ -8,13 +8,12 @@ extern "C" {
 #include "hack.h"
 #include "dlb.h"
 
+#include <errno.h>
+
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <signal.h>
 #include <pwd.h>
-#ifndef O_RDONLY
-#include <fcntl.h>
-#endif
 
 #define O_BINARY 0
 static int locknum = 0;
@@ -43,6 +42,38 @@ static boolean wiz_error_flag = FALSE;
 
 extern char* windowtype;
 
+void
+getlock() {
+  const char *fq_lock;
+  int fd;
+  regularize(lock);
+  set_levelfile_name(lock, 0);
+
+  fq_lock = fqname(lock, LEVELPREFIX, 0);
+
+  if ((fd = open(fq_lock, 0)) == -1) {
+    if(errno == ENOENT) goto gotlock; /* no such file */
+    perror(fq_lock);
+    unlock_file(HLOCK);
+    fprintf(stderr, "Cannot open %s", fq_lock);
+    exit(EXIT_FAILURE);
+  }
+
+gotlock:
+  fd = open(fq_lock, O_CREAT|O_WRONLY|O_TRUNC, FCMASK);
+  unlock_file(HLOCK);
+  if (fd == -1) {
+    fprintf(stderr, "Cannot create lock file (%s).", fq_lock);
+    exit(EXIT_FAILURE);
+  } else {
+    if(write(fd, (genericptr_t) &hackpid, sizeof(hackpid))
+        != sizeof(hackpid)) {
+      fprintf(stderr, "Cannot write lock (%s)", fq_lock);
+      exit(EXIT_FAILURE);
+    }
+  }
+}
+
 int
 nethack_main(int argc, char*argv[]) {
 	register int fd;
@@ -51,41 +82,11 @@ nethack_main(int argc, char*argv[]) {
 #endif
 	boolean exact_username;
 
-#if defined(__APPLE__)
-	/* special hack to change working directory to a resource fork when
-	   running from finder --sam */
-#define MAC_PATH_VALUE ".app/Contents/MacOS/"
-	char mac_cwd[1024], *mac_exe = argv[0], *mac_tmp;
-	unsigned int arg0_len = strlen(mac_exe), mac_tmp_len, mac_lhs_len=0;
-	getcwd(mac_cwd, 1024);
-	if(mac_exe[0] == '/' && !strcmp(mac_cwd, "/")) {
-	    if((mac_exe = strrchr(mac_exe, '/')))
-		mac_exe++;
-	    else
-		mac_exe = argv[0];
-	    mac_tmp_len = (strlen(mac_exe) * 2) + strlen(MAC_PATH_VALUE);
-	    if(mac_tmp_len <= arg0_len) {
-		mac_tmp = malloc(mac_tmp_len + 1);
-		sprintf(mac_tmp, "%s%s%s", mac_exe, MAC_PATH_VALUE, mac_exe);
-		if(!strcmp(argv[0] + (arg0_len - mac_tmp_len), mac_tmp)) {
-		    mac_lhs_len = (arg0_len - mac_tmp_len) + strlen(mac_exe) + 5;
-		    if(mac_lhs_len > mac_tmp_len - 1)
-			mac_tmp = realloc(mac_tmp, mac_lhs_len);
-		    strncpy(mac_tmp, argv[0], mac_lhs_len);
-		    mac_tmp[mac_lhs_len] = '\0';
-		    chdir(mac_tmp);
-		}
-		free(mac_tmp);
-	    }
-	}
-#endif
 
 	hname = argv[0];
 	hackpid = getpid();
 	//(void) umask(0777 & ~FCMASK);
 
-	//choose_windows(DEFAULT_WINDOW_SYS);
-	//choose_windows("Nacl");
         choose_windows(windowtype);
 
 #ifdef CHDIR			/* otherwise no chdir() */
@@ -205,11 +206,11 @@ nethack_main(int argc, char*argv[]) {
 		(void) signal(SIGINT,SIG_IGN);
 		if(!locknum)
 			Sprintf(lock, "%d%s", (int)getuid(), plname);
-		//getlock();
+		getlock();
 #ifdef WIZARD
 	} else {
 		Sprintf(lock, "%d%s", (int)getuid(), plname);
-		//getlock();
+		getlock();
 	}
 #endif /* WIZARD */
 

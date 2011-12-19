@@ -25,7 +25,9 @@
 
 #define POSIX_TYPES
 
-// TODO(bradnelson): figure out why this causes stuckage.
-#undef INSURANCE
+#define HLOCK   "perm"  /* an empty file used for locking purposes */
 
 #define PORT_ID "nacl"
+
+void regularize(char *);
+

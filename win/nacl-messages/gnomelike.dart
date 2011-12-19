@@ -157,7 +157,7 @@ class GnomeLike { //implements NethackUi {
       // Args: Pair<Cmd, Desc>*
       case NaclMsg.NACL_MSG_GET_EXT_CMD:
         // TODO(jeffbailey): Don't hardcode this.
-        pm('2');
+        pm('-1');
         break;
 
       case NaclMsg.NACL_MSG_NH_POSKEY:

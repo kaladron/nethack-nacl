@@ -42,6 +42,7 @@ CLEANFILES = $(DAT)/data \
 	$(DAT)/dungeon.pdf \
 	$(DAT)/options \
 	$(DAT)/oracles \
+	$(DAT)/rumors \
 	$(DAT)/quest.dat \
 	$(INCL)/dgn_comp.h \
 	$(INCL)/lev_comp.h \
