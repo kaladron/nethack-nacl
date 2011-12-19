@@ -2,7 +2,7 @@ TODO items:
 
  - NaCl Latency
  - Popup for # commands
- - Control modifier for keyboard
+ - Control modifier for keyboard (in TTY)
  - Get dungeon size from game at init
  - Attribute panel
  - Msg for choose_windows
