@@ -17,12 +17,13 @@ class GnomeLike { //implements NethackUi {
   CanvasRenderingContext2D ctx;
   ImageElement image;
   DivElement textWindow;
+  DivElement game;
 
   void setup() {
     int pixheight = HEIGHT * DISPLAY_SQUARE;
     int pixwidth = WIDTH * DISPLAY_SQUARE;
 
-    DivElement game = document.query("#game");
+    game = document.query("#game");
     textWindow = new Element.tag("div");
     textWindow.id = "textwindow";
 
@@ -156,8 +157,22 @@ class GnomeLike { //implements NethackUi {
   
       // Args: Pair<Cmd, Desc>*
       case NaclMsg.NACL_MSG_GET_EXT_CMD:
-        // TODO(jeffbailey): Don't hardcode this.
-        pm('-1');
+        DivElement popup = new Element.tag("div");
+        popup.id = "popup";
+        popup.style.width = window.innerWidth.toString() + "px";
+        popup.style.height = window.innerHeight.toString() + "px";
+
+        ButtonElement button = new Element.tag("button");
+        button.text = "Conduct";
+        button.on.click.add((evt) {
+          // TODO(jeffbailey): Handle keyboard
+          pm('2');
+          popup.remove();
+        });
+        popup.nodes.add(button);
+
+        game.nodes.add(popup);
+        
         break;
 
       case NaclMsg.NACL_MSG_NH_POSKEY:

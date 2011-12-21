@@ -9,4 +9,6 @@ TODO items:
  - Pack all argn command line parameters into options
  - Clean out cruft from nethack_main
  - Port the console to dart.
-
+ - When dying, Nethack gives "Cannot open record file!".  This is part
+   of the top ten scoreboard, which should be kept on Appengine.  In a
+   magical future world, it would be in G+ and based on the social graph.
