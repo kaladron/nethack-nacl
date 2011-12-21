@@ -1,3 +1,20 @@
+DivElement gnomelikePopup;
+
+class ExtHandler {
+  int i;
+
+  ExtHandler(this.i);
+
+  void handleClick(MouseEvent evt) {
+    pm(i.toString());
+    gnomelikePopup.remove();
+  }
+
+  void pm(out) {
+    nethackEmbed.postMessage('JSPipeMount:3:' + out);
+  }
+}
+
 class GnomeLike { //implements NethackUi {
   int HEIGHT = 24;
   int WIDTH = 80;
@@ -91,7 +108,7 @@ class GnomeLike { //implements NethackUi {
   void handleMessage(var msg) {
     var prefix = 'JSPipeMount:3:';
     if (!msg.data.startsWith(prefix)) return;
-    var data = JSON.parse(msg.data.substring(prefix.length));
+    List<String> data = JSON.parse(msg.data.substring(prefix.length));
     print(data);
     switch (data[0]) {
       case NaclMsg.NACL_MSG_ASKNAME:
@@ -157,21 +174,26 @@ class GnomeLike { //implements NethackUi {
   
       // Args: Pair<Cmd, Desc>*
       case NaclMsg.NACL_MSG_GET_EXT_CMD:
-        DivElement popup = new Element.tag("div");
-        popup.id = "popup";
-        popup.style.width = window.innerWidth.toString() + "px";
-        popup.style.height = window.innerHeight.toString() + "px";
+        gnomelikePopup = new Element.tag("div");
+        gnomelikePopup.id = "popup";
+        gnomelikePopup.style.width = window.innerWidth.toString() + "px";
+        gnomelikePopup.style.height = window.innerHeight.toString() + "px";
+        // TODO(jeffbailey): Handle keyboard
 
-        ButtonElement button = new Element.tag("button");
-        button.text = "Conduct";
-        button.on.click.add((evt) {
-          // TODO(jeffbailey): Handle keyboard
-          pm('2');
-          popup.remove();
-        });
-        popup.nodes.add(button);
+        Iterator<String> iString = data.iterator();
+        int i = -1; // We start before the list.
+        iString.next();
 
-        game.nodes.add(popup);
+        while (iString.hasNext()) {
+          ButtonElement button = new Element.tag("button");
+          button.text = iString.next();
+          i++;
+          iString.next(); // TODO(jeffbailey): Hover text for help.
+          button.on.click.add(new ExtHandler(i).handleClick);
+          gnomelikePopup.nodes.add(button);
+        }
+
+        game.nodes.add(gnomelikePopup);
         
         break;
 
