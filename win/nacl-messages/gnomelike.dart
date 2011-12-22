@@ -184,15 +184,22 @@ class GnomeLike { //implements NethackUi {
         int i = -1; // We start before the list.
         iString.next();
 
+        DivElement borderBox = new Element.tag("div");
+        borderBox.id = "gnomelikeBorderBox";
+
         while (iString.hasNext()) {
           ButtonElement button = new Element.tag("button");
+          button.style.width = "20em";
           button.text = iString.next();
           i++;
           iString.next(); // TODO(jeffbailey): Hover text for help.
           button.on.click.add(new ExtHandler(i).handleClick);
-          gnomelikePopup.nodes.add(button);
+          DivElement buttonWrap = new Element.tag("div");
+          buttonWrap.nodes.add(button);
+          borderBox.nodes.add(buttonWrap);
         }
 
+        gnomelikePopup.nodes.add(borderBox);
         game.nodes.add(gnomelikePopup);
         
         break;

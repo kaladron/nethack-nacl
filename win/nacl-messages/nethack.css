@@ -17,3 +17,8 @@
   margin: 0;
   padding: 0;
 }
+
+#gnomelikeBorderBox {
+  border: 3px solid black;
+  position: absolute;
+}
