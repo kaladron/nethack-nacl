@@ -73,19 +73,36 @@ class GnomeLike { //implements NethackUi {
 
   void setupKeyListener() {
     document.on.keyDown.add((KeyboardEvent evt) {
-      if (evt.ctrlKey == false) {
+
+      int cmdKey = 0;
+
+      switch(evt.which) {
+      case 37: // left Arrow
+        cmdKey = 104; // h
+        break;
+      case 39: // Right
+        cmdKey = 108; // l
+        break;
+      case 38: // up
+        cmdKey = 107; // k
+        break;
+      case 40: // down
+        cmdKey = 106; // j
+        break;
+      case 17: // ctrl
         return;
       }
 
-      evt.preventDefault();
-
-      if (evt.which == 17) {
-        return;
+      if (evt.ctrlKey == true) {
+        cmdKey = evt.which & 0x1F;
       }
 
-      eventBuffer.add([evt.which & 0x1F, 0, 0, 0]);
-      processInput();
-      return false;
+      if (cmdKey != 0) {
+        evt.preventDefault();
+        eventBuffer.add([cmdKey, 0, 0, 0]);
+        processInput();
+        return false;
+      }
     });
 
     document.on.keyPress.add((evt) {
