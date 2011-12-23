@@ -4,6 +4,9 @@
  * found in the LICENSE file.
  */
 
+
+var bc = console;
+
 /**
  * @fileoverview Implement an xterm-color style console.
  */
@@ -102,7 +105,7 @@ console.Console = function(consoleId, naclModuleId) {
 
   // Start interval for polling screen.
   var this_console = this;
-  setInterval(function() { this_console.idle(); }, 30);
+  //setInterval(function() { this_console.idle(); }, 30);
 };
 
 /**
@@ -452,13 +455,26 @@ console.Console.prototype.keypress = function(evt) {
  * @param {Object} evt A key event.
  */
 console.Console.prototype.keydown = function(evt) {
-  // Check keyboard mappings.
   var escapeCode = this.getKey(false, evt.keyCode,
                                evt.shiftKey, evt.ctrlKey, evt.altKey);
   if (escapeCode != null) {
     this.got(escapeCode);
+    evt.preventDefault();
     return false;
   }
+
+  // Check keyboard mappings.
+  if (evt.ctrlKey == false) {
+    return true;
+  }
+
+  evt.preventDefault();
+
+  if (evt.which == 17) {
+    return true;
+  }
+
+  this.got(String.fromCharCode(evt.which & 0x1F));
   return true;
 }
 
