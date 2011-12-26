@@ -176,8 +176,9 @@ PUBLISH_FILES = \
   $(OBJPUBLISH)/nethack.js \
   $(OBJPUBLISH)/nethack.html \
   $(OBJPUBLISH)/console.js \
-  $(OBJPUBLISH)/mapbg.png \
   $(OBJPUBLISH)/absurd128.png \
+  $(OBJPUBLISH)/mapbg.png \
+  $(OBJPUBLISH)/petmark.png \
   $(OBJPUBLISH)/x11tiles.png \
   $(OBJPUBLISH)/icon_16.png \
   $(OBJPUBLISH)/icon_48.png \

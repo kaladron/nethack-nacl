@@ -374,8 +374,18 @@ void nacl_cliparound_proper(winid wid, int x, int y) {
 }
 
 void nacl_print_glyph(winid wid, XCHAR_P x, XCHAR_P y, int glyph) {
+  boolean pet = false;
+
+  if (glyph_is_pet(glyph)
+#ifdef TEXTCOLOR
+    && iflags.hilite_pet
+#endif
+    ) {
+    pet = true;
+  }
+
   NaClMessage() << NACL_MSG_PRINT_GLYPH << wid << x << y
-                << glyph2tile[glyph] << eom;
+                << glyph2tile[glyph] << pet << eom;
 }
 
 void nacl_raw_print(const char *str) {

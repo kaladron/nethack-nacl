@@ -32,7 +32,8 @@ class GnomeLike { //implements NethackUi {
   int win_num = 1;
   CanvasElement canvas;
   CanvasRenderingContext2D ctx;
-  ImageElement image;
+  ImageElement tiles;
+  ImageElement petmark;
   DivElement textWindow;
   DivElement game;
 
@@ -63,8 +64,11 @@ class GnomeLike { //implements NethackUi {
     canvas.style.height = pixheight;
     canvas.on.mouseDown.add(mouseNav);
 
-    image = new Element.tag('img');
-    image.src = "x11tiles.png";
+    tiles = new Element.tag('img');
+    tiles.src = "x11tiles.png";
+
+    petmark = new Element.tag('img');
+    petmark.src = "petmark.png";
 
     eventBuffer = new Queue<List<String>>();
     textWindow = document.query("#textwindow");
@@ -145,9 +149,9 @@ class GnomeLike { //implements NethackUi {
         win_num++;
         break;
   
-      // Args: Window, X, Y, glyph
+      // Args: Window, X, Y, glyph, pet
       case NaclMsg.NACL_MSG_PRINT_GLYPH:
-        putGlyph(data[2], data[3], data[4]);
+        putTile(data[2], data[3], data[4], data[5]);
         break;
   
       // Args: Window, Attribute, Text
@@ -237,12 +241,11 @@ class GnomeLike { //implements NethackUi {
     nethackEmbed.postMessage('JSPipeMount:3:' + out);
   }
   
-  void putGlyph(int x, int y, int tile) {
-    //int tile = GLYPH2TILE[glyph];
+  void putTile(int x, int y, int tile, int pet) {
     int tile_x = tile % TILES_PER_ROW;
     int tile_y = (tile / TILES_PER_ROW).floor();
   
-    ctx.drawImage(image, tile_x * TILE_SQUARE,
+    ctx.drawImage(tiles, tile_x * TILE_SQUARE,
                   tile_y * TILE_SQUARE,
                   TILE_SQUARE,
                   TILE_SQUARE,
@@ -250,6 +253,12 @@ class GnomeLike { //implements NethackUi {
                   y * DISPLAY_SQUARE,
                   DISPLAY_SQUARE,
                   DISPLAY_SQUARE);
+
+    if (pet) {
+      ctx.drawImage(petmark, 
+                    x * DISPLAY_SQUARE,
+                    y * DISPLAY_SQUARE);
+    }
   }
   
   void putStr(int win, int attr, String text) {

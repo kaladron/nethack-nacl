@@ -71,7 +71,7 @@ static void *nethack_init(void *arg) {
   {
     mkdir("/myhome", 0777);
     int fh = open("/myhome/NetHack.cnf", O_CREAT | O_WRONLY);
-    const char config[] = "OPTIONS=color\nOPTIONS=pickup_types:$\n";
+    const char config[] = "OPTIONS=color,hilite_pet,pickup_types:$\n";
     write(fh, config, sizeof(config) - 1);
     close(fh);
   }
