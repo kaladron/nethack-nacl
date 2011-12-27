@@ -139,7 +139,7 @@ class GnomeLike { //implements NethackUi {
       // Args: Window Number
       case NaclMsg.NACL_MSG_CLEAR_NHWINDOW:
       print(data[1]);
-      if (data[1] == 3) {
+      if (data[1] == NHW_MAP) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
       break;
@@ -242,6 +242,9 @@ class GnomeLike { //implements NethackUi {
   }
   
   void putTile(int x, int y, int tile, int pet) {
+
+    x--; // This is the easiest way to correct for origin weirdness.
+
     int tile_x = tile % TILES_PER_ROW;
     int tile_y = (tile / TILES_PER_ROW).floor();
   
@@ -254,7 +257,7 @@ class GnomeLike { //implements NethackUi {
                   DISPLAY_SQUARE,
                   DISPLAY_SQUARE);
 
-    if (pet) {
+    if (pet == 1) {
       ctx.drawImage(petmark, 
                     x * DISPLAY_SQUARE,
                     y * DISPLAY_SQUARE);
