@@ -42,8 +42,66 @@ class GnomeLike { //implements NethackUi {
     int pixwidth = WIDTH * DISPLAY_SQUARE;
 
     game = document.query("#game");
+
+    DivElement topPart = new Element.tag("div");
+
     textWindow = new Element.tag("div");
     textWindow.id = "textwindow";
+    textWindow.style.display = "inline-block";
+
+    DivElement statusBox = new Element.tag("div");
+    statusBox.style.display = "inline-block";
+
+    DivElement strBox = new Element.tag("div");
+    strBox.style.display = "inline-block";
+    strBox.nodes.add(new Element.html('<div><img src="str.png"></div>'));
+    DivElement strText = new Element.tag("div");
+    strText.text = "STR: 99";
+    strBox.nodes.add(strText);
+    statusBox.nodes.add(strBox);
+
+    DivElement dexBox = new Element.tag("div");
+    dexBox.style.display = "inline-block";
+    dexBox.nodes.add(new Element.html('<div><img src="dex.png"></div>'));
+    DivElement dexText = new Element.tag("div");
+    dexText.text = "DEX: 99";
+    dexBox.nodes.add(dexText);
+    statusBox.nodes.add(dexBox);
+
+    DivElement conBox = new Element.tag("div");
+    conBox.style.display = "inline-block";
+    conBox.nodes.add(new Element.html('<div><img src="con.png"></div>'));
+    DivElement conText = new Element.tag("div");
+    conText.text = "CON: 99";
+    conBox.nodes.add(conText);
+    statusBox.nodes.add(conBox);
+
+    DivElement intBox = new Element.tag("div");
+    intBox.style.display = "inline-block";
+    intBox.nodes.add(new Element.html('<div><img src="int.png"></div>'));
+    DivElement intText = new Element.tag("div");
+    intText.text = "INT: 99";
+    intBox.nodes.add(intText);
+    statusBox.nodes.add(intBox);
+
+    DivElement wisBox = new Element.tag("div");
+    wisBox.style.display = "inline-block";
+    wisBox.nodes.add(new Element.html('<div><img src="wis.png"></div>'));
+    DivElement wisText = new Element.tag("div");
+    wisText.text = "WIS: 99";
+    wisBox.nodes.add(wisText);
+    statusBox.nodes.add(wisBox);
+
+    DivElement chaBox = new Element.tag("div");
+    chaBox.style.display = "inline-block";
+    chaBox.nodes.add(new Element.html('<div><img src="cha.png"></div>'));
+    DivElement chaText = new Element.tag("div");
+    chaText.text = "CHA: 99";
+    chaBox.nodes.add(chaText);
+    statusBox.nodes.add(chaBox);
+
+    topPart.nodes.add(textWindow);
+    topPart.nodes.add(statusBox);
 
     canvas = document.query("#canvas");
 
@@ -54,7 +112,7 @@ class GnomeLike { //implements NethackUi {
 
     map.nodes.add(canvas);
 
-    game.nodes.add(textWindow);
+    game.nodes.add(topPart);
     game.nodes.add(map);
 
     ctx = canvas.getContext("2d");
