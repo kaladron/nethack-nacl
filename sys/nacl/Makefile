@@ -176,15 +176,40 @@ PUBLISH_FILES = \
   $(OBJPUBLISH)/nethack.js \
   $(OBJPUBLISH)/nethack.html \
   $(OBJPUBLISH)/console.js \
-  $(OBJPUBLISH)/mapbg.png \
-  $(OBJPUBLISH)/petmark.png \
-  $(OBJPUBLISH)/x11tiles.png \
-  $(OBJPUBLISH)/icon_16.png \
-  $(OBJPUBLISH)/icon_48.png \
-  $(OBJPUBLISH)/icon_128.png \
   $(OBJPUBLISH)/manifest.json \
   $(OBJPUBLISH)/nethack.nmf \
-  $(OBJPUBLISH)/nethack.tar
+  $(OBJPUBLISH)/nethack.tar \
+  $(OBJPUBLISH)/blind.png \
+  $(OBJPUBLISH)/chaotic.png \
+  $(OBJPUBLISH)/cha.png \
+  $(OBJPUBLISH)/confused.png \
+  $(OBJPUBLISH)/con.png \
+  $(OBJPUBLISH)/dex.png \
+  $(OBJPUBLISH)/ext_enc.png \
+  $(OBJPUBLISH)/hallu.png \
+  $(OBJPUBLISH)/hungry.png \
+  $(OBJPUBLISH)/hvy_enc.png \
+  $(OBJPUBLISH)/icon_128.png \
+  $(OBJPUBLISH)/icon_16.png \
+  $(OBJPUBLISH)/icon_48.png \
+  $(OBJPUBLISH)/int.png \
+  $(OBJPUBLISH)/lawful.png \
+  $(OBJPUBLISH)/mapbg.png \
+  $(OBJPUBLISH)/mod_enc.png \
+  $(OBJPUBLISH)/neutral.png \
+  $(OBJPUBLISH)/nh_icon.png \
+  $(OBJPUBLISH)/nothing.png \
+  $(OBJPUBLISH)/ovr_enc.png \
+  $(OBJPUBLISH)/petmark.png \
+  $(OBJPUBLISH)/satiated.png \
+  $(OBJPUBLISH)/sick_fp.png \
+  $(OBJPUBLISH)/sick_il.png \
+  $(OBJPUBLISH)/slt_enc.png \
+  $(OBJPUBLISH)/str.png \
+  $(OBJPUBLISH)/stunned.png \
+  $(OBJPUBLISH)/wis.png \
+  $(OBJPUBLISH)/x11tiles.png
+
 
 all: $(PUBLISH_FILES)
 
