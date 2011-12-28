@@ -12,7 +12,7 @@ E int NDECL((*afternmv));
 
 E const char *hname;
 E int hackpid;
-#if defined(UNIX) || defined(VMS)
+#if defined(UNIX) || defined(VMS) || defined(__native_client__)
 E int locknum;
 #endif
 #ifdef DEF_PAGER

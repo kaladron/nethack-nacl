@@ -12,7 +12,7 @@
 #include <unistd.h>
 
 #define FILENAME 80
-#define FCMASK O_BINARY
+#define FCMASK  0660    /* file creation mask */
 #define NO_SIGNAL
 
 #define Rand()  rand()

@@ -16,6 +16,8 @@ DOC   = $(top_srcdir)/doc
 UTIL  = $(top_srcdir)/util
 # Main source
 SRC   = $(top_srcdir)/src
+# Unix source
+UNIX_SRC = $(top_srcdir)/sys/unix
 # Nacl source
 NACL_SRC = $(top_srcdir)/sys/nacl
 # Nacl Windows
@@ -33,7 +35,13 @@ OBJPUBLISH = $(top_srcdir)/publish
 OBJRESOURCE = $(top_srcdir)/resource
 
 # Yo dawg, look here!
-VPATH = $(SRC) $(UTIL) $(NACL_SRC) $(NACL_WIN) $(TTY_WIN) $(WIN_SHARE)
+VPATH = $(SRC) \
+	$(UTIL) \
+	$(NACL_SRC) \
+	$(NACL_WIN) \
+	$(UNIX_SRC) \
+	$(TTY_WIN) \
+	$(WIN_SHARE)
 
 # TODO(jeffbailey): Clean src/monstr.c and src/tile.c
 
@@ -70,12 +78,13 @@ GENHDRS = $(INCL)/date.h $(INCL)/onames.h $(INCL)/pm.h
 #GENSRCS = $(SRC)/monstr.c $(SRC)/tile.c
 
 OBJS ?= \
-       $(patsubst %.c,%.o,$(notdir $(GENSRCS))) \
-       $(patsubst %.c,%.o,$(notdir $(wildcard $(SRC)/*.c))) \
-       $(patsubst %.c,%.o,$(notdir $(wildcard $(TTY_WIN)/*.c))) \
-       $(patsubst %.c,%.o,$(notdir $(wildcard $(NACL_SRC)/*.c))) \
-       $(patsubst %.cc,%.o,$(notdir $(wildcard $(NACL_SRC)/*.cc))) \
-       $(patsubst %.cc,%.o,$(notdir $(wildcard $(NACL_WIN)/*.cc)))
+	unixunix.o \
+	$(patsubst %.c,%.o,$(notdir $(GENSRCS))) \
+	$(patsubst %.c,%.o,$(notdir $(wildcard $(SRC)/*.c))) \
+	$(patsubst %.c,%.o,$(notdir $(wildcard $(TTY_WIN)/*.c))) \
+	$(patsubst %.c,%.o,$(notdir $(wildcard $(NACL_SRC)/*.c))) \
+	$(patsubst %.cc,%.o,$(notdir $(wildcard $(NACL_SRC)/*.cc))) \
+	$(patsubst %.cc,%.o,$(notdir $(wildcard $(NACL_WIN)/*.cc)))
 
 DGNCOMPOBJS = $(addprefix $(OBJHOST)/, \
 	dgn_comp.y.o \
