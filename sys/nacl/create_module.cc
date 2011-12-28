@@ -24,7 +24,7 @@ extern "C" {
 int nethack_main(int argc, char *argv[]);
 int mount(const char *type, const char *dir, int flags, void *data);
 int simple_tar_extract(const char *path);
-char *windowtype;
+static char *windowtype;
 }
 
 
@@ -71,9 +71,13 @@ static void *nethack_init(void *arg) {
   {
     mkdir("/myhome", 0777);
     int fh = open("/myhome/NetHack.cnf", O_CREAT | O_WRONLY);
-    const char config[] = "OPTIONS=color,hilite_pet,pickup_types:$\n";
-    write(fh, config, sizeof(config) - 1);
+    char *config;
+    asprintf(&config,
+        "OPTIONS=windowtype:%s,color,hilite_pet,pickup_types:$\n",
+        windowtype);
+    write(fh, config, strlen(config) - 1);
     close(fh);
+    free(config);
   }
 
   const char *argv[] = {"nethack"};

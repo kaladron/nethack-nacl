@@ -4,6 +4,8 @@
 
 /* main.c - Unix NetHack */
 
+/* This file is also used by sys/nacl */
+
 #include "hack.h"
 #include "dlb.h"
 
@@ -44,6 +46,10 @@ extern void NDECL(init_linux_cons);
 static void NDECL(wd_message);
 #ifdef WIZARD
 static boolean wiz_error_flag = FALSE;
+#endif
+
+#ifdef __native_client__
+#define main(argc,argv) nethack_main(argc,argv)
 #endif
 
 int

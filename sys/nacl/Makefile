@@ -78,6 +78,7 @@ GENHDRS = $(INCL)/date.h $(INCL)/onames.h $(INCL)/pm.h
 #GENSRCS = $(SRC)/monstr.c $(SRC)/tile.c
 
 OBJS ?= \
+	unixmain.o \
 	unixunix.o \
 	$(patsubst %.c,%.o,$(notdir $(GENSRCS))) \
 	$(patsubst %.c,%.o,$(notdir $(wildcard $(SRC)/*.c))) \
