@@ -8,7 +8,9 @@
 #include "dlb.h"
 
 #include <sys/stat.h>
+#ifndef NO_SIGNAL
 #include <signal.h>
+#endif
 #include <pwd.h>
 #ifndef O_RDONLY
 #include <fcntl.h>
@@ -163,9 +165,11 @@ char *argv[];
 	 * It seems you really want to play.
 	 */
 	u.uhp = 1;	/* prevent RIP on early quits */
+#ifndef NO_SIGNAL
 	(void) signal(SIGHUP, (SIG_RET_TYPE) hangup);
 #ifdef SIGXCPU
 	(void) signal(SIGXCPU, (SIG_RET_TYPE) hangup);
+#endif
 #endif
 
 	process_options(argc, argv);	/* command line options */
@@ -203,8 +207,10 @@ char *argv[];
 		 * check for multiple games under the same name
 		 * (if !locknum) or check max nr of players (otherwise)
 		 */
+#ifndef NO_SIGNAL
 		(void) signal(SIGQUIT,SIG_IGN);
 		(void) signal(SIGINT,SIG_IGN);
+#endif
 		if(!locknum)
 			Sprintf(lock, "%d%s", (int)getuid(), plname);
 		getlock();
@@ -246,7 +252,9 @@ char *argv[];
 		const char *fq_save = fqname(SAVEF, SAVEPREFIX, 1);
 
 		(void) chmod(fq_save,0);	/* disallow parallel restores */
+#ifndef NO_SIGNAL
 		(void) signal(SIGINT, (SIG_RET_TYPE) done1);
+#endif
 #ifdef NEWS
 		if(iflags.news) {
 		    display_file(NEWS, FALSE);

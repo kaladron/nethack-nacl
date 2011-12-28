@@ -73,6 +73,7 @@ OBJS ?= \
        $(patsubst %.c,%.o,$(notdir $(GENSRCS))) \
        $(patsubst %.c,%.o,$(notdir $(wildcard $(SRC)/*.c))) \
        $(patsubst %.c,%.o,$(notdir $(wildcard $(TTY_WIN)/*.c))) \
+       $(patsubst %.c,%.o,$(notdir $(wildcard $(NACL_SRC)/*.c))) \
        $(patsubst %.cc,%.o,$(notdir $(wildcard $(NACL_SRC)/*.cc))) \
        $(patsubst %.cc,%.o,$(notdir $(wildcard $(NACL_WIN)/*.cc)))
 
@@ -163,6 +164,7 @@ WRAPFUNC = \
 	   signal \
 	   stat \
 	   tgetch \
+	   umask \
 	   unlink \
 	   write
 
