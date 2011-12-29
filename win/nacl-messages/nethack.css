@@ -1,3 +1,5 @@
+pre > .x-line { display: block; }
+
 #textwindow {
   height: 10em;
   width: 60%;
