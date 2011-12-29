@@ -91,10 +91,10 @@ class XtermConsole {
   String acc = '';
   int firstNum = -1;
   int secondNum = -1;
+  RegExp exp = const RegExp(@"[0-9]");
 
   // Handles Escape Squences.  If we're handling a sequence, return true;
   bool sequenceCheck(String s) {
-    RegExp exp = const RegExp(@"[0-9]");
 
     switch(inState) {
     case 0:
