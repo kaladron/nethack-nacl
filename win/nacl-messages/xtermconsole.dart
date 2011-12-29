@@ -71,13 +71,15 @@ class XtermConsole {
   // 1: Waiting for [
   // 2: First number
   // 3: Second number
-  bool inState = 0;
+  int inState = 0;
   String acc = '';
   int firstNum = -1;
   int secondNum = -1;
 
   // Handles Escape Squences.  If we're handling a sequence, return true;
   bool sequenceCheck(String s) {
+    RegExp exp = const RegExp(@"[0-9]");
+
     switch(inState) {
     case 0:
       if (s[0] == '\x1b') {
@@ -92,7 +94,26 @@ class XtermConsole {
       }
       return clearState();
     case 2:
+      // TODO(jeffbailey): This doesn't handle the single number case without ;
+      if (s[0] == ';') {
+        firstNum = Math.parseInt(acc);
+        acc = '';
+        inState = 3;
+        return true;
+      }
+      if (exp.hasMatch(s[0])) {
+        acc += s[0];
+        return true;
+      }
+      break;
     case 3:  
+      if (exp.hasMatch(s[0])) {
+        acc += s[0];
+        return true;
+      }
+      secondNum = Math.parseInt(acc);
+      acc = '';
+      break;
     }
 
     switch(s[0]) {
@@ -103,8 +124,8 @@ class XtermConsole {
         if (secondNum == -1) {
           secondNum = 1;
         }
-        cursor_x = firstNum - 1;
-        cursor_y = secondNum - 1;
+        cursor_y = firstNum - 1;
+        cursor_x = secondNum - 1;
         clearState();
         return true;
     }
