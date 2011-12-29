@@ -167,7 +167,7 @@ class GnomeLike { //implements NethackUi {
       }
     });
 
-    document.on.keyPress.add((evt) {
+    document.on.keyPress.add((KeyboardEvent evt) {
       eventBuffer.add([evt.which, 0, 0, 0]);
       processInput();
       return false;

@@ -39,6 +39,22 @@ class XtermConsole {
     }
 
     game.nodes.add(pre);
+
+    //document.on.keyDown.add((KeyboardEvent evt) {
+    //
+    //}
+
+    document.on.keyPress.add((KeyboardEvent evt) {
+      if (evt.which != 0 && evt.charCode != 0) {
+        String key = new String.fromCharCodes([evt.which]);
+        got(key);
+        return false;
+      }
+    });
+  }
+
+  void got(String str) {
+    nethackEmbed.postMessage('JSPipeMount:0:' + str);
   }
 
   Element createCell() {
@@ -117,17 +133,27 @@ class XtermConsole {
     }
 
     switch(s[0]) {
-      case 'H':
-        if (firstNum == -1) {
-          firstNum = 1;
-        }
-        if (secondNum == -1) {
-          secondNum = 1;
-        }
-        cursor_y = firstNum - 1;
-        cursor_x = secondNum - 1;
-        clearState();
-        return true;
+    case 'H':
+      if (firstNum == -1) {
+        firstNum = 1;
+      }
+      if (secondNum == -1) {
+        secondNum = 1;
+      }
+      cursor_y = firstNum - 1;
+      cursor_x = secondNum - 1;
+      clearState();
+      return true;
+    case 'J':
+      if (firstNum == -1) {
+        firstNum = 0;
+      }
+      switch(firstNum) {
+      case 0:
+        // Clear from cursor to end of line and rest of screen.
+      }
+      clearState();
+      return true;
     }
 
     // Unknown sequence
