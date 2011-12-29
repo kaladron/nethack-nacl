@@ -58,10 +58,67 @@ class XtermConsole {
       if (cursor_y >= height) {
         return;
       }
+      if (sequenceCheck(s[i])) {
+        continue;
+      }
       SpanElement cell = pre.nodes[cursor_y].nodes[cursor_x];
       cell.text = s[i];
       cursor_x++;
     }
+  }
+
+  // 0: Not acquiring
+  // 1: Waiting for [
+  // 2: First number
+  // 3: Second number
+  bool inState = 0;
+  String acc = '';
+  int firstNum = -1;
+  int secondNum = -1;
+
+  // Handles Escape Squences.  If we're handling a sequence, return true;
+  bool sequenceCheck(String s) {
+    switch(inState) {
+    case 0:
+      if (s[0] == '\x1b') {
+        inState = 1;
+        return true;
+      }
+      return false;
+    case 1:
+      if (s[0] == '[') {
+        inState = 2;
+        return true;
+      }
+      return clearState();
+    case 2:
+    case 3:  
+    }
+
+    switch(s[0]) {
+      case 'H':
+        if (firstNum == -1) {
+          firstNum = 1;
+        }
+        if (secondNum == -1) {
+          secondNum = 1;
+        }
+        cursor_x = firstNum - 1;
+        cursor_y = secondNum - 1;
+        clearState();
+        return true;
+    }
+
+    // Unknown sequence
+    return clearState();
+  }
+
+  bool clearState() {
+    inState = 0;
+    acc = '';
+    firstNum = -1;
+    secondNum = -1;
+    return false;
   }
 
   void handleMessage(var msg) {
