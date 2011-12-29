@@ -3,7 +3,6 @@
 
 #source('gnomelike.dart');
 #source('nacl_msg.dart');
-#source('xtermconsole.dart');
 
 interface NethackUi {
   void setup();

@@ -187,6 +187,8 @@ PUBLISH_FILES = \
   $(OBJPUBLISH)/nethack.css \
   $(OBJPUBLISH)/nethack.js \
   $(OBJPUBLISH)/nethack.html \
+  $(OBJPUBLISH)/xterm.html \
+  $(OBJPUBLISH)/xtermconsole.js \
   $(OBJPUBLISH)/console.js \
   $(OBJPUBLISH)/manifest.json \
   $(OBJPUBLISH)/nethack.nmf \

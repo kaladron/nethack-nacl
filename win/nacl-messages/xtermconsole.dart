@@ -1,18 +1,50 @@
+#import('dart:html');
+#import('dart:json');
+
+interface NethackUi {
+  void setup();
+
+  String get windowtype();
+
+  void handleMessage(var msg);
+}
+
+
 class XtermConsole {
-  HashMap<int, String> colorTable;
-  DivElement xterm;
+  String windowtype = "tty";
 
-  XtermConsole(DivElement xterm) {
-    this.xterm = xterm;
+  void setup() {
 
-    colorTable = new HashMap<int, String>();
-    colorTable[0] = '#000000';
-    colorTable[1] = '#ff0000';
-    colorTable[2] = '#00ff00';
-    colorTable[3] = '#ffff00';
-    colorTable[4] = '#0000ff';
-    colorTable[5] = '#ff00ff';
-    colorTable[6] = '#00ffff';
-    colorTable[7] = '#ffffff';
-  } 
+  }
+
+  void handleMessage(var msg) {
+    print(msg.data);
+  }
+}
+
+ObjectElement nethackEmbed;
+
+
+void initNethack(XtermConsole game) {
+  ParamElement param = new Element.tag('param');
+  param.name = "windowtype";
+  param.value = game.windowtype;
+
+  nethackEmbed = new Element.tag('object');
+  nethackEmbed.width = 0;
+  nethackEmbed.height = 0;
+  nethackEmbed.on['message'].add(game.handleMessage);
+  nethackEmbed.data = "nethack.nmf";
+  nethackEmbed.type = "application/x-nacl";
+  nethackEmbed.nodes.add(param);
+
+  DivElement listener = document.query("#listener");
+  listener.nodes.add(nethackEmbed);
+}
+  
+
+main() {
+  XtermConsole game = new XtermConsole();
+  initNethack(game);
+  game.setup();
 }
