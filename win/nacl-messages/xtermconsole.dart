@@ -45,6 +45,11 @@ class XtermConsole {
     //}
 
     document.on.keyPress.add((KeyboardEvent evt) {
+      if (evt.charCode == 13) {
+        got('\n');
+        return false;
+      }
+
       if (evt.which != 0 && evt.charCode != 0) {
         String key = new String.fromCharCodes([evt.which]);
         got(key);
