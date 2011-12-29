@@ -1,4 +1,14 @@
 pre > .x-line { display: block; }
+pre > .x-line > span[data-fg=black] { color: black; }
+pre > .x-line > span[data-bg=black] { background-color: black; }
+pre > .x-line > span[data-fg=navy] { color: navy; }
+pre > .x-line > span[data-bg=navy] { background-color: navy; }
+pre > .x-line > span[data-fg=lime] { color: lime; }
+pre > .x-line > span[data-bg=lime] { background-color: lime; }
+pre > .x-line > span[data-fg=yellow] { color: yellow; }
+pre > .x-line > span[data-bg=yellow] { background-color: yellow; }
+pre > .x-line > span[data-fg=silver] { color: silver; }
+pre > .x-line > span[data-bg=silver] { background-color: silver; }
 
 #textwindow {
   height: 10em;

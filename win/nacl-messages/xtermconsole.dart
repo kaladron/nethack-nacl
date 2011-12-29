@@ -21,6 +21,8 @@ class XtermConsole {
 
   PreElement pre;
 
+  var prefix = 'JSPipeMount:1:';
+
   void setup() {
     DivElement game = document.query("#game");
     pre = new Element.tag("pre");
@@ -41,6 +43,8 @@ class XtermConsole {
 
   Element createCell() {
     SpanElement c = new Element.tag("span");
+    c.attributes['data-fg'] = 'lime';
+    c.attributes['data-bg'] = 'black';
     c.text = ' ';
     return c;
   }
@@ -61,7 +65,8 @@ class XtermConsole {
   }
 
   void handleMessage(var msg) {
-    putString(msg.data);
+    if (!msg.data.startsWith(prefix)) return;
+    putString(msg.data.substring(prefix.length));
   }
 }
 
