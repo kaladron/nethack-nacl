@@ -24,6 +24,7 @@ class XtermConsole {
   var prefix = 'JSPipeMount:1:';
 
   void setup() {
+    numbers = new List<int>();
     DivElement game = document.query("#game");
     pre = new Element.tag("pre");
 
@@ -90,12 +91,10 @@ class XtermConsole {
 
   // 0: Not acquiring
   // 1: Waiting for [
-  // 2: First number
-  // 3: Second number
+  // 2: number collection
   int inState = 0;
   String acc = '';
-  int firstNum = -1;
-  int secondNum = -1;
+  List<int> numbers;
   RegExp exp = const RegExp(@"[0-9]");
 
   // Handles Escape Squences.  If we're handling a sequence, return true;
@@ -115,33 +114,55 @@ class XtermConsole {
       }
       return clearState();
     case 2:
-      // TODO(jeffbailey): This doesn't handle the single number case without ;
-      if (s[0] == ';') {
-        firstNum = Math.parseInt(acc);
+      if (exp.hasMatch(s[0])) {
+        acc += s[0];
+        return true;
+      }
+
+      if (acc == '') {
+        numbers.add(-1);
+      } else {
+        int token = Math.parseInt(acc);
+        numbers.add(token);
         acc = '';
-        inState = 3;
+      }
+
+      if (s[0] == ';') {
         return true;
       }
-      if (exp.hasMatch(s[0])) {
-        acc += s[0];
-        return true;
-      }
-      break;
-    case 3:  
-      if (exp.hasMatch(s[0])) {
-        acc += s[0];
-        return true;
-      }
-      secondNum = Math.parseInt(acc);
-      acc = '';
-      break;
     }
 
     switch(s[0]) {
+    case 'A':
+      if (cursor_y != 0) {
+        cursor_y--;
+      }
+      clearState();
+      return true;
+    case 'B':
+      if (cursor_y < height) {
+        cursor_y++;
+      }
+      clearState();
+      return true;
+    case 'C':
+      if (cursor_x < width) {
+        cursor_x++;
+      }
+      clearState();
+      return true;
+    case 'D':
+      if (cursor_x != 0) {
+        cursor_x--;
+      }
+      clearState();
+      return true;
     case 'H':
+      int firstNum = numbers[0];
       if (firstNum == -1) {
         firstNum = 1;
       }
+      int secondNum = numbers[1];
       if (secondNum == -1) {
         secondNum = 1;
       }
@@ -150,13 +171,51 @@ class XtermConsole {
       clearState();
       return true;
     case 'J':
+      int firstNum = numbers[0];
       if (firstNum == -1) {
         firstNum = 0;
       }
       switch(firstNum) {
       case 0:
         // Clear from cursor to end of line and rest of screen.
+        for (int i = cursor_x; i < width; i++) {
+          SpanElement cell = pre.nodes[cursor_y].nodes[i];
+          cell.text = ' ';
+        }    
       }
+      clearState();
+      return true;
+    case 'K':
+      int firstNum = numbers[0];
+      if (firstNum == -1) {
+        firstNum = 0;
+      }
+      switch(firstNum) {
+      case 0:
+        // Clear from cursor to end of line and rest of screen.
+        for (int i = cursor_x; i < width; i++) {
+          SpanElement cell = pre.nodes[cursor_y].nodes[i];
+          cell.text = ' ';
+        }    
+        break;
+      case 1:
+        // Clear from cursor to start of line.
+        for (int i = cursor_x; i <= 0; i--) {
+          SpanElement cell = pre.nodes[cursor_y].nodes[i];
+          cell.text = ' ';
+        }
+        break;
+      case 2:
+        // Clear whole line.
+        for (int i = 0; i < width; i++) {
+          SpanElement cell = pre.nodes[cursor_y].nodes[i];
+          cell.text = ' ';
+        }    
+        break;
+      }
+      clearState();
+      return true;
+    case 'm':
       clearState();
       return true;
     }
@@ -168,8 +227,7 @@ class XtermConsole {
   bool clearState() {
     inState = 0;
     acc = '';
-    firstNum = -1;
-    secondNum = -1;
+    numbers = new List<int>();
     return false;
   }
 
