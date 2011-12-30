@@ -23,6 +23,8 @@ class XtermConsole {
 
   var prefix = 'JSPipeMount:1:';
 
+  Map<int, String> keyMap;
+
   void setup() {
     numbers = new List<int>();
     DivElement game = document.query("#game");
@@ -41,16 +43,16 @@ class XtermConsole {
 
     game.nodes.add(pre);
 
-    //document.on.keyDown.add((KeyboardEvent evt) {
-    //
-    //}
-
-    document.on.keyPress.add((KeyboardEvent evt) {
-      if (evt.charCode == 13) {
-        got('\n');
+    setupKeyMap();
+    
+    document.on.keyDown.add((KeyboardEvent evt) {
+      if (keyMap.containsKey(evt.keyCode)) {
+        got(keyMap[evt.keyCode]);
         return false;
       }
+    });
 
+    document.on.keyPress.add((KeyboardEvent evt) {
       if (evt.which != 0 && evt.charCode != 0) {
         String key = new String.fromCharCodes([evt.which]);
         got(key);
@@ -58,6 +60,15 @@ class XtermConsole {
       }
     });
   }
+
+  void setupKeyMap() {
+    keyMap = new Map<int, String>();
+    keyMap[8] = '\x08'; // backspace
+    keyMap[9] = '\x09'; // tab
+    keyMap[13] = '\n'; //enter
+    keyMap[38] = '\x1b[A'; // up
+  }
+
 
   void got(String str) {
     nethackEmbed.postMessage('JSPipeMount:0:' + str);
