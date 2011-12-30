@@ -100,9 +100,15 @@ class XtermConsole {
 
     switch(ch) {
     case 8:
-      SpanElement cell = pre.nodes[cursor_y].nodes[cursor_x];
-      // TODO(jeffbailey): Make safe backspace.
       cursor_x--;
+      if (cursor_x <0 ) {
+        cursor_x = width - 1;
+        cursor_y--;
+      }
+      if (cursor_y < 0) {
+        cursor_x = 0;
+        cursor_y = 0;
+      }
     }
     return true;
   }
