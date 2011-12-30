@@ -83,10 +83,28 @@ class XtermConsole {
       if (sequenceCheck(s[i])) {
         continue;
       }
+      if (specialChar(s[i])) {
+        continue;
+      }
       SpanElement cell = pre.nodes[cursor_y].nodes[cursor_x];
       cell.text = s[i];
       cursor_x++;
     }
+  }
+
+  bool specialChar(String s) {
+    int ch = s.charCodeAt(0);
+    if (ch >= 32) {
+      return false;
+    }
+
+    switch(ch) {
+    case 8:
+      SpanElement cell = pre.nodes[cursor_y].nodes[cursor_x];
+      // TODO(jeffbailey): Make safe backspace.
+      cursor_x--;
+    }
+    return true;
   }
 
   // 0: Not acquiring
