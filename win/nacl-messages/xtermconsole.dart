@@ -158,41 +158,47 @@ class XtermConsole {
       clearState();
       return true;
     case 'H':
-      int firstNum = numbers[0];
-      if (firstNum == -1) {
-        firstNum = 1;
+      for (int x = numbers.length; x < 2; x++) {
+        numbers.add(-1);
       }
-      int secondNum = numbers[1];
-      if (secondNum == -1) {
-        secondNum = 1;
+
+      if (numbers[0] == -1) {
+        numbers[0] = 1;
       }
-      cursor_y = firstNum - 1;
-      cursor_x = secondNum - 1;
+      if (numbers[1] == -1) {
+        numbers[1] = 1;
+      }
+      cursor_y = numbers[0] - 1;
+      cursor_x = numbers[1] - 1;
       clearState();
       return true;
     case 'J':
-      int firstNum = numbers[0];
-      if (firstNum == -1) {
-        firstNum = 0;
+      if (numbers[0] == -1) {
+        numbers[0] = 0;
       }
-      switch(firstNum) {
+      switch(numbers[0]) {
       case 0:
         // Clear from cursor to end of line and rest of screen.
-        for (int i = cursor_x; i < width; i++) {
-          SpanElement cell = pre.nodes[cursor_y].nodes[i];
+        for (int x = cursor_x; x < width; x++) {
+          SpanElement cell = pre.nodes[cursor_y].nodes[x];
           cell.text = ' ';
         }    
+        for (int y = cursor_y + 1; y < height; y++) {
+          for (int x = 0; x < width; x++) {
+            SpanElement cell = pre.nodes[y].nodes[x];
+            cell.text = ' ';
+          }
+        }
       }
       clearState();
       return true;
     case 'K':
-      int firstNum = numbers[0];
-      if (firstNum == -1) {
-        firstNum = 0;
+      if (numbers[0] == -1) {
+        numbers[0] = 0;
       }
-      switch(firstNum) {
+      switch(numbers[0]) {
       case 0:
-        // Clear from cursor to end of line and rest of screen.
+        // Clear from cursor to end of line;
         for (int i = cursor_x; i < width; i++) {
           SpanElement cell = pre.nodes[cursor_y].nodes[i];
           cell.text = ' ';
@@ -221,7 +227,21 @@ class XtermConsole {
     }
 
     // Unknown sequence
+    print('Unknown sequence: ' + s);
     return clearState();
+  }
+
+  void printLoc() {
+    print('x: ' + cursor_x.toString() + ' y: ' + cursor_y.toString());
+  }
+
+  void printSeq(String s) {
+    String out = "[";
+    for (int x = 0; x < numbers.length; x++) {
+      out += numbers[x].toString() + ";";
+    }
+    out += s;
+    print(out);
   }
 
   bool clearState() {
