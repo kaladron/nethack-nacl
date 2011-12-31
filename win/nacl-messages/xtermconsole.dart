@@ -80,7 +80,17 @@ class XtermConsole {
     keyMap[8] = '\x08'; // backspace
     keyMap[9] = '\x09'; // tab
     keyMap[13] = '\n'; //enter
-    keyMap[38] = '\x1b' + '[A'; // up
+    //keyMap[38] = '\x1b' + '[A'; // up
+
+    // TODO(jeffbailey): Split this into a nethackKeyMap, handle shift-arrows
+    keyMap[38] = 'k';
+    keyMap[40] = 'j';
+    keyMap[39] = 'l';
+    keyMap[37] = 'h';
+    keyMap[36] = 'y';
+    keyMap[35] = 'b';
+    keyMap[33] = 'u';
+    keyMap[34] = 'n';
   }
 
 
