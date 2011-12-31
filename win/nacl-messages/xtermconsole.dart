@@ -51,6 +51,19 @@ class XtermConsole {
         evt.preventDefault();
         return false;
       }
+
+      if (evt.ctrlKey == false) {
+        return true;
+      }
+
+      evt.preventDefault();
+
+      if (evt.which == 17) {
+        return true;
+      }
+
+      this.got(new String.fromCharCodes([evt.which & 0x1F]));
+      return true;
     });
 
     document.on.keyPress.add((KeyboardEvent evt) {
