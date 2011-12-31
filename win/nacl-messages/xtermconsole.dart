@@ -146,7 +146,16 @@ class XtermConsole {
         cursor_x = 0;
         cursor_y = 0;
       }
+      return true;
+    case 13:
+      cursor_x = 0;
+      // TODO(jeffbailey): This should scroll the screen.
+      if (cursor_y != width -1) {
+        cursor_y++;
+      }
+      return true;
     }
+    print('Unknown special char: ' + ch.toString());
     return true;
   }
 
