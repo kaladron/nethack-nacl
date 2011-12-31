@@ -147,6 +147,9 @@ class XtermConsole {
         cursor_y = 0;
       }
       return true;
+    case 10:
+      cursor_x = 0;
+      return true;
     case 13:
       cursor_x = 0;
       // TODO(jeffbailey): This should scroll the screen.
