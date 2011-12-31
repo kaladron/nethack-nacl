@@ -1,14 +1,36 @@
 pre > .x-line { display: block; }
-pre > .x-line > span[data-fg=black] { color: black; }
-pre > .x-line > span[data-bg=black] { background-color: black; }
-pre > .x-line > span[data-fg=navy] { color: navy; }
-pre > .x-line > span[data-bg=navy] { background-color: navy; }
-pre > .x-line > span[data-fg=lime] { color: lime; }
-pre > .x-line > span[data-bg=lime] { background-color: lime; }
-pre > .x-line > span[data-fg=yellow] { color: yellow; }
-pre > .x-line > span[data-bg=yellow] { background-color: yellow; }
-pre > .x-line > span[data-fg=silver] { color: silver; }
-pre > .x-line > span[data-bg=silver] { background-color: silver; }
+pre > .x-line > span[data-fg=colour0] { color: rgb(0,0,0); }
+pre > .x-line > span[data-bg=colour0] { background-color: rgb(0,0,0); }
+pre > .x-line > span[data-fg=colour1] { color: rgb(170,0,0); }
+pre > .x-line > span[data-bg=colour1] { background-color: rgb(170,0,0); }
+pre > .x-line > span[data-fg=colour2] { color: rgb(0,170,0); }
+pre > .x-line > span[data-bg=colour2] { background-color: rgb(0,170,0); }
+pre > .x-line > span[data-fg=colour3] { color: rgb(170,85,0); }
+pre > .x-line > span[data-bg=colour3] { background-color: rgb(170,85,0); }
+pre > .x-line > span[data-fg=colour4] { color: rgb(0,0,170); }
+pre > .x-line > span[data-bg=colour4] { background-color: rgb(0,0,170); }
+pre > .x-line > span[data-fg=colour5] { color: rgb(170,0,170); }
+pre > .x-line > span[data-bg=colour5] { background-color: rgb(170,0,170); }
+pre > .x-line > span[data-fg=colour6] { color: rgb(0,170,170);; }
+pre > .x-line > span[data-bg=colour6] { background-color: rgb(0,170,170); }
+pre > .x-line > span[data-fg=colour7] { color: rgb(170,170,170); }
+pre > .x-line > span[data-bg=colour7] { background-color: rgb(170,170,170); }
+pre > .x-line > span[data-fg=hcolour0] { color: rgb(85,85,85); }
+pre > .x-line > span[data-bg=hcolour0] { background-color: rgb(85,85,8); }
+pre > .x-line > span[data-fg=hcolour1] { color: rgb(255,85,85); }
+pre > .x-line > span[data-bg=hcolour1] { background-color: rgb(255,85,85); }
+pre > .x-line > span[data-fg=hcolour2] { color: rgb(85,255,85); }
+pre > .x-line > span[data-bg=hcolour2] { background-color: rgb(85,255,85); }
+pre > .x-line > span[data-fg=hcolour3] { color: rgb(255,255,85); }
+pre > .x-line > span[data-bg=hcolour3] { background-color: rgb(255,255,85); }
+pre > .x-line > span[data-fg=hcolour4] { color: rgb(85,85,255); }
+pre > .x-line > span[data-bg=hcolour4] { background-color: rgb(85,85,255); }
+pre > .x-line > span[data-fg=hcolour5] { color: rgb(255,85,255); }
+pre > .x-line > span[data-bg=hcolour5] { background-color: rgb(255,85,255); }
+pre > .x-line > span[data-fg=hcolour6] { color: rgb(85,255,255);; }
+pre > .x-line > span[data-bg=hcolour6] { background-color: rgb(85,255,255); }
+pre > .x-line > span[data-fg=hcolour7] { color: rgb(255,255,255); }
+pre > .x-line > span[data-bg=hcolour7] { background-color: rgb(255,255,255); }
 
 #textwindow {
   height: 10em;

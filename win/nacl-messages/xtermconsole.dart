@@ -48,6 +48,7 @@ class XtermConsole {
     document.on.keyDown.add((KeyboardEvent evt) {
       if (keyMap.containsKey(evt.keyCode)) {
         got(keyMap[evt.keyCode]);
+        evt.preventDefault();
         return false;
       }
     });
@@ -66,7 +67,7 @@ class XtermConsole {
     keyMap[8] = '\x08'; // backspace
     keyMap[9] = '\x09'; // tab
     keyMap[13] = '\n'; //enter
-    keyMap[38] = '\x1b[A'; // up
+    keyMap[38] = '\x1b' + '[A'; // up
   }
 
 
@@ -76,8 +77,8 @@ class XtermConsole {
 
   Element createCell() {
     SpanElement c = new Element.tag("span");
-    c.attributes['data-fg'] = 'lime';
-    c.attributes['data-bg'] = 'black';
+    c.attributes['data-fg'] = 'hcolour2';
+    c.attributes['data-bg'] = 'colour0';
     c.text = ' ';
     return c;
   }
@@ -97,8 +98,15 @@ class XtermConsole {
       if (specialChar(s[i])) {
         continue;
       }
+
       SpanElement cell = pre.nodes[cursor_y].nodes[cursor_x];
       cell.text = s[i];
+      if (bright) {
+        cell.attributes['data-fg'] = "hcolour" + foreground.toString();
+      } else {
+        cell.attributes['data-fg'] = "colour" + foreground.toString();
+      }
+      cell.attributes['data-bg'] = "colour" + background.toString();
       cursor_x++;
     }
   }
@@ -131,6 +139,10 @@ class XtermConsole {
   String acc = '';
   List<int> numbers;
   RegExp exp = const RegExp(@"[0-9]");
+  int foreground = 2;
+  int background = 0;
+  bool underline = false;
+  bool bright = false;
 
   // Handles Escape Squences.  If we're handling a sequence, return true;
   bool sequenceCheck(String s) {
@@ -257,6 +269,29 @@ class XtermConsole {
       clearState();
       return true;
     case 'm':
+      Iterator<int> numItr = numbers.iterator();
+      while(numItr.hasNext()) {
+        int attr = numItr.next();
+        switch(attr) {
+        case 0:
+          //TODO(jeffbailey): Reset text colour
+          bright = false;
+          continue;
+        case 1:
+          bright = true;
+          continue;
+        }
+
+        if (attr >= 30 && attr <= 37) {
+          foreground = attr - 30;
+          continue;
+        }
+
+        if (attr >= 40 && attr <= 47) {
+          background = attr - 40;
+          continue;
+        }
+      }
       clearState();
       return true;
     }
@@ -284,6 +319,7 @@ class XtermConsole {
     acc = '';
     numbers = new List<int>();
     return false;
+    bright = false;
   }
 
   void handleMessage(var msg) {
