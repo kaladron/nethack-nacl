@@ -101,12 +101,7 @@ class XtermConsole {
 
       SpanElement cell = pre.nodes[cursor_y].nodes[cursor_x];
       cell.text = s[i];
-      if (bright) {
-        cell.attributes['data-fg'] = "hcolour" + foreground.toString();
-      } else {
-        cell.attributes['data-fg'] = "colour" + foreground.toString();
-      }
-      cell.attributes['data-bg'] = "colour" + background.toString();
+      setColour(cell);
       cursor_x++;
     }
   }
@@ -132,6 +127,16 @@ class XtermConsole {
     return true;
   }
 
+  void setColour(Element cell) {
+    if (bright) {
+      cell.attributes['data-fg'] = "hcolour" + foreground.toString();
+    } else {
+      cell.attributes['data-fg'] = "colour" + foreground.toString();
+    }
+    cell.attributes['data-bg'] = "colour" + background.toString();
+  }
+  
+
   // 0: Not acquiring
   // 1: Waiting for [
   // 2: number collection
@@ -141,6 +146,9 @@ class XtermConsole {
   RegExp exp = const RegExp(@"[0-9]");
   int foreground = 2;
   int background = 0;
+  int defaultForeground = 2;
+  int defaultBackground = 0;
+
   bool underline = false;
   bool bright = false;
 
@@ -179,6 +187,7 @@ class XtermConsole {
       }
     }
 
+    //printSeq(s[0]);
     switch(s[0]) {
     case 'A':
       if (cursor_y != 0) {
@@ -229,11 +238,13 @@ class XtermConsole {
         for (int x = cursor_x; x < width; x++) {
           SpanElement cell = pre.nodes[cursor_y].nodes[x];
           cell.text = ' ';
+          setColour(cell);
         }    
         for (int y = cursor_y + 1; y < height; y++) {
           for (int x = 0; x < width; x++) {
             SpanElement cell = pre.nodes[y].nodes[x];
             cell.text = ' ';
+            setColour(cell);
           }
         }
       }
@@ -249,6 +260,7 @@ class XtermConsole {
         for (int i = cursor_x; i < width; i++) {
           SpanElement cell = pre.nodes[cursor_y].nodes[i];
           cell.text = ' ';
+          setColour(cell);
         }    
         break;
       case 1:
@@ -256,6 +268,7 @@ class XtermConsole {
         for (int i = cursor_x; i <= 0; i--) {
           SpanElement cell = pre.nodes[cursor_y].nodes[i];
           cell.text = ' ';
+          setColour(cell);
         }
         break;
       case 2:
@@ -263,6 +276,7 @@ class XtermConsole {
         for (int i = 0; i < width; i++) {
           SpanElement cell = pre.nodes[cursor_y].nodes[i];
           cell.text = ' ';
+          setColour(cell);
         }    
         break;
       }
@@ -272,14 +286,22 @@ class XtermConsole {
       Iterator<int> numItr = numbers.iterator();
       while(numItr.hasNext()) {
         int attr = numItr.next();
+        if (attr == -1) {
+          attr = 0;
+        }
         switch(attr) {
         case 0:
-          //TODO(jeffbailey): Reset text colour
+          foreground = defaultForeground;
+          background = defaultBackground;
           bright = false;
           continue;
         case 1:
           bright = true;
           continue;
+        case 7:
+          int tmp = foreground;
+          foreground = background;
+          background = tmp;
         }
 
         if (attr >= 30 && attr <= 37) {
