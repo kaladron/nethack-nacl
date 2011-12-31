@@ -1,68 +1,15 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Nethack</title>
-    <META HTTP-EQUIV="Pragma" CONTENT="no-cache" />
-    <META HTTP-EQUIV="Expires" CONTENT="-1" />
-    <style type="text/css">
-div.console
-{
-  color:rgb(0,255,0);
-  background-color:rgb(0,0,0);
-  font-family: "Courier New"
-               Courier
-               "Andale Mono"
-               "Fixed"
-               "Lucidatypewriter"
-               monospace;
-}
-    </style>
-  </head>
-  <body onload="init()">
-<script type="text/javascript" src="console.js"></script>
-<script type="text/javascript">
-//<![CDATA[
-
-/**
- * Create the console, and wait for nacl module to load.
- */ 
-
-var term;
-
-function init() {
-  // Setup console.
-  term = new console.Console('console', 'nethack');
-  term.nethackKeyboard();
-
-  // Show loading message.
-  term.write('Loading...');
-}
-
-function moduleDidLoad(e) {
-  term.attach();
-}
-
-//]]>
-</script>
-
-<a href="index.html">Graphical Version</a>
-<table><tr><td>
-<div id="console" class="console"></div>
-</td></tr></table>
-<p>
-  <div id="listener">
-    <script type="text/javascript">
-      document.getElementById('listener').addEventListener(
-          'load', moduleDidLoad, true);
-    </script>
-  <object data="nethack.nmf"
-          id="nethack"
-          width="0" height="0"
-          src="nethack.nmf"
-          type="application/x-nacl">
-    <param name="windowtype" value="tty"> 
-  </object>
-</p>
-
+<head>
+<title>Nethack</title>
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<link rel="stylesheet" href="nethack.css">
+</head>
+<body>
+<a href="index.html">Graphical version</a>
+<div id="listener"></div>
+<div id="game"></div>
+<script src="xtermconsole.js"></script>
 </body>
 </html>
