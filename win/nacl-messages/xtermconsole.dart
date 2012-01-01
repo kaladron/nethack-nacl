@@ -14,7 +14,7 @@ class XtermConsole {
   String windowtype = "tty";
 
   int width = 80;
-  int height = 24;
+  int height = 25;
 
   int cursor_x = 0;
   int cursor_y = 0;
@@ -161,7 +161,6 @@ class XtermConsole {
       }
       return true;
     }
-    print('Unknown special char: ' + ch.toString());
     return true;
   }
 
@@ -383,6 +382,7 @@ class XtermConsole {
   }
 
   void handleMessage(var msg) {
+    print(msg.data);
     if (!msg.data.startsWith(prefix)) return;
     putString(msg.data.substring(prefix.length));
   }
