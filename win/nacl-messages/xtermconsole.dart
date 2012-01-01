@@ -29,6 +29,7 @@ class XtermConsole {
     numbers = new List<int>();
     DivElement game = document.query("#game");
     pre = new Element.tag("pre");
+    pre.id = "x-pre";
 
     for (int y = 0; y < height; y++) {
       SpanElement r = new Element.tag("span");
@@ -382,7 +383,6 @@ class XtermConsole {
   }
 
   void handleMessage(var msg) {
-    print(msg.data);
     if (!msg.data.startsWith(prefix)) return;
     putString(msg.data.substring(prefix.length));
   }
