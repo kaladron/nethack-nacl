@@ -32,6 +32,12 @@ pre > .x-line > span[data-bg=hcolour6] { background-color: rgb(85,255,255); }
 pre > .x-line > span[data-fg=hcolour7] { color: rgb(255,255,255); }
 pre > .x-line > span[data-bg=hcolour7] { background-color: rgb(255,255,255); }
 
+.x-cell {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
 #textwindow {
   height: 10em;
   width: 60%;

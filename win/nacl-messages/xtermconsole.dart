@@ -9,7 +9,6 @@ interface NethackUi {
   void handleMessage(var msg);
 }
 
-
 class XtermConsole {
   String windowtype = "tty";
 
@@ -104,10 +103,29 @@ class XtermConsole {
     c.attributes['data-fg'] = 'hcolour2';
     c.attributes['data-bg'] = 'colour0';
     c.text = ' ';
+    c.classes = ['x-cell'];
     return c;
   }
 
-  void putString(s) {
+  // Move the cursor to relative coordinates
+  void moveCursor(int x, int y) {
+
+  }
+
+  // Move the cursor to absolute coordinates
+  void setCursor(int x, int y) {
+
+  }
+
+  void setCursorX(int x) {
+
+  }
+
+  void setCursorY(int y) {
+
+  }
+
+  void putString(String s) {
     for (int i = 0; i < s.length; i++) {
       if (cursor_x >= width) {
         cursor_x = 0;
@@ -173,6 +191,12 @@ class XtermConsole {
     }
     cell.attributes['data-bg'] = "colour" + background.toString();
   }
+
+  void clearCell(Element cell) {
+    cell.text = ' ';
+    setColour(cell);
+  }
+ 
   
 
   // 0: Not acquiring
@@ -274,15 +298,11 @@ class XtermConsole {
       case 0:
         // Clear from cursor to end of line and rest of screen.
         for (int x = cursor_x; x < width; x++) {
-          SpanElement cell = pre.nodes[cursor_y].nodes[x];
-          cell.text = ' ';
-          setColour(cell);
+          clearCell(pre.nodes[cursor_y].nodes[x]);
         }    
         for (int y = cursor_y + 1; y < height; y++) {
           for (int x = 0; x < width; x++) {
-            SpanElement cell = pre.nodes[y].nodes[x];
-            cell.text = ' ';
-            setColour(cell);
+            clearCell(pre.nodes[y].nodes[x]);
           }
         }
       }
@@ -296,25 +316,19 @@ class XtermConsole {
       case 0:
         // Clear from cursor to end of line;
         for (int i = cursor_x; i < width; i++) {
-          SpanElement cell = pre.nodes[cursor_y].nodes[i];
-          cell.text = ' ';
-          setColour(cell);
+          clearCell(pre.nodes[cursor_y].nodes[i]);
         }    
         break;
       case 1:
         // Clear from cursor to start of line.
         for (int i = cursor_x; i <= 0; i--) {
-          SpanElement cell = pre.nodes[cursor_y].nodes[i];
-          cell.text = ' ';
-          setColour(cell);
+          clearCell(pre.nodes[cursor_y].nodes[i]);
         }
         break;
       case 2:
         // Clear whole line.
         for (int i = 0; i < width; i++) {
-          SpanElement cell = pre.nodes[cursor_y].nodes[i];
-          cell.text = ' ';
-          setColour(cell);
+          clearCell(pre.nodes[cursor_y].nodes[i]);
         }    
         break;
       }
