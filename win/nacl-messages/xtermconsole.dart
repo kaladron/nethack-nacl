@@ -43,6 +43,8 @@ class XtermConsole {
 
     game.nodes.add(pre);
 
+    toggleCursor();
+
     setupKeyMap();
     
     document.on.keyDown.add((KeyboardEvent evt) {
@@ -107,31 +109,22 @@ class XtermConsole {
     return c;
   }
 
-  // Move the cursor to relative coordinates
-  void moveCursor(int x, int y) {
-
-  }
-
-  // Move the cursor to absolute coordinates
-  void setCursor(int x, int y) {
-
-  }
-
-  void setCursorX(int x) {
-
-  }
-
-  void setCursorY(int y) {
-
+  void toggleCursor() {
+    SpanElement cell = pre.nodes[cursor_y].nodes[cursor_x];
+    String temp = cell.attributes['data-fg'];
+    cell.attributes['data-fg'] = cell.attributes['data-bg'];
+    cell.attributes['data-bg'] = temp;
   }
 
   void putString(String s) {
+    toggleCursor();
     for (int i = 0; i < s.length; i++) {
       if (cursor_x >= width) {
         cursor_x = 0;
         cursor_y++;
       }
       if (cursor_y >= height) {
+        toggleCursor();
         return;
       }
       if (sequenceCheck(s[i])) {
@@ -146,6 +139,7 @@ class XtermConsole {
       setColour(cell);
       cursor_x++;
     }
+    toggleCursor();
   }
 
   bool specialChar(String s) {
@@ -157,7 +151,7 @@ class XtermConsole {
     switch(ch) {
     case 8:
       cursor_x--;
-      if (cursor_x <0 ) {
+      if (cursor_x < 0 ) {
         cursor_x = width - 1;
         cursor_y--;
       }
