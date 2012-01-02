@@ -348,6 +348,7 @@ class XtermConsole {
           int tmp = foreground;
           foreground = background;
           background = tmp;
+          continue;
         }
 
         if (attr >= 30 && attr <= 37) {
@@ -359,6 +360,8 @@ class XtermConsole {
           background = attr - 40;
           continue;
         }
+
+        print('Unrecognised attribute for "m" directive: ' + attr.toString());
       }
       clearState();
       return true;
