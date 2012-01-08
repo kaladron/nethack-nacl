@@ -37,9 +37,24 @@ void initNethack(game) {
 
 main() {
   Storage ls = window.localStorage;
+  String ui = ls.getItem('ui');
+  if (ui == null) {
+    ui = "tty";
+    ls.setItem("ui", ui);
+  }
+
   // Dart's interfaces are broken, so we use the weak typing.
-  var game = new GnomeLike(); // GnomeLike
-  // var game = new XtermConsole(); // XtermConsole
+
+  var game;
+
+  switch(ui) {
+  case "tty":
+    game = new XtermConsole(); // XtermConsole
+    break;
+  case "gnomelike":
+    game = new GnomeLike(); // GnomeLike
+    break;
+  }
   initNethack(game);
   game.setup();
 }

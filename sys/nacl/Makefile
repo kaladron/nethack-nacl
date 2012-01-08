@@ -297,6 +297,7 @@ $(NACL_WIN)/%.js: $(NACL_WIN)/%.dart
 	sed -i -e 's/nethackEmbed.postMessage\$$1/nethackEmbed._ptr.postMessage/' $@
 	sed -i -e 's/textWindow.get\$$scrollHeight()/textWindow._ptr.scrollHeight/' $@
 	sed -i -e 's/_ptr.preventDefault\$$0/_ptr.preventDefault/' $@
+	sed -i -e 's/html_get$$window().get$$localStorage()/window.localStorage/' $@
 
 $(OBJPUBLISH)/nethack.tar: $(NHRESOURCES) | $(OBJPUBLISH)
 	cd $(OBJRESOURCE) && tar -cf ../publish/nethack.tar *
