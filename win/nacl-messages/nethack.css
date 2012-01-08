@@ -1,3 +1,9 @@
+pre {
+  display: table;
+  border: 4px black solid;
+  margin: auto;
+}
+
 pre > .x-line { display: block; }
 pre > .x-line > span[data-fg=colour0] { color: rgb(0,0,0); }
 pre > .x-line > span[data-bg=colour0] { background-color: rgb(0,0,0); }
@@ -63,6 +69,3 @@ pre > .x-line > span[data-bg=hcolour7] { background-color: rgb(255,255,255); }
   position: absolute;
 }
 
-#x-pre {
-  text-align: center;
-}
