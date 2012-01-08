@@ -1,5 +1,12 @@
 DivElement gnomelikePopup;
 
+// Keep these in sync with include/wintype.h
+int NHW_MESSAGE = 1;
+int NHW_STATUS = 2;
+int NHW_MAP = 3;
+int NHW_MENU = 4;
+int NHW_TEXT = 5;
+
 class ExtHandler {
   int i;
 

@@ -3,6 +3,7 @@
 
 #source('gnomelike.dart');
 #source('nacl_msg.dart');
+#source('xtermconsole.dart');
 
 interface NethackUi {
   void setup();
@@ -16,15 +17,7 @@ interface NethackUi {
 ObjectElement nethackEmbed;
 
 
-// Keep these in sync with include/wintype.h
-int NHW_MESSAGE = 1;
-int NHW_STATUS = 2;
-int NHW_MAP = 3;
-int NHW_MENU = 4;
-int NHW_TEXT = 5;
-
-
-void initNethack(GnomeLike game) {
+void initNethack(game) {
   ParamElement param = new Element.tag('param');
   param.name = "windowtype";
   param.value = game.windowtype;
@@ -43,7 +36,10 @@ void initNethack(GnomeLike game) {
   
 
 main() {
-  GnomeLike game = new GnomeLike();
+  Storage ls = window.localStorage;
+  // Dart's interfaces are broken, so we use the weak typing.
+  var game = new GnomeLike(); // GnomeLike
+  // var game = new XtermConsole(); // XtermConsole
   initNethack(game);
   game.setup();
 }
