@@ -71,17 +71,37 @@ class XtermConsole {
     keyMap[8] = '\x08'; // backspace
     keyMap[9] = '\x09'; // tab
     keyMap[13] = '\n'; //enter
-    //keyMap[38] = '\x1b' + '[A'; // up
+    keyMap[27] = '\x1b'; // escape
+    keyMap[33] = '\x1b' + '[5~'; // pgup
+    keyMap[34] = '\x1b' + '[6~'; // pgdown
+    keyMap[35] = '\x1b' + '[4~'; // end
+    keyMap[36] = '\x1b' + '[1~'; // home 
+    keyMap[37] = '\x1b' + '[D'; // left
+    keyMap[38] = '\x1b' + '[A'; // up
+    keyMap[39] = '\x1b' + '[C'; // right
+    keyMap[40] = '\x1b' + '[B'; // down
+    keyMap[45] = '\x1b' + '[2~'; // insert
+    keyMap[46] = '\x1b' + '[3~'; // delete 
+    keyMap[121] = '\x1b' + '[21'; // F1
+    keyMap[122] = '\x1b' + '[22'; // F1
+    keyMap[123] = '\x1b' + '[23'; // F1
+    keyMap[124] = '\x1b' + '[24'; // F1
+    keyMap[125] = '\x1b' + '[25'; // F1
+    keyMap[126] = '\x1b' + '[26'; // F1
+    keyMap[127] = '\x1b' + '[27'; // F1
+    keyMap[128] = '\x1b' + '[28'; // F1
+    keyMap[129] = '\x1b' + '[29'; // F1
+    keyMap[130] = '\x1b' + '[30'; // F1
 
     // TODO(jeffbailey): Split this into a nethackKeyMap, handle shift-arrows
-    keyMap[38] = 'k';
-    keyMap[40] = 'j';
-    keyMap[39] = 'l';
-    keyMap[37] = 'h';
-    keyMap[36] = 'y';
-    keyMap[35] = 'b';
-    keyMap[33] = 'u';
-    keyMap[34] = 'n';
+    keyMap[33] = 'u'; // pgup
+    keyMap[34] = 'n'; // pgdown
+    keyMap[35] = 'b'; // end
+    keyMap[36] = 'y'; // home
+    keyMap[37] = 'h'; // left
+    keyMap[38] = 'k'; // up
+    keyMap[39] = 'l'; // right
+    keyMap[40] = 'j'; // down
   }
 
 
