@@ -186,9 +186,6 @@ PUBLISH_FILES = \
   $(OBJPUBLISH)/index.html \
   $(OBJPUBLISH)/nethack.css \
   $(OBJPUBLISH)/nethack.js \
-  $(OBJPUBLISH)/oldconsole.html \
-  $(OBJPUBLISH)/nethack.html \
-  $(OBJPUBLISH)/console.js \
   $(OBJPUBLISH)/manifest.json \
   $(OBJPUBLISH)/nethack.nmf \
   $(OBJPUBLISH)/nethack.tar \
