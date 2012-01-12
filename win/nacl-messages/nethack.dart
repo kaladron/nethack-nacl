@@ -16,8 +16,7 @@ interface NethackUi {
 
 ObjectElement nethackEmbed;
 
-
-void initNethack(game) {
+void initNethack(game, Map<String, String> options) {
   nethackEmbed = new Element.tag('object');
   nethackEmbed.width = 0;
   nethackEmbed.height = 0;
@@ -25,27 +24,16 @@ void initNethack(game) {
   nethackEmbed.data = "nethack.nmf";
   nethackEmbed.type = "application/x-nacl";
 
-  ParamElement param;
+  List<String> keys = options.getKeys();
+  Iterator<String> i = keys.iterator();
 
-  param = new Element.tag('param');
-  param.name = "windowtype";
-  param.value = game.windowtype;
-  nethackEmbed.nodes.add(param);
-
-  param = new Element.tag('param');
-  param.name = "color";
-  param.value = "";
-  nethackEmbed.nodes.add(param);
-
-  param = new Element.tag('param');
-  param.name = "hilite_pet";
-  param.value = "";
-  nethackEmbed.nodes.add(param);
-
-  param = new Element.tag('param');
-  param.name = "pickup_types";
-  param.value = '\$';
-  nethackEmbed.nodes.add(param);
+  while (i.hasNext()) {
+    ParamElement param = new Element.tag('param');
+    String key = i.next();
+    param.name = key;
+    param.value = options[key];
+    nethackEmbed.nodes.add(param);
+  }
 
   DivElement listener = document.query("#listener");
   listener.nodes.add(nethackEmbed);
@@ -54,17 +42,24 @@ void initNethack(game) {
 
 main() {
   Storage ls = window.localStorage;
-  String ui = ls.getItem('ui');
-  if (ui == null) {
-    ui = "tty";
-    ls.setItem("ui", ui);
+  String optionsString = ls.getItem('options');
+  Map<String,String> options;
+  if (optionsString == null) {
+    options = new Map<String, String>();
+    options["windowtype"] = "tty";
+    options["color"] = "";
+    options["hilite_pet"] = "";
+    options["pickup_types"] = "\$";
+    ls.setItem("options", JSON.stringify(options));
+  } else {
+    options = JSON.parse(optionsString);
   }
 
   // Dart's interfaces are broken, so we use the weak typing.
 
   var game;
 
-  switch(ui) {
+  switch(options["windowtype"]) {
   case "tty":
     game = new XtermConsole(); // XtermConsole
     break;
@@ -72,6 +67,6 @@ main() {
     game = new GnomeLike(); // GnomeLike
     break;
   }
-  initNethack(game);
+  initNethack(game, options);
   game.setup();
 }
