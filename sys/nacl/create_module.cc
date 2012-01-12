@@ -24,7 +24,6 @@ extern "C" {
 int nethack_main(int argc, char *argv[]);
 int mount(const char *type, const char *dir, int flags, void *data);
 int simple_tar_extract(const char *path);
-static char *windowtype;
 }
 
 
@@ -67,19 +66,6 @@ static void *nethack_init(void *arg) {
 
   simple_tar_extract("/" TARFILE);
 
-  // Setup config file.
-  {
-    mkdir("/myhome", 0777);
-    int fh = open("/myhome/NetHack.cnf", O_CREAT | O_WRONLY);
-    char *config;
-    asprintf(&config,
-        "OPTIONS=windowtype:%s,color,hilite_pet,pickup_types:$\n",
-        windowtype);
-    write(fh, config, strlen(config) - 1);
-    close(fh);
-    free(config);
-  }
-
   const char *argv[] = {"nethack"};
   nethack_main(1, const_cast<char **>(argv));
 
@@ -104,20 +90,35 @@ class NethackInstance : public pp::Instance {
   virtual bool Init(uint32_t argc, const char* argn[], const char* argv[]) {
     runner_ = new MainThreadRunner(this);
 
+    mkdir("/myhome", 0777);
+    FILE* cfg_file = fopen("/myhome/NetHack.cnf", "w+");
+    if (cfg_file == NULL) {
+      fprintf(stderr, "Cannot open config file!\n");
+      exit(1);
+    }
+
+
     const char**argnwalk = argn;
     const char**argvwalk = argv;
-    fprintf(stderr, "%d\n", argc);
     uint32_t argcwalk = 0;
-    while (argcwalk < argc) {
+    for (;argcwalk < argc; argnwalk++, argvwalk++, argcwalk++) {
+      // Skip DOM noise.
+      if (!strcmp(*argnwalk, "width")) continue;
+      if (!strcmp(*argnwalk, "height")) continue;
+      if (!strcmp(*argnwalk, "data")) continue;
+      if (!strcmp(*argnwalk, "type")) continue;
+      if (!strcmp(*argnwalk, "src")) continue;
+      if (!strcmp(*argnwalk, "@dev")) continue;
+
       fprintf(stderr, "argn: %s, argv: %s\n", *argnwalk, *argvwalk);
-      // TODO(jeffbailey): This should copy every key/value pair into opts.
-      if (!strcmp(*argnwalk, "windowtype")) {
-        windowtype = strdup(*argvwalk);
+
+      if (!strcmp(*argvwalk, "")) {
+        fprintf(cfg_file, "OPTIONS=%s\n", *argnwalk);
+      } else {
+        fprintf(cfg_file, "OPTIONS=%s:%s\n", *argnwalk, *argvwalk);
       }
-      argnwalk++;
-      argvwalk++;
-      argcwalk++;
     }
+    fclose(cfg_file);
 
     jsbridge_ = new JSPostMessageBridge(runner_);
     jspipe_ = new JSPipeMount();

@@ -18,16 +18,33 @@ ObjectElement nethackEmbed;
 
 
 void initNethack(game) {
-  ParamElement param = new Element.tag('param');
-  param.name = "windowtype";
-  param.value = game.windowtype;
-
   nethackEmbed = new Element.tag('object');
   nethackEmbed.width = 0;
   nethackEmbed.height = 0;
   nethackEmbed.on['message'].add(game.handleMessage);
   nethackEmbed.data = "nethack.nmf";
   nethackEmbed.type = "application/x-nacl";
+
+  ParamElement param;
+
+  param = new Element.tag('param');
+  param.name = "windowtype";
+  param.value = game.windowtype;
+  nethackEmbed.nodes.add(param);
+
+  param = new Element.tag('param');
+  param.name = "color";
+  param.value = "";
+  nethackEmbed.nodes.add(param);
+
+  param = new Element.tag('param');
+  param.name = "hilite_pet";
+  param.value = "";
+  nethackEmbed.nodes.add(param);
+
+  param = new Element.tag('param');
+  param.name = "pickup_types";
+  param.value = '\$';
   nethackEmbed.nodes.add(param);
 
   DivElement listener = document.query("#listener");
