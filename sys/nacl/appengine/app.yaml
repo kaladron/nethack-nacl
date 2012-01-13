@@ -6,5 +6,8 @@ api_version: 1
 default_expiration: "1s"
 
 handlers:
+- url: /googleffb2e0a7be075da2.html
+  static_files: googleffb2e0a7be075da2.html
+  upload: googleffb2e0a7be075da2.html
 - url: /.*
   script: AppEngineMount.py
