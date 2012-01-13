@@ -32,6 +32,9 @@ void initNethack(game, Map<String, String> options) {
     String key = i.next();
     param.name = key;
     param.value = options[key];
+    if (key == 'windowtype') {
+      param.value = game.windowtype;
+    }
     nethackEmbed.nodes.add(param);
   }
 
