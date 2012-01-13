@@ -32,6 +32,7 @@ OBJ32 = $(top_srcdir)/obj32
 OBJ64 = $(top_srcdir)/obj64
 OBJHOST = $(top_srcdir)/objhost
 OBJPUBLISH = $(top_srcdir)/publish
+OBJEXTENSION = $(OBJPUBLISH)/extension
 OBJRESOURCE = $(top_srcdir)/resource
 
 # Yo dawg, look here!
@@ -133,8 +134,8 @@ OBJ64S = $(addprefix $(OBJ64)/,$(OBJS))
 
 MAKEDEFS := $(OBJHOST)/makedefs
 HOSTBINS := $(OBJHOST)/dgn_comp $(OBJHOST)/lev_comp $(OBJHOST)/tilemap
-NETHACK32 := $(OBJPUBLISH)/nethack_x86-32.nexe
-NETHACK64 := $(OBJPUBLISH)/nethack_x86-64.nexe
+NETHACK32 := $(OBJEXTENSION)/nethack_x86-32.nexe
+NETHACK64 := $(OBJEXTENSION)/nethack_x86-64.nexe
 
 HOST_CFLAGS = -g -O2 -w -m32 -D__native_client__
 CFLAGS = -g -O2 -w
@@ -183,55 +184,59 @@ LDWRAP = $(foreach x, $(WRAPFUNC), -Xlinker --wrap -Xlinker $(x))
 PUBLISH_FILES = \
   $(NETHACK32) \
   $(NETHACK64) \
-  $(OBJPUBLISH)/index.html \
-  $(OBJPUBLISH)/nethack.css \
-  $(OBJPUBLISH)/nethack.js \
-  $(OBJPUBLISH)/manifest.json \
-  $(OBJPUBLISH)/nethack.nmf \
-  $(OBJPUBLISH)/nethack.tar \
-  $(OBJPUBLISH)/blind.png \
-  $(OBJPUBLISH)/chaotic.png \
-  $(OBJPUBLISH)/cha.png \
-  $(OBJPUBLISH)/confused.png \
-  $(OBJPUBLISH)/con.png \
-  $(OBJPUBLISH)/dex.png \
-  $(OBJPUBLISH)/ext_enc.png \
-  $(OBJPUBLISH)/hallu.png \
-  $(OBJPUBLISH)/hungry.png \
-  $(OBJPUBLISH)/hvy_enc.png \
-  $(OBJPUBLISH)/icon_128.png \
-  $(OBJPUBLISH)/icon_16.png \
-  $(OBJPUBLISH)/icon_48.png \
-  $(OBJPUBLISH)/int.png \
-  $(OBJPUBLISH)/lawful.png \
-  $(OBJPUBLISH)/mapbg.png \
-  $(OBJPUBLISH)/mod_enc.png \
-  $(OBJPUBLISH)/neutral.png \
-  $(OBJPUBLISH)/nh_icon.png \
-  $(OBJPUBLISH)/nothing.png \
-  $(OBJPUBLISH)/ovr_enc.png \
-  $(OBJPUBLISH)/petmark.png \
-  $(OBJPUBLISH)/satiated.png \
-  $(OBJPUBLISH)/sick_fp.png \
-  $(OBJPUBLISH)/sick_il.png \
-  $(OBJPUBLISH)/slt_enc.png \
-  $(OBJPUBLISH)/str.png \
-  $(OBJPUBLISH)/stunned.png \
-  $(OBJPUBLISH)/wis.png \
-  $(OBJPUBLISH)/x11tiles.png
+  $(OBJEXTENSION)/index.html \
+  $(OBJEXTENSION)/nethack.css \
+  $(OBJEXTENSION)/nethack.js \
+  $(OBJEXTENSION)/manifest.json \
+  $(OBJEXTENSION)/nethack.nmf \
+  $(OBJEXTENSION)/nethack.tar \
+  $(OBJEXTENSION)/blind.png \
+  $(OBJEXTENSION)/chaotic.png \
+  $(OBJEXTENSION)/cha.png \
+  $(OBJEXTENSION)/confused.png \
+  $(OBJEXTENSION)/con.png \
+  $(OBJEXTENSION)/dex.png \
+  $(OBJEXTENSION)/ext_enc.png \
+  $(OBJEXTENSION)/hallu.png \
+  $(OBJEXTENSION)/hungry.png \
+  $(OBJEXTENSION)/hvy_enc.png \
+  $(OBJEXTENSION)/icon_128.png \
+  $(OBJEXTENSION)/icon_16.png \
+  $(OBJEXTENSION)/icon_48.png \
+  $(OBJEXTENSION)/int.png \
+  $(OBJEXTENSION)/lawful.png \
+  $(OBJEXTENSION)/mapbg.png \
+  $(OBJEXTENSION)/mod_enc.png \
+  $(OBJEXTENSION)/neutral.png \
+  $(OBJEXTENSION)/nh_icon.png \
+  $(OBJEXTENSION)/nothing.png \
+  $(OBJEXTENSION)/ovr_enc.png \
+  $(OBJEXTENSION)/petmark.png \
+  $(OBJEXTENSION)/satiated.png \
+  $(OBJEXTENSION)/sick_fp.png \
+  $(OBJEXTENSION)/sick_il.png \
+  $(OBJEXTENSION)/slt_enc.png \
+  $(OBJEXTENSION)/str.png \
+  $(OBJEXTENSION)/stunned.png \
+  $(OBJEXTENSION)/wis.png \
+  $(OBJEXTENSION)/x11tiles.png
 
 
-all: $(PUBLISH_FILES)
+all: $(OBJPUBLISH)/nethackext.zip
 
-$(NETHACK32): $(MAKEDEFS) $(OBJ32S) $(OBJPUBLISH)
+$(OBJPUBLISH)/nethackext.zip: $(PUBLISH_FILES)
+	rm -f $@
+	cd $(<D) && zip -r ../nethackext.zip *
+
+$(NETHACK32): $(MAKEDEFS) $(OBJ32S) $(OBJEXTENSION)
 	i686-nacl-g++ $(LDFLAGS) $(LDWRAP) \
         -Wl,--start-group $(LIBS) $(OBJ32S) -Wl,--end-group -o $@
 
-$(NETHACK64): $(MAKEDEFS) $(OBJ64S) $(OBJPUBLISH)
+$(NETHACK64): $(MAKEDEFS) $(OBJ64S) $(OBJEXTENSION)
 	x86_64-nacl-g++ $(LDFLAGS) $(LDWRAP) \
         -Wl,--start-group $(LIBS) $(OBJ64S) -Wl,--end-group -o $@
 
-$(OBJ32) $(OBJ64) $(OBJHOST) $(OBJPUBLISH) $(OBJRESOURCE):
+$(OBJ32) $(OBJ64) $(OBJHOST) $(OBJPUBLISH) $(OBJEXTENSION) $(OBJRESOURCE):
 	mkdir -p $@
 
 $(OBJHOST)/makedefs: $(OBJHOST)/makedefs.o $(OBJHOST)/monst.o $(OBJHOST)/objects.o
@@ -283,7 +288,7 @@ $(OBJHOST)/stamp.sp_lev: $(HOSTBINS) $(OBJRESOURCE)
 	done
 	touch $@
 
-$(OBJPUBLISH)/%: $(NACL_WIN)/%
+$(OBJEXTENSION)/%: $(NACL_WIN)/%
 	cp $< $@
 
 $(NACL_WIN)/nethack.dart: $(DARTFILES)
@@ -296,8 +301,8 @@ $(NACL_WIN)/%.js: $(NACL_WIN)/%.dart
 	sed -i -e 's/_ptr.preventDefault\$$0/_ptr.preventDefault/' $@
 	sed -i -e 's/html_get$$window().get$$localStorage()/window.localStorage/' $@
 
-$(OBJPUBLISH)/nethack.tar: $(NHRESOURCES) | $(OBJPUBLISH)
-	cd $(OBJRESOURCE) && tar -cf ../publish/nethack.tar *
+$(OBJEXTENSION)/nethack.tar: $(NHRESOURCES) | $(OBJEXTENSION)
+	tar -cf $@ -C $(OBJRESOURCE) .
 
 $(OBJRESOURCE)/nhdat: $(OBJHOST)/dlb_main $(GENFILES)
 	touch $@
