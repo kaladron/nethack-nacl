@@ -40,8 +40,19 @@ class MainPage(webapp.RequestHandler):
       self.redirect(users.create_login_url(self.request.uri))
       return
 
-    self.response.headers['Content-Type'] = 'text/plain'
-    self.response.out.write('hi')
+    self.response.headers['Access-Control-Allow-Origin'] = (
+        'chrome-extension://ladkaalcnedlcimjgaldjoeahnklilnk/')
+    self.response.headers['Access-Control-Allow-Credentials'] = 'true'
+    self.response.out.write('<html>\n')
+    self.response.out.write('<head>\n')
+    self.response.out.write('<title>NaClHack</title>\n')
+    self.response.out.write('</head>\n')
+    self.response.out.write('<body>\n')
+    self.response.out.write('[ %s ] <a href="%s">Sign out</a>' % (
+        user.email(),
+        users.create_logout_url(self.request.uri)))
+    self.response.out.write('</body>\n')
+    self.response.out.write('</html>\n')
 
 
 def FileKey(filename, user):
@@ -61,7 +72,10 @@ class FileHandlingPage(webapp.RequestHandler):
     method = split[1]
 
     self.response.headers['Content-Type'] = 'application/octet-stream'
-
+    self.response.headers['Access-Control-Allow-Origin'] = (
+        'chrome-extension://ladkaalcnedlcimjgaldjoeahnklilnk/')
+    self.response.headers['Access-Control-Allow-Credentials'] = 'true'
+    
     if method == 'read':
       filename = self.request.get(u'filename')
       assert filename
