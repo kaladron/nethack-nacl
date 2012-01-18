@@ -77,7 +77,8 @@ class GnomeLike { //implements NethackUi {
 
     DivElement conBox = new Element.tag("div");
     conBox.style.display = "inline-block";
-    conBox.nodes.add(new Element.html('<div><img src="con.png"></div>'));
+    conBox.nodes.add(new Element.html(
+        '<div><img src="constitution.png"></div>'));
     DivElement conText = new Element.tag("div");
     conText.text = "CON: 99";
     conBox.nodes.add(conText);
