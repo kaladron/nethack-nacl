@@ -41,9 +41,27 @@ void initNethack(game, Map<String, String> options) {
   DivElement listener = document.query("#listener");
   listener.nodes.add(nethackEmbed);
 }
+
+DivElement popup;
+
+Element getPopup() {
+  return popup;
+}
+
+void showPopup() {
+  popup.style.width = window.innerWidth.toString() + "px";
+  popup.style.height = window.innerHeight.toString() + "px";
+  popup.style.display = "block";
+}
+
+void clearPopup() {
+  popup.style.display = "none";
+  popup.innerHTML = "";
+}
   
 
 main() {
+  popup = document.query("#popup");
   Storage ls = window.localStorage;
   String optionsString = ls.getItem('options');
   Map<String,String> options;

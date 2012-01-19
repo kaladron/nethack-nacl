@@ -14,7 +14,7 @@ class ExtHandler {
 
   void handleClick(MouseEvent evt) {
     pm(i.toString());
-    gnomelikePopup.remove();
+    clearPopup();
   }
 
   void pm(out) {
@@ -260,10 +260,7 @@ class GnomeLike { //implements NethackUi {
   
       // Args: Pair<Cmd, Desc>*
       case NaclMsg.NACL_MSG_GET_EXT_CMD:
-        gnomelikePopup = new Element.tag("div");
-        gnomelikePopup.id = "popup";
-        gnomelikePopup.style.width = window.innerWidth.toString() + "px";
-        gnomelikePopup.style.height = window.innerHeight.toString() + "px";
+        gnomelikePopup = getPopup();
         // TODO(jeffbailey): Handle keyboard
 
         Iterator<String> iString = data.iterator();
@@ -286,7 +283,7 @@ class GnomeLike { //implements NethackUi {
         }
 
         gnomelikePopup.nodes.add(borderBox);
-        game.nodes.add(gnomelikePopup);
+        showPopup();
         
         break;
 
