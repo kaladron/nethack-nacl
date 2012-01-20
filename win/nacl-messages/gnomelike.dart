@@ -334,7 +334,9 @@ class GnomeLike implements NethackUi {
     if (textWindow.nodes.length > SCROLLBUFFER_SIZE) {
       textWindow.nodes[0].remove();
     }  
-    textWindow.scrollTop = textWindow.scrollHeight;
+    textWindow.rect.then((ElementRect elementRect) {
+      textWindow.scrollTop = elementRect.scroll.height;
+    });
   }
   
   bool mouseNav(MouseEvent evt) {

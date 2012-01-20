@@ -297,7 +297,6 @@ $(NACL_WIN)/nethack.dart: $(DARTFILES)
 $(NACL_WIN)/%.js: $(NACL_WIN)/%.dart
 	minfrog --compile-only --out=$@ $<
 	sed -i -e 's/nethackEmbed.postMessage\$$1/nethackEmbed._ptr.postMessage/' $@
-	sed -i -e 's/textWindow.get\$$scrollHeight()/textWindow._ptr.scrollHeight/' $@
 
 $(OBJEXTENSION)/nethack.tar: $(NHRESOURCES) | $(OBJEXTENSION)
 	tar -cf $@ -C $(OBJRESOURCE) .
