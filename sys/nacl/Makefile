@@ -194,7 +194,7 @@ PUBLISH_FILES = \
   $(OBJEXTENSION)/chaotic.png \
   $(OBJEXTENSION)/cha.png \
   $(OBJEXTENSION)/confused.png \
-  $(OBJEXTENSION)/con.png \
+  $(OBJEXTENSION)/constitution.png \
   $(OBJEXTENSION)/dex.png \
   $(OBJEXTENSION)/ext_enc.png \
   $(OBJEXTENSION)/hallu.png \
