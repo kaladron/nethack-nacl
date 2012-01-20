@@ -18,8 +18,8 @@ ObjectElement nethackEmbed;
 
 void initNethack(game, Map<String, String> options) {
   nethackEmbed = new Element.tag('object');
-  nethackEmbed.width = 0;
-  nethackEmbed.height = 0;
+  nethackEmbed.width = "0";
+  nethackEmbed.height = "0";
   nethackEmbed.on['message'].add(game.handleMessage);
   nethackEmbed.data = "nethack.nmf";
   nethackEmbed.type = "application/x-nacl";
