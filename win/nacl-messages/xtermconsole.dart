@@ -1,4 +1,4 @@
-class XtermConsole {
+class XtermConsole implements NethackUi {
   String windowtype = "tty";
 
   int width = 80;

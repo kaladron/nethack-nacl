@@ -16,7 +16,7 @@ interface NethackUi {
 
 ObjectElement nethackEmbed;
 
-void initNethack(game, Map<String, String> options) {
+void initNethack(NethackUi game, Map<String, String> options) {
   nethackEmbed = new Element.tag('object');
   nethackEmbed.width = "0";
   nethackEmbed.height = "0";
@@ -78,7 +78,7 @@ main() {
 
   // Dart's interfaces are broken, so we use the weak typing.
 
-  var game;
+  NethackUi game;
 
   switch(options["windowtype"]) {
   case "tty":

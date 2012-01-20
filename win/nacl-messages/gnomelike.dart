@@ -22,7 +22,7 @@ class ExtHandler {
   }
 }
 
-class GnomeLike { //implements NethackUi {
+class GnomeLike implements NethackUi {
   int HEIGHT = 24;
   int WIDTH = 80;
   int DISPLAY_SQUARE = 16;
