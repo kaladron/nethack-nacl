@@ -193,7 +193,7 @@ class GnomeLike implements NethackUi {
   }
   
   void handleMessage(var msg) {
-    var prefix = 'JSPipeMount:3:';
+    String prefix = 'JSPipeMount:3:';
     if (!msg.data.startsWith(prefix)) return;
     List<String> data = JSON.parse(msg.data.substring(prefix.length));
     print(data);

@@ -9,7 +9,7 @@ class XtermConsole implements NethackUi {
 
   PreElement pre;
 
-  var prefix = 'JSPipeMount:1:';
+  String prefix = 'JSPipeMount:1:';
 
   Map<int, String> keyMap;
 
