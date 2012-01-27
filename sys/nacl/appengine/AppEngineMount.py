@@ -6,18 +6,19 @@ found in the LICENSE file.
 
 import cgi
 import datetime
+import json
+import logging
+import os
 import urllib
 import wsgiref.handlers
-import os
-import logging
 
-from google.appengine.ext import db
 from google.appengine.api import users
+from google.appengine.ext import db
 from google.appengine.ext import webapp
-from google.appengine.ext.webapp.util import run_wsgi_app
-from google.appengine.ext.webapp import template
-from google.appengine.ext.webapp import Request
 from google.appengine.ext.db import Key
+from google.appengine.ext.webapp import Request
+from google.appengine.ext.webapp import template
+from google.appengine.ext.webapp.util import run_wsgi_app
 
 
 """
@@ -53,6 +54,38 @@ class MainPage(webapp.RequestHandler):
         users.create_logout_url(self.request.uri)))
     self.response.out.write('</body>\n')
     self.response.out.write('</html>\n')
+
+
+class ClosePage(webapp.RequestHandler):
+  def get(self):
+    self.response.out.write('\n'.join([
+      '<html>',
+      '<head>',
+      '<title>NaClHack</title>',
+      '</head>',
+      '<body onload="window.close();">',
+      '</body>',
+      '</html>',
+    ]) + '\n')
+
+
+class StatusPage(webapp.RequestHandler):
+  def get(self):
+    self.response.headers['Access-Control-Allow-Origin'] = (
+        'chrome-extension://ladkaalcnedlcimjgaldjoeahnklilnk/')
+    self.response.headers['Access-Control-Allow-Credentials'] = 'true'
+    self.response.headers['Content-Type'] = 'application/json'
+    reply = {}
+    user = users.get_current_user()
+    if user:
+      reply['logged_in'] = True
+      reply['email'] = user.email()
+      reply['nickname'] = user.nickname()
+      reply['logout_url'] = users.create_logout_url('/_close')
+    else:
+      reply['logged_in'] = False
+      reply['login_url'] = users.create_login_url('/_close')
+    self.response.out.write(json.dumps(reply))
 
 
 def FileKey(filename, user):
@@ -152,6 +185,8 @@ class FileHandlingPage(webapp.RequestHandler):
 
 application = webapp.WSGIApplication([
   ('/', MainPage),
+  ('/_status', StatusPage),
+  ('/_close', ClosePage),
   ('/_file/.*', FileHandlingPage),
 
 ], debug=True)
