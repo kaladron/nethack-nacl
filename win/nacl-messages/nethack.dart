@@ -59,8 +59,32 @@ void clearPopup() {
   popup.innerHTML = "";
 }
   
+addHeader() {
+  Element leftList = new Element.tag('ul');
+  leftList.style.display = "table-cell";
+  leftList.nodes.add(new Element.html('<li>Nethack: TTY Mode</li>'));
+  leftList.nodes.add(new Element.html(
+    '<li><a href="https://naclhack.appspot.com/" target="_blank">' + 
+    'Experimental saved games</a></li>'));
+
+  Element rightList = new Element.tag('ul');
+  rightList.style.display = "table-cell";
+  rightList.style.textAlign = "right";
+  rightList.nodes.add(new Element.html(
+    '<li><a href="http://www.nethack.org/common/license.html">License</a></li>'
+    ));
+  rightList.nodes.add(new Element.html(
+    '<li><a href="https://github.com/kaladron/nethack-nacl">' + 
+    'Source Code</a></li>'));
+
+  Element header = document.query('#header');
+  header.nodes.add(leftList);
+  header.nodes.add(rightList);
+}
+
 
 main() {
+  addHeader();
   popup = document.query("#popup");
   Storage ls = window.localStorage;
   String optionsString = ls.getItem('options');
@@ -75,8 +99,6 @@ main() {
   } else {
     options = JSON.parse(optionsString);
   }
-
-  // Dart's interfaces are broken, so we use the weak typing.
 
   NethackUi game;
 

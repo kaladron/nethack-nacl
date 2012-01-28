@@ -56,6 +56,11 @@ pre > .x-line > span[data-bg=hcolour7] { background-color: rgb(255,255,255); }
   border: 0;
 }
 
+#header {
+  display: table;
+  width: 100%;
+}
+
 #textwindow {
   height: 10em;
   width: 60%;
