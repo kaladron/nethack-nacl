@@ -58,14 +58,23 @@ void clearPopup() {
   popup.style.display = "none";
   popup.innerHTML = "";
 }
+
+void showOptions(MouseEvent evt) {
+  showPopup();
+  evt.preventDefault();
+}
   
-addHeader() {
+void addHeader() {
   Element leftList = new Element.tag('ul');
   leftList.style.display = "table-cell";
   leftList.nodes.add(new Element.html('<li>Nethack: TTY Mode</li>'));
   leftList.nodes.add(new Element.html(
     '<li><a href="https://naclhack.appspot.com/" target="_blank">' + 
     'Experimental saved games</a></li>'));
+  Element options = new Element.html(
+    '<li><a href="">Options</a></li>');
+  options.on.click.add(showOptions);
+  leftList.nodes.add(options);
 
   Element rightList = new Element.tag('ul');
   rightList.style.display = "table-cell";
