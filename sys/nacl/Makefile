@@ -185,6 +185,7 @@ PUBLISH_FILES = \
   $(NETHACK32) \
   $(NETHACK64) \
   $(OBJEXTENSION)/index.html \
+  $(OBJEXTENSION)/license.html \
   $(OBJEXTENSION)/nethack.css \
   $(OBJEXTENSION)/nethack.js \
   $(OBJEXTENSION)/manifest.json \

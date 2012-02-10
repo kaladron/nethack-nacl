@@ -68,19 +68,19 @@ void addHeader() {
   Element leftList = new Element.tag('ul');
   leftList.style.display = "table-cell";
   leftList.nodes.add(new Element.html('<li>Nethack: TTY Mode</li>'));
-  leftList.nodes.add(new Element.html(
-    '<li><a href="https://naclhack.appspot.com/" target="_blank">' + 
-    'Experimental saved games</a></li>'));
+  // leftList.nodes.add(new Element.html(
+  //  '<li><a href="https://naclhack.appspot.com/" target="_blank">' + 
+  //  'Experimental saved games</a></li>'));
   Element options = new Element.html(
     '<li><a href="">Options</a></li>');
   options.on.click.add(showOptions);
-  leftList.nodes.add(options);
+  // leftList.nodes.add(options);
 
   Element rightList = new Element.tag('ul');
   rightList.style.display = "table-cell";
   rightList.style.textAlign = "right";
   rightList.nodes.add(new Element.html(
-    '<li><a href="http://www.nethack.org/common/license.html">License</a></li>'
+    '<li><a href="license.html">License</a></li>'
     ));
   rightList.nodes.add(new Element.html(
     '<li><a href="https://github.com/kaladron/nethack-nacl">' + 
