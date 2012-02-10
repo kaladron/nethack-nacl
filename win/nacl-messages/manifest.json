@@ -8,7 +8,8 @@
     }
   },
   "permissions": [
-    "http://naclhack.appspot.com/"
+    "http://naclhack.appspot.com/",
+    "unlimitedStorage"
   ],
   "icons": {
     "16": "icon_16.png",
