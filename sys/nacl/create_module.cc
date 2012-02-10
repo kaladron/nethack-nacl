@@ -10,11 +10,11 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <ppapi/cpp/instance.h>
-#include "nacl-mounts/AppEngine/AppEngineMount.h"
 #include "nacl-mounts/base/MainThreadRunner.h"
 #include "nacl-mounts/base/UrlLoaderJob.h"
 #include "nacl-mounts/console/JSPipeMount.h"
 #include "nacl-mounts/console/JSPostMessageBridge.h"
+#include "nacl-mounts/pepper/PepperMount.h"
 #include "../../win/nacl-messages/naclmsg.h"
 
 #define TARFILE "nethack.tar"
@@ -27,67 +27,80 @@ int simple_tar_extract(const char *path);
 }
 
 
-static void *nethack_init(void *arg) {
-  MainThreadRunner *runner = reinterpret_cast<MainThreadRunner*>(arg);
-
-  /* Setup home directory to a known location. */
-  setenv("HOME", "/myhome", 1);
-  /* Setup terminal type. */
-  setenv("TERM", "xterm-color", 1);
-  /* Blank out USER and LOGNAME. */
-  setenv("USER", "", 1);
-  setenv("LOGNAME", "", 1);
-  /* Indicate where we decompress things. */
-  setenv("NETHACKDIR", "/usr/games/lib/nethackdir", 1);
-  /* Set location of config file. */
-  setenv("NETHACKOPTIONS", "/myhome/NetHack.cnf", 1);
-
-  mkdir("/usr", 0777);
-  mkdir("/usr/games", 0777);
-  mkdir("/usr/games/lib", 0777);
-  mkdir("/usr/games/lib/nethackdir", 0777);
-  mkdir("/usr/games/lib/nethackdir/save", 0777);
-  AppEngineMount* aem = new AppEngineMount(
-      runner, "http://naclhack.appspot.com/_file");
-  int ret = mount("AppEngine", "/usr/games/lib/nethackdir/save", 0, aem);
-  assert(ret == 0);                                             
-  chdir("/usr/games/lib/nethackdir");
-
-  {
-    UrlLoaderJob *job = new UrlLoaderJob;
-    job->set_url(TARFILE);
-    std::vector<char> data;
-    job->set_dst(&data);
-    runner->RunJob(job);
-    int fh = open("/" TARFILE, O_CREAT | O_WRONLY);
-    write(fh, &data[0], data.size());
-    close(fh);
-  }
-
-  simple_tar_extract("/" TARFILE);
-
-  const char *argv[] = {"nethack"};
-  nethack_main(1, const_cast<char **>(argv));
-
-  return 0;
-}
-
-
 class NethackInstance : public pp::Instance {
  public:
   explicit NethackInstance(PP_Instance instance) : pp::Instance(instance) {
     NaClMessage::SetInstance(this);
     jspipe_ = NULL;
     jsbridge_ = NULL;
+    fs_ = NULL;
   }
 
   virtual ~NethackInstance() {
     if (runner_) delete runner_;
     if (jspipe_) delete jspipe_;
     if (jsbridge_) delete jsbridge_;
+    if (fs_) delete fs_;
+    pthread_join(nethack_thread_, NULL);
+  }
+
+  static void *GameThread(void *arg) {
+    NethackInstance *inst = static_cast<NethackInstance*>(arg);
+    inst->Run();
+    return 0;
+  }
+
+  void Run() {
+    /* Setup home directory to a known location. */
+    setenv("HOME", "/myhome", 1);
+    /* Setup terminal type. */
+    setenv("TERM", "xterm-color", 1);
+    /* Blank out USER and LOGNAME. */
+    setenv("USER", "", 1);
+    setenv("LOGNAME", "", 1);
+    /* Indicate where we decompress things. */
+    setenv("NETHACKDIR", "/usr/games/lib/nethackdir", 1);
+    /* Set location of config file. */
+    setenv("NETHACKOPTIONS", "/myhome/NetHack.cnf", 1);
+
+    // Setup game directory.
+    mkdir("/usr", 0777);
+    mkdir("/usr/games", 0777);
+    mkdir("/usr/games/lib", 0777);
+    mkdir("/usr/games/lib/nethackdir", 0777);
+    mkdir("/usr/games/lib/nethackdir/save", 0777);
+
+    // Mount local storage.
+    {
+      PepperMount* pm = new PepperMount(runner_, fs_, 20 * 1024 * 1024);
+      pm->SetPathPrefix("/nethack-userdata");
+      int ret = mount("local", "/usr/games/lib/nethackdir/save", 0, pm);
+      assert(ret == 0); 
+    }
+
+    chdir("/usr/games/lib/nethackdir");
+    // Make the directory again to create parents on local storage.
+    mkdir("/usr/games/lib/nethackdir/save", 0777);
+
+    {
+      UrlLoaderJob *job = new UrlLoaderJob;
+      job->set_url(TARFILE);
+      std::vector<char> data;
+      job->set_dst(&data);
+      runner_->RunJob(job);
+      int fh = open("/" TARFILE, O_CREAT | O_WRONLY);
+      write(fh, &data[0], data.size());
+      close(fh);
+    }
+
+    simple_tar_extract("/" TARFILE);
+
+    const char *argv[] = {"nethack"};
+    nethack_main(1, const_cast<char **>(argv));
   }
 
   virtual bool Init(uint32_t argc, const char* argn[], const char* argv[]) {
+    fs_ = new pp::FileSystem(this, PP_FILESYSTEMTYPE_LOCALPERSISTENT);
     runner_ = new MainThreadRunner(this);
 
     mkdir("/myhome", 0777);
@@ -96,7 +109,6 @@ class NethackInstance : public pp::Instance {
       fprintf(stderr, "Cannot open config file!\n");
       exit(1);
     }
-
 
     const char**argnwalk = argn;
     const char**argvwalk = argv;
@@ -138,11 +150,11 @@ class NethackInstance : public pp::Instance {
     // Open pipe for messages.
     fd = open("/jspipe/3", O_RDWR);
     assert(fd == 3);
-    
+
 #ifdef USE_PSEUDO_THREADS
-    MainThreadRunner::PseudoThreadFork(nethack_init, runner_);
+    MainThreadRunner::PseudoThreadFork(&GameThread, this);
 #else
-    pthread_create(&nethack_thread_, NULL, nethack_init, runner_);
+    pthread_create(&nethack_thread_, NULL, &GameThread, this);
 #endif
     return true;
   }
@@ -157,6 +169,7 @@ class NethackInstance : public pp::Instance {
   JSPipeMount* jspipe_;
   JSPostMessageBridge* jsbridge_;
   MainThreadRunner *runner_;
+  pp::FileSystem *fs_;
 };
 
 
