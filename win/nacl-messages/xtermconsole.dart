@@ -20,13 +20,7 @@ class XtermConsole implements NethackUi {
     pre.id = "x-pre";
 
     for (int y = 0; y < height; y++) {
-      SpanElement r = new Element.tag("span");
-      r.classes = ['x-line'];
-
-      for (int x = 0; x < width; x++) {
-        r.nodes.add(createCell());
-      }
-
+      Element r = makeRow();
       pre.nodes.add(r);
     }
 
@@ -65,6 +59,18 @@ class XtermConsole implements NethackUi {
       }
     });
   }
+
+  Element makeRow() {
+    SpanElement r = new Element.tag("span");
+    r.classes = ['x-line'];
+
+    for (int x = 0; x < width; x++) {
+      r.nodes.add(createCell());
+    }
+    return r;
+  }
+
+
 
   void setupKeyMap() {
     keyMap = new Map<int, String>();
@@ -172,7 +178,7 @@ class XtermConsole implements NethackUi {
     case 10:
       cursor_x = 0;
       // TODO(jeffbailey): This should scroll the screen.
-      if (cursor_y != width -1) {
+      if (cursor_y != height - 1) {
         cursor_y++;
       }
       return true;
