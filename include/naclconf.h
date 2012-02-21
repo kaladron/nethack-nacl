@@ -29,5 +29,10 @@
 
 #define PORT_ID "nacl"
 
+#undef HACKDIR
+#define HACKDIR "/nethack"
+#define VAR_PLAYGROUND "/mnt/playground/nethack"
+#define NOCWD_ASSUMPTIONS
+
 void regularize(char *);
 

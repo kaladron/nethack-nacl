@@ -220,7 +220,11 @@ PUBLISH_FILES = \
   $(OBJEXTENSION)/str.png \
   $(OBJEXTENSION)/stunned.png \
   $(OBJEXTENSION)/wis.png \
-  $(OBJEXTENSION)/x11tiles.png
+  $(OBJEXTENSION)/x11tiles.png \
+  $(OBJEXTENSION)/terminal.html \
+  $(OBJEXTENSION)/terminal.js \
+  $(OBJEXTENSION)/terminal.css \
+  $(OBJEXTENSION)/interlace.png 
 
 
 all: $(OBJPUBLISH)/nethackext.zip

@@ -85,12 +85,30 @@ void addHeader() {
   rightList.nodes.add(new Element.html(
     '<li><a href="https://github.com/kaladron/nethack-nacl">' + 
     'Source Code</a></li>'));
+  rightList.nodes.add(new Element.html(
+    '<li><a href="terminal.html">' + 
+    'Terminal</a></li>'));
 
   Element header = document.query('#header');
   header.nodes.add(leftList);
   header.nodes.add(rightList);
 }
 
+
+void setOptions() {
+  // Get Filesystem
+
+  // Does /home/NetHack.cnf exist?
+
+  // Yes?  return
+
+  // No?  Make it.
+
+  // Add contents:
+
+  // OPTIONS=windowtype:tty,hilite_pet,color
+  // OPTIONS=pickup_types:$
+}
 
 main() {
   addHeader();

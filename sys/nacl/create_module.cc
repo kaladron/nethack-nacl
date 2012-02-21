@@ -52,35 +52,36 @@ class NethackInstance : public pp::Instance {
 
   void Run() {
     /* Setup home directory to a known location. */
-    setenv("HOME", "/myhome", 1);
+    setenv("HOME", "/mnt/home", 1);
     /* Setup terminal type. */
     setenv("TERM", "xterm-color", 1);
     /* Blank out USER and LOGNAME. */
     setenv("USER", "", 1);
     setenv("LOGNAME", "", 1);
     /* Indicate where we decompress things. */
-    setenv("NETHACKDIR", "/usr/games/lib/nethackdir", 1);
+    setenv("HACKDIR", "/nethack", 1);
     /* Set location of config file. */
-    setenv("NETHACKOPTIONS", "/myhome/NetHack.cnf", 1);
+    setenv("NETHACKOPTIONS", "/mnt/home/NetHack.cnf", 1);
 
     // Setup game directory.
-    mkdir("/usr", 0777);
-    mkdir("/usr/games", 0777);
-    mkdir("/usr/games/lib", 0777);
-    mkdir("/usr/games/lib/nethackdir", 0777);
-    mkdir("/usr/games/lib/nethackdir/save", 0777);
+    mkdir("/nethack", 0777);
+    mkdir("/mnt", 0777);
 
     // Mount local storage.
     {
       PepperMount* pm = new PepperMount(runner_, fs_, 20 * 1024 * 1024);
       pm->SetPathPrefix("/nethack-userdata");
-      int ret = mount("local", "/usr/games/lib/nethackdir/save", 0, pm);
+      //int ret = mount("local", "/usr/games/lib/nethackdir", 0, pm);
+      int ret = mount("local", "/mnt", 0, pm);
       assert(ret == 0); 
     }
 
-    chdir("/usr/games/lib/nethackdir");
-    // Make the directory again to create parents on local storage.
-    mkdir("/usr/games/lib/nethackdir/save", 0777);
+    mkdir("/mnt/home", 0777);
+    mkdir("/mnt/playground", 0777);
+    mkdir("/mnt/playground/nethack", 0777);
+    mkdir("/mnt/playground/nethack/save", 0777);
+
+    chdir("/nethack");
 
     {
       UrlLoaderJob *job = new UrlLoaderJob;
@@ -102,35 +103,6 @@ class NethackInstance : public pp::Instance {
   virtual bool Init(uint32_t argc, const char* argn[], const char* argv[]) {
     fs_ = new pp::FileSystem(this, PP_FILESYSTEMTYPE_LOCALPERSISTENT);
     runner_ = new MainThreadRunner(this);
-
-    mkdir("/myhome", 0777);
-    FILE* cfg_file = fopen("/myhome/NetHack.cnf", "w+");
-    if (cfg_file == NULL) {
-      fprintf(stderr, "Cannot open config file!\n");
-      exit(1);
-    }
-
-    const char**argnwalk = argn;
-    const char**argvwalk = argv;
-    uint32_t argcwalk = 0;
-    for (;argcwalk < argc; argnwalk++, argvwalk++, argcwalk++) {
-      // Skip DOM noise.
-      if (!strcmp(*argnwalk, "width")) continue;
-      if (!strcmp(*argnwalk, "height")) continue;
-      if (!strcmp(*argnwalk, "data")) continue;
-      if (!strcmp(*argnwalk, "type")) continue;
-      if (!strcmp(*argnwalk, "src")) continue;
-      if (!strcmp(*argnwalk, "@dev")) continue;
-
-      fprintf(stderr, "argn: %s, argv: %s\n", *argnwalk, *argvwalk);
-
-      if (!strcmp(*argvwalk, "")) {
-        fprintf(cfg_file, "OPTIONS=%s\n", *argnwalk);
-      } else {
-        fprintf(cfg_file, "OPTIONS=%s:%s\n", *argnwalk, *argvwalk);
-      }
-    }
-    fclose(cfg_file);
 
     jsbridge_ = new JSPostMessageBridge(runner_);
     jspipe_ = new JSPipeMount();
