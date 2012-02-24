@@ -139,7 +139,9 @@ done2()
 #  endif
 # endif
 	    if ((c = ynq(tmp)) == 'y') {
+# ifndef NO_SIGNAL
 		(void) signal(SIGINT, (SIG_RET_TYPE) done1);
+# endif
 		exit_nhwindows((char *)0);
 		NH_abort();
 	    } else if (c == 'q') done_stopprint++;

@@ -6,7 +6,7 @@ char erase_char, kill_char;
 
 void gettty() { }
 
-void settty() { }
+void settty(const char* unused) { }
 
 void setftty() {
   iflags.cbreak = ON;
@@ -16,3 +16,7 @@ void setftty() {
 void setctty() { }
 
 }
+
+void introff() { }
+
+void intron() { }

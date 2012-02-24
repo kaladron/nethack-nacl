@@ -22,7 +22,6 @@
 #endif
 
 #ifdef __native_client__
-# undef UNIX
 # define NEED_VARARGS
 # define USE_STDARG
 #endif
