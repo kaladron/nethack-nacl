@@ -23,7 +23,7 @@
 extern "C" {
 int nethack_main(int argc, char *argv[]);
 int mount(const char *type, const char *dir, int flags, void *data);
-int simple_tar_extract(const char *path);
+int simple_tar_extract_to(const char *path, const char *dst);
 }
 
 
@@ -81,8 +81,6 @@ class NethackInstance : public pp::Instance {
     mkdir("/mnt/playground/nethack", 0777);
     mkdir("/mnt/playground/nethack/save", 0777);
 
-    chdir("/nethack");
-
     {
       UrlLoaderJob *job = new UrlLoaderJob;
       job->set_url(TARFILE);
@@ -94,7 +92,7 @@ class NethackInstance : public pp::Instance {
       close(fh);
     }
 
-    simple_tar_extract("/" TARFILE);
+    simple_tar_extract_to("/" TARFILE, "/nethack");
 
     const char *argv[] = {"nethack"};
     nethack_main(1, const_cast<char **>(argv));
