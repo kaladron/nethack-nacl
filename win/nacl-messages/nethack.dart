@@ -1,5 +1,6 @@
 #import('dart:html');
 #import('dart:json');
+#import('dart:dom', prefix:'dom');
 
 #source('gnomelike.dart');
 #source('nacl_msg.dart');
@@ -94,25 +95,40 @@ void addHeader() {
   header.nodes.add(rightList);
 }
 
+void initOptions() {
+  dom.window.webkitRequestFileSystem(dom.DOMWindow.PERSISTENT, 5*1024*1024, makeOptionsFile);
+}
 
-void setOptions() {
-  // Get Filesystem
+void errorHandler() {
+  return;
+}
 
-  // Does /home/NetHack.cnf exist?
+void makeOptionsFile(dom.DOMFileSystem fs) {
 
-  // Yes?  return
+//  fs.root.getFile('NetHack.cnf', {'create': true, 'exclusive': true}, (var fileEntry) {
+//
+//    fileEntry.createWriter((var fileWriter) {
+//      var bb = new dom.BlobBuilder();
+//      //bb.append('OPTIONS=windowtype:tty,hilite_pet,color');
+//      //bb.append('OPTIONS=pickup_types:\$');
+//
+//    //  fileWriter.write(bb.getBlog('text/plain'));
+//    }, errorHandler);
+//
+//
+//  }, errorHandler);
+//
 
-  // No?  Make it.
-
-  // Add contents:
-
-  // OPTIONS=windowtype:tty,hilite_pet,color
-  // OPTIONS=pickup_types:$
+  startGame();
 }
 
 main() {
   addHeader();
   popup = document.query("#popup");
+  initOptions();
+}
+
+void startGame() {
   Storage ls = window.localStorage;
   String optionsString = ls.getItem('options');
   Map<String,String> options;
