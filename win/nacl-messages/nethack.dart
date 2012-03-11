@@ -68,26 +68,22 @@ void addHeader() {
   Element leftList = new Element.tag('ul');
   leftList.style.display = "table-cell";
   leftList.nodes.add(new Element.html('<li>Nethack: TTY Mode</li>'));
-  // leftList.nodes.add(new Element.html(
-  //  '<li><a href="https://naclhack.appspot.com/" target="_blank">' + 
-  //  'Experimental saved games</a></li>'));
   Element options = new Element.html(
     '<li><a href="">Options</a></li>');
   options.on.click.add(showOptions);
-  // leftList.nodes.add(options);
 
   Element rightList = new Element.tag('ul');
   rightList.style.display = "table-cell";
   rightList.style.textAlign = "right";
   rightList.nodes.add(new Element.html(
-    '<li><a href="license.html">License</a></li>'
+    '<li><a href="license.html" target="_blank">License</a></li>'
     ));
   rightList.nodes.add(new Element.html(
-    '<li><a href="https://github.com/kaladron/nethack-nacl">' + 
+    '<li><a href="https://github.com/kaladron/nethack-nacl" target="_blank">' +
     'Source Code</a></li>'));
-  rightList.nodes.add(new Element.html(
-    '<li><a href="terminal.html">' + 
-    'Terminal</a></li>'));
+  //rightList.nodes.add(new Element.html(
+  //  '<li><a href="terminal.html">' + 
+  //  'Terminal</a></li>'));
 
   Element header = document.query('#header');
   header.nodes.add(leftList);
@@ -95,7 +91,7 @@ void addHeader() {
 }
 
 void initOptions() {
-  window.webkitRequestFileSystem(Window.PERSISTENT, 5*1024*1024, makeOptionsFile);
+  window.webkitRequestFileSystem(Window.PERSISTENT, 5*1024*1024, makeOptionsDir);
 }
 
 bool errorHandler(FileError error) {
@@ -106,6 +102,19 @@ bool errorHandler(FileError error) {
 class FileStatus {
   bool create;
   bool exclusive;
+}
+
+void makeOptionsDir(DOMFileSystem fs) {
+  FileStatus fstatus = new FileStatus();
+  fstatus.create = true;
+  fstatus.exclusive = false;
+
+  fs.root.getDirectory('nethack-userdata', fstatus, (var dirEntry) {
+    dirEntry.getDirectory('home', fstatus, (var dirEntry) {
+      makeOptionsFile(fs);
+    });
+  });
+
 }
 
 void makeOptionsFile(DOMFileSystem fs) {
