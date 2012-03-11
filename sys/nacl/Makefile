@@ -300,8 +300,8 @@ $(NACL_WIN)/nethack.dart: $(DARTFILES)
 	touch $@
 
 $(NACL_WIN)/%.js: $(NACL_WIN)/%.dart
-	minfrog --compile-only --out=$@ $<
-	sed -i -e 's/nethackEmbed.postMessage\$$1/nethackEmbed._ptr.postMessage/' $@
+	frogc --compile-only --out=$@ $<
+	sed -i -e 's/nethackEmbed.postMessage\$$1/nethackEmbed.postMessage/' $@
 
 $(OBJEXTENSION)/nethack.tar: $(NHRESOURCES) | $(OBJEXTENSION)
 	tar -cf $@ -C $(OBJRESOURCE) .

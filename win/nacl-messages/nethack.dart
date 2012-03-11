@@ -1,6 +1,5 @@
 #import('dart:html');
 #import('dart:json');
-#import('dart:dom', prefix:'dom');
 
 #source('gnomelike.dart');
 #source('nacl_msg.dart');
@@ -96,30 +95,42 @@ void addHeader() {
 }
 
 void initOptions() {
-  dom.window.webkitRequestFileSystem(dom.DOMWindow.PERSISTENT, 5*1024*1024, makeOptionsFile);
+  window.webkitRequestFileSystem(Window.PERSISTENT, 5*1024*1024, makeOptionsFile);
 }
 
-void errorHandler() {
-  return;
-}
-
-void makeOptionsFile(dom.DOMFileSystem fs) {
-
-//  fs.root.getFile('NetHack.cnf', {'create': true, 'exclusive': true}, (var fileEntry) {
-//
-//    fileEntry.createWriter((var fileWriter) {
-//      var bb = new dom.BlobBuilder();
-//      //bb.append('OPTIONS=windowtype:tty,hilite_pet,color');
-//      //bb.append('OPTIONS=pickup_types:\$');
-//
-//    //  fileWriter.write(bb.getBlog('text/plain'));
-//    }, errorHandler);
-//
-//
-//  }, errorHandler);
-//
-
+bool errorHandler(FileError error) {
   startGame();
+  return true;
+}
+
+class FileStatus {
+  bool create;
+  bool exclusive;
+}
+
+void makeOptionsFile(DOMFileSystem fs) {
+
+  FileStatus fstatus = new FileStatus();
+  fstatus.create = true;
+  fstatus.exclusive = true;
+
+  fs.root.getFile('/nethack-userdata/home/NetHack.cnf',
+    fstatus, (var fileEntry) {
+
+    fileEntry.createWriter((var fileWriter) {
+
+      fileWriter.onwriteend = startGame;
+
+      BlobBuilder bb = new _BlobBuilderImpl();
+      bb.append('OPTIONS=windowtype:tty,hilite_pet,color\n');
+      bb.append('OPTIONS=pickup_types:\$\n');
+
+      fileWriter.write(bb.getBlob('text/plain'));
+    }, errorHandler);
+
+
+  }, errorHandler);
+
 }
 
 main() {
