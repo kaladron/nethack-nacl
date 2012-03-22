@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <ppapi/cpp/instance.h>
+#include "nacl-mounts/base/KernelProxy.h"
 #include "nacl-mounts/base/MainThreadRunner.h"
 #include "nacl-mounts/base/UrlLoaderJob.h"
 #include "nacl-mounts/console/JSPipeMount.h"
@@ -22,7 +23,6 @@
 
 extern "C" {
 int nethack_main(int argc, char *argv[]);
-int mount(const char *type, const char *dir, int flags, void *data);
 int simple_tar_extract_to(const char *path, const char *dst);
 }
 
@@ -64,22 +64,21 @@ class NethackInstance : public pp::Instance {
     setenv("NETHACKOPTIONS", "/mnt/home/NetHack.cnf", 1);
 
     // Setup game directory.
-    mkdir("/nethack", 0777);
-    mkdir("/mnt", 0777);
+    kp_->mkdir("/nethack", 0777);
+    kp_->mkdir("/mnt", 0777);
 
     // Mount local storage.
     {
       PepperMount* pm = new PepperMount(runner_, fs_, 20 * 1024 * 1024);
       pm->SetPathPrefix("/nethack-userdata");
-      //int ret = mount("local", "/usr/games/lib/nethackdir", 0, pm);
-      int ret = mount("local", "/mnt", 0, pm);
+      int ret = kp_->mount("/mnt", pm);
       assert(ret == 0); 
     }
 
-    mkdir("/mnt/home", 0777);
-    mkdir("/mnt/playground", 0777);
-    mkdir("/mnt/playground/nethack", 0777);
-    mkdir("/mnt/playground/nethack/save", 0777);
+    kp_->mkdir("/mnt/home", 0777);
+    kp_->mkdir("/mnt/playground", 0777);
+    kp_->mkdir("/mnt/playground/nethack", 0777);
+    kp_->mkdir("/mnt/playground/nethack/save", 0777);
 
     {
       UrlLoaderJob *job = new UrlLoaderJob;
@@ -101,6 +100,7 @@ class NethackInstance : public pp::Instance {
   virtual bool Init(uint32_t argc, const char* argn[], const char* argv[]) {
     fs_ = new pp::FileSystem(this, PP_FILESYSTEMTYPE_LOCALPERSISTENT);
     runner_ = new MainThreadRunner(this);
+    kp_ = KernelProxy::KPInstance();
 
     jsbridge_ = new JSPostMessageBridge(runner_);
     jspipe_ = new JSPipeMount();
@@ -109,7 +109,7 @@ class NethackInstance : public pp::Instance {
     jspipe_->set_using_pseudo_thread(true);
 #endif
     // Replace stdin, stdout with js console.
-    mount("jspipe", "/jspipe", 0, jspipe_);
+    kp_->mount("/jspipe", jspipe_);
     close(0);
     close(1);
     int fd;
@@ -139,6 +139,7 @@ class NethackInstance : public pp::Instance {
   JSPipeMount* jspipe_;
   JSPostMessageBridge* jsbridge_;
   MainThreadRunner *runner_;
+  KernelProxy *kp_;
   pp::FileSystem *fs_;
 };
 
