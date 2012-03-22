@@ -15,13 +15,13 @@
 #define FCMASK  0660    /* file creation mask */
 #define NO_SIGNAL
 
-#define STRNCMPI
+// define STRNCMPI
 #define TEXTCOLOR
 
 #define TIMED_DELAY    /* usleep() */
 #define msleep(k) sleep((k)/1000)
 
-#define POSIX_TYPES
+//undef POSIX_TYPES
 
 #define HLOCK   "perm"  /* an empty file used for locking purposes */
 

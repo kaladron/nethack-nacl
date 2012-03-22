@@ -18,6 +18,8 @@ UTIL  = $(top_srcdir)/util
 SRC   = $(top_srcdir)/src
 # Unix source
 UNIX_SRC = $(top_srcdir)/sys/unix
+# Shared source
+SHARED_SRC = $(top_srcdir)/sys/share
 # Nacl source
 NACL_SRC = $(top_srcdir)/sys/nacl
 # Nacl Windows
@@ -41,6 +43,7 @@ VPATH = $(SRC) \
 	$(NACL_SRC) \
 	$(NACL_WIN) \
 	$(UNIX_SRC) \
+	$(SHARED_SRC) \
 	$(TTY_WIN) \
 	$(WIN_SHARE)
 
@@ -79,8 +82,10 @@ GENHDRS = $(INCL)/date.h $(INCL)/onames.h $(INCL)/pm.h
 #GENSRCS = $(SRC)/monstr.c $(SRC)/tile.c
 
 OBJS ?= \
+	ioctl.o \
 	unixmain.o \
 	unixunix.o \
+	unixtty.o \
 	$(patsubst %.c,%.o,$(notdir $(GENSRCS))) \
 	$(patsubst %.c,%.o,$(notdir $(wildcard $(SRC)/*.c))) \
 	$(patsubst %.c,%.o,$(notdir $(wildcard $(TTY_WIN)/*.c))) \
@@ -179,7 +184,7 @@ WRAPFUNC = \
 	   unlink \
 	   write
 
-LDWRAP = $(foreach x, $(WRAPFUNC), -Xlinker --wrap -Xlinker $(x))
+#LDWRAP = $(foreach x, $(WRAPFUNC), -Xlinker --wrap -Xlinker $(x))
 
 PUBLISH_FILES = \
   $(NETHACK32) \
@@ -228,6 +233,9 @@ PUBLISH_FILES = \
 
 
 all: $(OBJPUBLISH)/nethackext.zip
+
+$(OBJEXTENSION)/nethack.nmf: $(NETHACK32) $(NETHACK64)
+	cd $(OBJEXTENSION) && create_nmf.py $(notdir $^) -L ${NACL_SDK_ROOT}/toolchain/linux_x86_glibc/x86_64-nacl/lib32 -L ${NACL_SDK_ROOT}/toolchain/linux_x86_glibc/x86_64-nacl/lib64 -o $@ -s .
 
 $(OBJPUBLISH)/nethackext.zip: $(PUBLISH_FILES)
 	rm -f $@

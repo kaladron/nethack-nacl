@@ -1,5 +1,5 @@
 #!/bin/bash
-export NACL_SDK_ROOT=/home/jeffbailey/Programming/svntree/naclports/src/
+export NACL_SDK_ROOT=/home/jeffbailey/Programming/nacl_sdk/pepper_18
+export NACL_TOOLS=${NACL_SDK_ROOT}/tools
 export DART=/home/jeffbailey/Programming/gclienttree/dart/dart/out/Debug_ia32/dart-sdk/bin
-#export DART=/home/jeffbailey/Programming/gclienttree/dart-bleeding/dart/out/Debug_ia32/dart-sdk/bin
-export PATH=${DART}:${NACL_SDK_ROOT}/toolchain/linux_x86_newlib/bin:$PATH
+export PATH=${DART}:${NACL_SDK_ROOT}/toolchain/linux_x86_glibc/bin:${NACL_TOOLS}:${PATH}
