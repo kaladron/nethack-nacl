@@ -28,6 +28,8 @@ NACL_WIN = $(top_srcdir)/win/nacl-messages
 TTY_WIN = $(top_srcdir)/win/tty
 # Win Share
 WIN_SHARE = $(top_srcdir)/win/share
+# NACL OS TYPE
+NACL_OS_TYPE=$(shell getos.py)
 
 # Objects
 OBJ32 = $(top_srcdir)/obj32
@@ -235,7 +237,7 @@ PUBLISH_FILES = \
 all: $(OBJPUBLISH)/nethackext.zip
 
 $(OBJEXTENSION)/nethack.nmf: $(NETHACK32) $(NETHACK64)
-	cd $(OBJEXTENSION) && create_nmf.py $(notdir $^) -L ${NACL_SDK_ROOT}/toolchain/linux_x86_glibc/x86_64-nacl/lib32 -L ${NACL_SDK_ROOT}/toolchain/linux_x86_glibc/x86_64-nacl/lib64 -o $@ -s .
+	cd $(OBJEXTENSION) && create_nmf.py $(notdir $^) -L ${NACL_SDK_ROOT}/toolchain/$(NACL_OS_TYPE)_x86_glibc/x86_64-nacl/lib32 -L ${NACL_SDK_ROOT}/toolchain/$(NACL_OS_TYPE)_x86_glibc/x86_64-nacl/lib64 -D x86_64-nacl-objdump -o $@ -s .
 
 $(OBJPUBLISH)/nethackext.zip: $(PUBLISH_FILES)
 	rm -f $@
