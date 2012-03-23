@@ -180,6 +180,7 @@ setctty()
 void
 gettty()
 {
+#if 0
 	if(GTTY(&inittyb) < 0 || GTTY2(&inittyb2) < 0)
 		perror("NetHack (gettty)");
 	curttyb = inittyb;
@@ -196,6 +197,7 @@ gettty()
 		setctty();
 	}
 	settty_needed = TRUE;
+#endif 0 // solve this later.
 }
 
 /* reset terminal to original state */

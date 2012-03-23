@@ -81,9 +81,9 @@ void addHeader() {
   rightList.nodes.add(new Element.html(
     '<li><a href="https://github.com/kaladron/nethack-nacl" target="_blank">' +
     'Source Code</a></li>'));
-  //rightList.nodes.add(new Element.html(
-  //  '<li><a href="terminal.html">' + 
-  //  'Terminal</a></li>'));
+  rightList.nodes.add(new Element.html(
+    '<li><a href="terminal.html">' + 
+    'Terminal</a></li>'));
 
   Element header = document.query('#header');
   header.nodes.add(leftList);
