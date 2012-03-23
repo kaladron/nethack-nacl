@@ -20,3 +20,7 @@ void setctty() { }
 void introff() { }
 
 void intron() { }
+
+int isatty(int fd) {
+  return 1;
+}
