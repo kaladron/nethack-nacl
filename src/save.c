@@ -2,6 +2,8 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <errno.h>
+
 #include "hack.h"
 #include "lev.h"
 #include "quest.h"
@@ -700,12 +702,14 @@ void
 bufon(fd)
     int fd;
 {
-#ifdef UNIX
+#if defined UNIX && !defined(__native_client__)
     if(bw_fd >= 0)
 	panic("double buffering unexpected");
     bw_fd = fd;
-    if((bw_FILE = fdopen(fd, "w")) == 0)
+    if((bw_FILE = fdopen(fd, "w")) == 0) {
+        fprintf(stderr, "%s\n", strerror(errno));
 	panic("buffering of file %d failed", fd);
+    }
 #endif
     buffering = TRUE;
 }
@@ -722,7 +726,7 @@ void
 bflush(fd)
     int fd;
 {
-#ifdef UNIX
+#if defined UNIX && !defined(__native_client__)
     if(fd == bw_fd) {
 	if(fflush(bw_FILE) == EOF)
 	    panic("flush of savefile failed!");
@@ -744,7 +748,7 @@ register unsigned num;
 	if (count_only) return;
 #endif
 
-#ifdef UNIX
+#if defined UNIX && !defined(__native_client__)
 	if (buffering) {
 	    if(fd != bw_fd)
 		panic("unbuffered write to fd %d (!= %d)", fd, bw_fd);
@@ -776,7 +780,7 @@ bclose(fd)
     int fd;
 {
     bufoff(fd);
-#ifdef UNIX
+#if defined UNIX && !defined(__native_client__)
     if (fd == bw_fd) {
 	(void) fclose(bw_FILE);
 	bw_fd = -1;
