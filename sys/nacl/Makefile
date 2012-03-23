@@ -83,11 +83,11 @@ DARTFILES = $(NACL_WIN)/gnomelike.dart \
 GENHDRS = $(INCL)/date.h $(INCL)/onames.h $(INCL)/pm.h
 #GENSRCS = $(SRC)/monstr.c $(SRC)/tile.c
 
+	# unixtty.o 
 OBJS ?= \
 	ioctl.o \
 	unixmain.o \
 	unixunix.o \
-	unixtty.o \
 	$(patsubst %.c,%.o,$(notdir $(GENSRCS))) \
 	$(patsubst %.c,%.o,$(notdir $(wildcard $(SRC)/*.c))) \
 	$(patsubst %.c,%.o,$(notdir $(wildcard $(TTY_WIN)/*.c))) \
