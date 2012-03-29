@@ -312,6 +312,7 @@ $(NACL_WIN)/nethack.dart: $(DARTFILES)
 $(NACL_WIN)/%.js: $(NACL_WIN)/%.dart
 	frogc --compile-only --out=$@ $<
 	sed -i -e 's/nethackEmbed.postMessage\$$1/nethackEmbed.postMessage/' $@
+	sed -i -e 's/body.get\$$on().get\$$beforeUnload().add(warnOnClose, false)/body.onbeforeunload=warnOnClose/' $@
 
 $(OBJEXTENSION)/nethack.tar: $(NHRESOURCES) | $(OBJEXTENSION)
 	tar -cf $@ -C $(OBJRESOURCE) .

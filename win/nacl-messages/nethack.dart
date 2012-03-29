@@ -142,7 +142,13 @@ void makeOptionsFile(DOMFileSystem fs) {
 
 }
 
+String warnOnClose(Event event) {
+  return "Warning: unsaved progress will be lost!";
+}
+
 main() {
+  BodyElement body = document.body;
+  body.on.beforeUnload.add(warnOnClose);
   addHeader();
   popup = document.query("#popup");
   initOptions();
