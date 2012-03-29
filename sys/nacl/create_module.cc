@@ -149,6 +149,7 @@ class NethackModule : public pp::Module {
   virtual pp::Instance* CreateInstance(PP_Instance instance) {
     return new NethackInstance(instance);
   }
+  virtual ~NethackModule() { }
 };
 
 
