@@ -335,7 +335,7 @@ class GnomeLike implements NethackUi {
       textWindow.nodes[0].remove();
     }  
     textWindow.rect.then((ElementRect elementRect) {
-      textWindow.scrollTop = elementRect.scroll.height;
+      textWindow.$dom_scrollTop = elementRect.scroll.height;
     });
   }
   
