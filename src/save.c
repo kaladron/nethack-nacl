@@ -702,7 +702,7 @@ void
 bufon(fd)
     int fd;
 {
-#if defined UNIX && !defined(__native_client__)
+#if defined UNIX
     if(bw_fd >= 0)
 	panic("double buffering unexpected");
     bw_fd = fd;
@@ -726,7 +726,7 @@ void
 bflush(fd)
     int fd;
 {
-#if defined UNIX && !defined(__native_client__)
+#if defined UNIX
     if(fd == bw_fd) {
 	if(fflush(bw_FILE) == EOF)
 	    panic("flush of savefile failed!");

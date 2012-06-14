@@ -21,9 +21,9 @@ void introff() { }
 
 void intron() { }
 
-int isatty(int fd) {
-  return 1;
-}
+//int isatty(int fd) {
+//  return 1;
+//}
 
 uid_t getuid() {
   return 1001;

@@ -310,7 +310,7 @@ $(NACL_WIN)/nethack.dart: $(DARTFILES)
 	touch $@
 
 $(NACL_WIN)/%.js: $(NACL_WIN)/%.dart
-	frogc --compile-only --out=$@ $<
+	dart2js --out=$@ $<
 	sed -i -e 's/nethackEmbed.postMessage\$$1/nethackEmbed.postMessage/' $@
 	sed -i -e 's/body.get\$$on().get\$$beforeUnload().add(warnOnClose, false)/body.onbeforeunload=warnOnClose/' $@
 
