@@ -195,6 +195,7 @@ PUBLISH_FILES = \
   $(OBJEXTENSION)/license.html \
   $(OBJEXTENSION)/nethack.css \
   $(OBJEXTENSION)/nethack.js \
+  $(OBJEXTENSION)/initfs.js \
   $(OBJEXTENSION)/manifest.json \
   $(OBJEXTENSION)/nethack.nmf \
   $(OBJEXTENSION)/nethack.tar \

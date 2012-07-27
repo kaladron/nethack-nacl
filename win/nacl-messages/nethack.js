@@ -30,6 +30,8 @@ function Nethack(argv) {
   this.pid_ = -1;
 };
 
+var nethackEmbed;
+
 /**
  * Prefix for text from the pipe mount.
  *
@@ -90,10 +92,19 @@ Nethack.prototype.onProcessOutput_ = function(pid, type, text) {
   this.io.print(text);
 }
 
-function handleMessage(e) {
+/**
+ * Handle messages sent to us from NaCl.
+ *
+ * @private
+ */
+Nethack.prototype.handleMessage_ = function(e) {
   if (e.data.indexOf(Nethack.prefix_) != 0) return;
   var msg = e.data.substring(Nethack.prefix_.length);
   term_.io.print(msg);  
+}
+
+function got(str) {
+  nethackEmbed.postMessage('JSPipeMount:0:' + str);
 }
 
 /**
@@ -102,13 +113,19 @@ function handleMessage(e) {
  * This is invoked by the terminal as a result of terminal.runCommandClass().
  */
 Nethack.prototype.run = function() {
+  var worker = new Worker('initfs.js');
+  worker.onmessage = this.startGame.bind(this);
+  worker.postMessage(true);
+};
+
+Nethack.prototype.startGame = function(event) {
   this.io = this.argv_.io.push();
 
   // Create the object for Nethack.
-  var nethackEmbed = document.createElement('object');
+  nethackEmbed = document.createElement('object');
   nethackEmbed.width = 0;
   nethackEmbed.height = 0;
-  nethackEmbed.addEventListener('message', handleMessage);
+  nethackEmbed.addEventListener('message', this.handleMessage_.bind(this));
   nethackEmbed.data = 'nethack.nmf';
   nethackEmbed.type = 'application/x-nacl';
 
@@ -119,17 +136,12 @@ Nethack.prototype.run = function() {
 
   document.getElementById('listener').appendChild(nethackEmbed);
 
+  this.io.onVTKeystroke = got;
+
   return;
   // TODO(jeffbailey): 
   // Everything past this point is old code and should
   // be removed once things work.
-
-  if (!chrome.terminalPrivate) {
-    this.io.println("Nethack is not supported on your version of Chrome :(");
-    this.io.println("Minimal version of Chrome needed to run crosh is 18.");
-    this.exit(1);
-    return;
-  }
 
   this.io.onVTKeystroke = this.sendString_.bind(this);
   this.io.sendString = this.sendString_.bind(this);
@@ -223,3 +235,4 @@ Nethack.prototype.exit = function(code) {
   if (this.argv_.onExit)
     this.argv_.onExit(code);
 };
+

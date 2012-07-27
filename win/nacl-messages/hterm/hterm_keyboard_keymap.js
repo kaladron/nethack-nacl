@@ -254,7 +254,7 @@ hterm.Keyboard.KeyMap.prototype.reset = function() {
     [76,  'lL',      DEFAULT, ctl('L'),           DEFAULT, DEFAULT],
     [186, ';:',      DEFAULT, STRIP,              DEFAULT, DEFAULT],
     [222, '\'"',     DEFAULT, STRIP,              DEFAULT, DEFAULT],
-    [13,  '[ENTER]', '\r',    CANCEL,             CANCEL,  DEFAULT],
+    [13,  '[ENTER]', '\n',    CANCEL,             CANCEL,  DEFAULT],
 
     // Fifth row.  This includes the copy/paste shortcuts.  On some
     // platforms it's Ctrl-C/V, on others it's Meta-C/V.  We assume either
