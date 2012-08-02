@@ -195,6 +195,7 @@ PUBLISH_FILES = \
   $(OBJEXTENSION)/license.html \
   $(OBJEXTENSION)/nethack.css \
   $(OBJEXTENSION)/nethack.js \
+  $(OBJEXTENSION)/initfs.js \
   $(OBJEXTENSION)/manifest.json \
   $(OBJEXTENSION)/nethack.nmf \
   $(OBJEXTENSION)/nethack.tar \
@@ -231,8 +232,30 @@ PUBLISH_FILES = \
   $(OBJEXTENSION)/terminal.html \
   $(OBJEXTENSION)/terminal.js \
   $(OBJEXTENSION)/terminal.css \
-  $(OBJEXTENSION)/interlace.png 
-
+  $(OBJEXTENSION)/interlace.png \
+  $(OBJEXTENSION)/hterm/hterm_bin.js \
+  $(OBJEXTENSION)/hterm/hterm_frame.js \
+  $(OBJEXTENSION)/hterm/hterm.js \
+  $(OBJEXTENSION)/hterm/hterm_keyboard.js \
+  $(OBJEXTENSION)/hterm/hterm_keyboard_keymap.js \
+  $(OBJEXTENSION)/hterm/hterm_mock_row_provider.js \
+  $(OBJEXTENSION)/hterm/hterm_options.js \
+  $(OBJEXTENSION)/hterm/hterm_pubsub.js \
+  $(OBJEXTENSION)/hterm/hterm_screen.js \
+  $(OBJEXTENSION)/hterm/hterm_scrollport.js \
+  $(OBJEXTENSION)/hterm/hterm_terminal_io.js \
+  $(OBJEXTENSION)/hterm/hterm_terminal.js \
+  $(OBJEXTENSION)/hterm/hterm_text_attributes.js \
+  $(OBJEXTENSION)/hterm/hterm_vt_character_map.js \
+  $(OBJEXTENSION)/hterm/hterm_vt.js \
+  $(OBJEXTENSION)/hterm/lib_colors.js \
+  $(OBJEXTENSION)/hterm/lib_f.js \
+  $(OBJEXTENSION)/hterm/lib_fs.js \
+  $(OBJEXTENSION)/hterm/lib.js \
+  $(OBJEXTENSION)/hterm/lib_message_manager.js \
+  $(OBJEXTENSION)/hterm/lib_preference_manager.js \
+  $(OBJEXTENSION)/hterm/lib_test_manager.js \
+  $(OBJEXTENSION)/hterm/lib_utf8.js
 
 all: $(OBJPUBLISH)/nethackext.zip
 
@@ -251,8 +274,12 @@ $(NETHACK64): $(MAKEDEFS) $(OBJ64S) $(OBJEXTENSION)
 	x86_64-nacl-g++ $(LDFLAGS) $(LDWRAP) \
         -Wl,--start-group $(LIBS) $(OBJ64S) -Wl,--end-group -o $@
 
-$(OBJ32) $(OBJ64) $(OBJHOST) $(OBJPUBLISH) $(OBJEXTENSION) $(OBJRESOURCE):
+$(OBJ32) $(OBJ64) $(OBJHOST) $(OBJPUBLISH) $(OBJRESOURCE):
 	mkdir -p $@
+
+$(OBJEXTENSION):
+	mkdir -p $@
+	mkdir $@/hterm
 
 $(OBJHOST)/makedefs: $(OBJHOST)/makedefs.o $(OBJHOST)/monst.o $(OBJHOST)/objects.o
 	gcc $(HOST_CFLAGS) $^ -o $@
@@ -310,9 +337,10 @@ $(NACL_WIN)/nethack.dart: $(DARTFILES)
 	touch $@
 
 $(NACL_WIN)/%.js: $(NACL_WIN)/%.dart
-	frogc --compile-only --out=$@ $<
-	sed -i -e 's/nethackEmbed.postMessage\$$1/nethackEmbed.postMessage/' $@
-	sed -i -e 's/body.get\$$on().get\$$beforeUnload().add(warnOnClose, false)/body.onbeforeunload=warnOnClose/' $@
+	#frogc --compile-only --out=$@ $<
+	#sed -i -e 's/nethackEmbed.postMessage\$$1/nethackEmbed.postMessage/' $@
+	#sed -i -e 's/body.get\$$on().get\$$beforeUnload().add(warnOnClose, false)/body.onbeforeunload=warnOnClose/' $@
+	touch $@
 
 $(OBJEXTENSION)/nethack.tar: $(NHRESOURCES) | $(OBJEXTENSION)
 	tar -cf $@ -C $(OBJRESOURCE) .
