@@ -131,6 +131,10 @@ class NethackInstance : public pp::Instance {
 
   virtual void HandleMessage(const pp::Var& message) {
     std::string msg = message.AsString();
+    if (msg == "SIGWINCH") {
+      winch();
+      return;
+    }
     jspipe_->Receive(msg.c_str(), msg.size());
   }
 
