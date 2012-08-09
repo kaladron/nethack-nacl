@@ -748,7 +748,7 @@ register unsigned num;
 	if (count_only) return;
 #endif
 
-#if defined UNIX && !defined(__native_client__)
+#if defined UNIX
 	if (buffering) {
 	    if(fd != bw_fd)
 		panic("unbuffered write to fd %d (!= %d)", fd, bw_fd);
@@ -780,7 +780,7 @@ bclose(fd)
     int fd;
 {
     bufoff(fd);
-#if defined UNIX && !defined(__native_client__)
+#if defined UNIX
     if (fd == bw_fd) {
 	(void) fclose(bw_FILE);
 	bw_fd = -1;
