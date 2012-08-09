@@ -21,13 +21,6 @@ void introff() { }
 
 void intron() { }
 
-<<<<<<< HEAD
-//int isatty(int fd) {
-//  return 1;
-//}
-
-=======
->>>>>>> 7d06465299cea3edc59252488684c7c24dcd2f49
 uid_t getuid() {
   return 1001;
 }
