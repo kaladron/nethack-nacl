@@ -135,7 +135,7 @@ void makeOptionsFile(DOMFileSystem fs) {
 
       fileWriter.onwriteend = startGame;
 
-      BlobBuilder bb = new _BlobBuilderImpl();
+      Blob bb = new _BlobImpl();
       bb.append('OPTIONS=windowtype:tty,hilite_pet,color\n');
       bb.append('OPTIONS=pickup_types:\$\n');
 

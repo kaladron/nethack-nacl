@@ -233,7 +233,6 @@ PUBLISH_FILES = \
   $(OBJEXTENSION)/terminal.js \
   $(OBJEXTENSION)/terminal.css \
   $(OBJEXTENSION)/interlace.png \
-  $(OBJEXTENSION)/hterm/hterm_bin.js \
   $(OBJEXTENSION)/hterm/hterm_frame.js \
   $(OBJEXTENSION)/hterm/hterm.js \
   $(OBJEXTENSION)/hterm/hterm_keyboard.js \
