@@ -20,7 +20,7 @@ gettty(){
 	erase_char = '\b';
 	kill_char = 21;		/* cntl-U */
 	iflags.cbreak = TRUE;
-#if !defined(TOS) 
+#if !defined(TOS) && !defined(__native_client__)
 	disable_ctrlP();	/* turn off ^P processing */
 #endif
 #if defined(MSDOS) && defined(NO_TERMS)
@@ -38,7 +38,7 @@ const char *s;
 #endif
 	end_screen();
 	if(s) raw_print(s);
-#if !defined(TOS)
+#if !defined(TOS) && !defined(__native_client__)
 	enable_ctrlP();		/* turn on ^P processing */
 #endif
 

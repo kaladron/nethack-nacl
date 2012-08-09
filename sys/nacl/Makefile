@@ -86,6 +86,7 @@ GENHDRS = $(INCL)/date.h $(INCL)/onames.h $(INCL)/pm.h
 	# unixtty.o 
 OBJS ?= \
 	ioctl.o \
+	pctty.o \
 	unixmain.o \
 	unixunix.o \
 	$(patsubst %.c,%.o,$(notdir $(GENSRCS))) \
