@@ -36,7 +36,7 @@ const char *s;
 #if defined(MSDOS) && defined(NO_TERMS)
 	gr_finish();
 #endif
-//	end_screen();
+	end_screen();
 	if(s) raw_print(s);
 #if !defined(TOS) && !defined(__native_client__)
 	enable_ctrlP();		/* turn on ^P processing */
@@ -48,7 +48,7 @@ const char *s;
 void
 setftty()
 {
-	//start_screen();
+	start_screen();
 }
 
 #if defined(TIMED_DELAY) && defined(_MSC_VER)
