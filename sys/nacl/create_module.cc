@@ -54,7 +54,7 @@ class NethackInstance : public pp::Instance {
     /* Setup home directory to a known location. */
     setenv("HOME", "/mnt/home", 1);
     /* Setup terminal type. */
-    setenv("TERM", "xterm-color", 1);
+    setenv("TERM", "xterm-256color", 1);
     /* Blank out USER and LOGNAME. */
     setenv("USER", "", 1);
     setenv("LOGNAME", "", 1);
