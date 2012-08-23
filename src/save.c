@@ -702,7 +702,7 @@ void
 bufon(fd)
     int fd;
 {
-#if defined UNIX && !defined(__native_client__)
+#ifdef UNIX
     if(bw_fd >= 0)
 	panic("double buffering unexpected");
     bw_fd = fd;
@@ -726,7 +726,7 @@ void
 bflush(fd)
     int fd;
 {
-#if defined UNIX && !defined(__native_client__)
+#ifdef UNIX
     if(fd == bw_fd) {
 	if(fflush(bw_FILE) == EOF)
 	    panic("flush of savefile failed!");
@@ -748,7 +748,7 @@ register unsigned num;
 	if (count_only) return;
 #endif
 
-#if defined UNIX && !defined(__native_client__)
+#ifdef UNIX
 	if (buffering) {
 	    if(fd != bw_fd)
 		panic("unbuffered write to fd %d (!= %d)", fd, bw_fd);
@@ -780,7 +780,7 @@ bclose(fd)
     int fd;
 {
     bufoff(fd);
-#if defined UNIX && !defined(__native_client__)
+#ifdef UNIX
     if (fd == bw_fd) {
 	(void) fclose(bw_FILE);
 	bw_fd = -1;
