@@ -4,7 +4,7 @@
   "offline_enabled": true,
   "name": "Nethack",
   "description": "Nethack",
-  "version": "3.4.3.12",
+  "version": "3.4.3.13",
   "app": {
     "launch": {
       "local_path": "index.html"
