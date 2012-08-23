@@ -356,9 +356,6 @@ $(OBJRESOURCE)/nhdat: $(OBJHOST)/dlb_main $(GENFILES)
 clean:
 	rm -rf $(OBJ32) $(OBJ64) $(OBJHOST) $(OBJPUBLISH) $(OBJRESOURCE) $(GENHDRS) $(GENSRCS) $(CLEANFILES)
 
-http:
-	./httpd.py
-
 $(GENHDRS): $(MAKEDEFS)
 	cd $(OBJHOST) && ./makedefs -o
 	cd $(OBJHOST) && ./makedefs -p
