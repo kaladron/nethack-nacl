@@ -103,6 +103,7 @@ hterm.Terminal = function(opt_profileName) {
   this.vt = new hterm.VT(this);
   this.vt.enable8BitControl = this.prefs_.get('enable-8-bit-control');
   this.vt.maxStringSequence = this.prefs_.get('max-string-sequence');
+  this.vt.enableClipboardWrite = this.prefs_.get('enable-clipboard-write');
 
   // The keyboard hander.
   this.keyboard = new hterm.Keyboard(this);
@@ -110,6 +111,13 @@ hterm.Terminal = function(opt_profileName) {
   // General IO interface that can be given to third parties without exposing
   // the entire terminal object.
   this.io = new hterm.Terminal.IO(this);
+
+  // True if mouse-click-drag should scroll the terminal.
+  this.enableMouseDragScroll = true;
+
+  this.copyOnSelect = this.prefs_.get('copy-on-select');
+  this.mousePasteButton = null;
+  this.syncMousePasteButton();
 
   this.realizeSize_(80, 24);
   this.setDefaultTabStops();
@@ -243,6 +251,14 @@ hterm.Terminal.prototype.setProfile = function(profileName) {
     ],
 
     /**
+     * Automatically copy mouse selection to the clipboard.
+     */
+    ['copy-on-select', true, function(v) {
+        self.copyOnSelect = !!v;
+      }
+    ],
+
+    /**
      * True to enable 8-bit control characters, false to ignore them.
      *
      * We'll respect the two-byte versions of these control characters
@@ -263,10 +279,18 @@ hterm.Terminal.prototype.setProfile = function(profileName) {
     ],
 
     /**
+     * Allow the host to write directly to the system clipboard.
+     */
+    ['enable-clipboard-write', true, function(v) {
+        self.vt.enableClipboardWrite = !!v;
+      }
+    ],
+
+    /**
      * Default font family for the terminal text.
      */
     ['font-family', ('"DejaVu Sans Mono", "Everson Mono", ' +
-                     'FreeMono, "Menlo", "Lucida Console", ' +
+                     'FreeMono, "Menlo", "Terminal", ' +
                      'monospace'),
      function(v) { self.syncFontFamily() }
     ],
@@ -322,6 +346,32 @@ hterm.Terminal.prototype.setProfile = function(profileName) {
     ],
 
     /**
+     * Set whether we should treat DEC mode 1002 (mouse cell motion tracking)
+     * as if it were 1000 (mouse click tracking).
+     *
+     * This makes it possible to use vi's ":set mouse=a" mode without losing
+     * access to the system text selection mechanism.
+     */
+    ['mouse-cell-motion-trick', false, function(v) {
+        self.vt.setMouseCellMotionTrick(v);
+      }
+    ],
+
+    /**
+     * Mouse paste button, or null to autodetect.
+     *
+     * For autodetect, we'll try to enable middle button paste for non-X11
+     * platforms.
+     *
+     * On X11 we move it to button 3, but that'll probably be a context menu
+     * in the future.
+     */
+    ['mouse-paste-button', null, function(v) {
+        self.syncMousePasteButton();
+      }
+    ],
+
+    /**
      * If true, scroll to the bottom on any keystroke.
      */
     ['scroll-on-keystroke', true, function(v) {
@@ -346,6 +396,14 @@ hterm.Terminal.prototype.setProfile = function(profileName) {
     ],
 
     /**
+     * Shift + Insert pastes if true, sent to host if false.
+     */
+    ['shift-insert-paste', true, function(v) {
+        self.keyboard.shiftInsertPaste = v;
+      }
+    ],
+
+    /**
      * The default environment variables.
      */
     ['environment', {TERM: 'xterm-256color'}, null],
@@ -358,7 +416,7 @@ hterm.Terminal.prototype.setProfile = function(profileName) {
     ['page-keys-scroll', false, function(v) {
         self.keyboard.pageKeysScroll = v;
       }
-    ]
+    ],
 
    ]);
 
@@ -383,6 +441,14 @@ hterm.Terminal.prototype.setCursorColor = function(color) {
  */
 hterm.Terminal.prototype.getCursorColor = function() {
   return this.cursorNode_.style.backgroundColor;
+};
+
+/**
+ * Enable or disable mouse based text selection in the terminal.
+ */
+hterm.Terminal.prototype.setSelectionEnabled = function(state) {
+  this.enableMouseDragScroll = state;
+  this.scrollPort_.setSelectionEnabled(state);
 };
 
 /**
@@ -519,6 +585,29 @@ hterm.Terminal.prototype.syncFontFamily = function() {
   this.syncBoldSafeState();
 };
 
+/**
+ * Set this.mousePasteButton based on the mouse-paste-button pref,
+ * autodetecting if necessary.
+ */
+hterm.Terminal.prototype.syncMousePasteButton = function() {
+  var button = this.prefs_.get('mouse-paste-button');
+  if (typeof button == 'number') {
+    this.mousePasteButton = button;
+    return;
+  }
+
+  var ary = navigator.userAgent.match(/\(X11;\s+(\S+)/);
+  if (!ary || ary[2] == 'CrOS') {
+    this.mousePasteButton = 2;
+  } else {
+    this.mousePasteButton = 3;
+  }
+};
+
+/**
+ * Enable or disable bold based on the enable-bold pref, autodetecting if
+ * necessary.
+ */
 hterm.Terminal.prototype.syncBoldSafeState = function() {
   var enableBold = this.prefs_.get('enable-bold');
   if (enableBold !== null) {
@@ -942,6 +1031,14 @@ hterm.Terminal.prototype.decorate = function(div) {
 
   this.document_ = this.scrollPort_.getDocument();
 
+  this.document_.body.oncontextmenu = function() { return false };
+
+  var onMouse = this.onMouse_.bind(this);
+  this.document_.body.firstChild.addEventListener('mousedown', onMouse);
+  this.document_.body.firstChild.addEventListener('mouseup', onMouse);
+  this.document_.body.firstChild.addEventListener('mousemove', onMouse);
+  this.scrollPort_.onScrollWheel = onMouse;
+
   this.document_.body.firstChild.addEventListener(
       'focus', this.onFocusChange_.bind(this, true));
   this.document_.body.firstChild.addEventListener(
@@ -967,7 +1064,37 @@ hterm.Terminal.prototype.decorate = function(div) {
        'height: ' + this.scrollPort_.characterSize.height + 'px;' +
        '-webkit-transition: opacity, background-color 100ms linear;');
   this.setCursorColor(this.prefs_.get('cursor-color'));
+
   this.document_.body.appendChild(this.cursorNode_);
+
+  // When 'enableMouseDragScroll' is off we reposition this element directly
+  // under the mouse cursor after a click.  This makes Chrome associate
+  // subsequent mousemove events with the scroll-blocker.  Since the
+  // scroll-blocker is a peer (not a child) of the scrollport, the mousemove
+  // events do not cause the scrollport to scroll.
+  //
+  // It's a hack, but it's the cleanest way I could find.
+  this.scrollBlockerNode_ = this.document_.createElement('div');
+  this.scrollBlockerNode_.style.cssText =
+      ('position: absolute;' +
+       'top: -99px;' +
+       'display: block;' +
+       'width: 10px;' +
+       'height: 10px;');
+  this.document_.body.appendChild(this.scrollBlockerNode_);
+
+  var onMouse = this.onMouse_.bind(this);
+  this.scrollPort_.onScrollWheel = onMouse;
+  ['mousedown', 'mouseup', 'mousemove', 'click', 'dblclick',
+   ].forEach(function(event) {
+       this.scrollBlockerNode_.addEventListener(event, onMouse);
+       this.cursorNode_.addEventListener(event, onMouse);
+       this.document_.addEventListener(event, onMouse);
+     }.bind(this));
+
+  this.cursorNode_.addEventListener('mousedown', function() {
+      setTimeout(this.focus.bind(this));
+    }.bind(this));
 
   this.setCursorBlink(!!this.prefs_.get('cursor-blink'));
   this.setReverseVideo(false);
@@ -1160,33 +1287,40 @@ hterm.Terminal.prototype.renumberRows_ = function(start, end) {
  * @param{string} str The string to print.
  */
 hterm.Terminal.prototype.print = function(str) {
-  if (this.options_.wraparound && this.screen_.cursorPosition.overflow)
-    this.newLine();
+  var startOffset = 0;
 
-  if (this.options_.insertMode) {
-    this.screen_.insertString(str);
-  } else {
-    this.screen_.overwriteString(str);
-  }
-
-  var overflow = this.screen_.maybeClipCurrentRow();
-
-  if (this.options_.wraparound && overflow) {
-    var lastColumn;
-
-    do {
+  while (startOffset < str.length) {
+    if (this.options_.wraparound && this.screen_.cursorPosition.overflow)
       this.newLine();
-      lastColumn = overflow.characterLength;
 
-      if (!this.options_.insertMode)
-        this.screen_.deleteChars(overflow.characterLength);
+    var count = str.length - startOffset;
+    var didOverflow = false;
+    var substr;
 
-      this.screen_.prependNodes(overflow);
+    if (this.screen_.cursorPosition.column + count >= this.screenSize.width) {
+      didOverflow = true;
+      count = this.screenSize.width - this.screen_.cursorPosition.column;
+    }
 
-      overflow = this.screen_.maybeClipCurrentRow();
-    } while (overflow);
+    if (didOverflow && !this.options_.wraparound) {
+      // If the string overflowed the line but wraparound is off, then the
+      // last printed character should be the last of the string.
+      // TODO: This will add to our problems with multibyte UTF-16 characters.
+      substr = str.substr(startOffset, count - 1) +
+          str.substr(str.length - 1);
+      count = str.length;
+    } else {
+      substr = str.substr(startOffset, count);
+    }
 
-    this.setCursorColumn(lastColumn);
+    if (this.options_.insertMode) {
+      this.screen_.insertString(substr);
+    } else {
+      this.screen_.overwriteString(substr);
+    }
+
+    this.screen_.maybeClipCurrentRow();
+    startOffset += count;
   }
 
   this.scheduleSyncCursorPosition_();
@@ -2122,6 +2256,54 @@ hterm.Terminal.prototype.showOverlay = function(msg, opt_timeout) {
     }, opt_timeout || 1500);
 };
 
+/**
+ * Paste from the system clipboard to the terminal.
+ */
+hterm.Terminal.prototype.paste = function() {
+  hterm.pasteFromClipboard(this.document_);
+};
+
+/**
+ * Copy a string to the system clipboard.
+ *
+ * Note: If there is a selected range in the terminal, it'll be cleared.
+ */
+hterm.Terminal.prototype.copyStringToClipboard = function(str) {
+  var copySource = this.document_.createElement('div');
+  copySource.textContent = str;
+  copySource.style.cssText = (
+      '-webkit-user-select: text;' +
+      'position: absolute;' +
+      'top: -99px');
+
+  this.document_.body.appendChild(copySource);
+  var selection = this.document_.getSelection();
+  selection.selectAllChildren(copySource);
+
+  this.copySelectionToClipboard();
+
+  copySource.parentNode.removeChild(copySource);
+};
+
+/**
+ * Copy the current selection to the system clipboard, then clear it after a
+ * short delay.
+ */
+hterm.Terminal.prototype.copySelectionToClipboard = function() {
+  hterm.copySelectionToClipboard(this.document_);
+  this.showOverlay(hterm.msg('NOTIFY_COPY'), 500);
+
+  if (this.copyTimeout_)
+    clearTimeout(this.copyTimeout_);
+
+  this.copyTimeout_ = setTimeout(function() {
+      var selection = this.document_.getSelection();
+      if (!selection.isCollapsed)
+        selection.collapseToEnd();
+      this.copyTimeout_ = null;
+    }.bind(this), 500);
+};
+
 hterm.Terminal.prototype.overlaySize = function() {
   this.showOverlay(this.screenSize.width + 'x' + this.screenSize.height);
 };
@@ -2137,6 +2319,72 @@ hterm.Terminal.prototype.onVTKeystroke = function(string) {
 
   this.io.onVTKeystroke(string);
 };
+
+/**
+ * Add the terminalRow and terminalColumn properties to mouse events and
+ * then forward on to onMouse().
+ *
+ * The terminalRow and terminalColumn properties contain the (row, column)
+ * coordinates for the mouse event.
+ */
+hterm.Terminal.prototype.onMouse_ = function(e) {
+  if (e.type == 'mousedown' && e.which == this.mousePasteButton) {
+    this.paste();
+    return;
+  }
+
+  if (e.type == 'mouseup' && e.which == 1 && this.copyOnSelect &&
+      !this.document_.getSelection().isCollapsed) {
+    this.copySelectionToClipboard();
+    return;
+  }
+
+  e.terminalRow = parseInt((e.clientY - this.scrollPort_.visibleRowTopMargin) /
+                           this.scrollPort_.characterSize.height) + 1;
+  e.terminalColumn = parseInt(e.clientX /
+                              this.scrollPort_.characterSize.width) + 1;
+
+  if (e.type == 'mousedown') {
+    if (e.terminalColumn > this.screenSize.width) {
+      // Mousedown in the scrollbar area.
+      return;
+    }
+
+    if (!this.enableMouseDragScroll) {
+      // Move the scroll-blocker into place if we want to keep the scrollport
+      // from scrolling.
+      this.scrollBlockerNode_.engaged = true;
+      this.scrollBlockerNode_.style.top = (e.clientY - 5) + 'px';
+      this.scrollBlockerNode_.style.left = (e.clientX - 5) + 'px';
+    }
+  } else if (this.scrollBlockerNode_.engaged &&
+             (e.type == 'mousemove' || e.type == 'mouseup')) {
+    // Disengage the scroll-blocker after one of these events.
+    this.scrollBlockerNode_.engaged = false;
+    this.scrollBlockerNode_.style.top = '-99px';
+  }
+
+  if (!e.processedByTerminalHandler_) {
+    // We register our event handlers on the document, as well as the cursor
+    // and the scroll blocker.  Mouse events that occur on the cursor or
+    // scroll blocker will also appear on the document, but we don't want to
+    // process them twice.
+    //
+    // We can't just prevent bubbling because that has other side effects, so
+    // we decorate the event object with this property instead.
+    e.processedByTerminalHandler_ = true;
+
+    this.onMouse(e);
+  }
+};
+
+/**
+ * Clients should override this if they care to know about mouse events.
+ *
+ * The event parameter will be a normal DOM mouse click event with additional
+ * 'terminalRow' and 'terminalColumn' properties.
+ */
+hterm.Terminal.prototype.onMouse = function(e) { };
 
 /**
  * React when focus changes.
@@ -2179,10 +2427,18 @@ hterm.Terminal.prototype.onResize_ = function() {
     return;
   }
 
+  var isNewSize = (columnCount != this.screenSize.width ||
+                   rowCount != this.screenSize.height);
+
+  // We do this even if the size didn't change, just to be sure everything is
+  // in sync.
   this.realizeSize_(columnCount, rowCount);
-  this.scheduleSyncCursorPosition_();
   this.showZoomWarning_(this.scrollPort_.characterSize.zoomFactor != 1);
-  this.overlaySize();
+
+  if (isNewSize)
+    this.overlaySize();
+
+  this.scheduleSyncCursorPosition_();
 };
 
 /**

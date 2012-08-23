@@ -64,7 +64,7 @@ hterm.VT.CannedTests = new lib.TestManager.Suite('hterm.VT.CannedTests');
 hterm.VT.CannedTests.prototype.setup = function(cx) {
   this.setDefaults(cx,
       { visibleColumnCount: 80,
-        visibleRowCount: 25
+        visibleRowCount: 25,
       });
 };
 

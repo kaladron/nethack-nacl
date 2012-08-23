@@ -114,7 +114,7 @@ hterm.VT.CharacterMap.maps['0'] = new hterm.VT.CharacterMap(
       '\x7b':'\u03c0',  // { -> pi
       '\x7c':'\u2260',  // | -> not-equal
       '\x7d':'\u00a3',  // } -> british-pound
-      '\x7e':'\u00b7'   // ~ -> dot
+      '\x7e':'\u00b7',  // ~ -> dot
     });
 
 /**
@@ -123,7 +123,7 @@ hterm.VT.CharacterMap.maps['0'] = new hterm.VT.CharacterMap(
  */
 hterm.VT.CharacterMap.maps['A'] = new hterm.VT.CharacterMap(
     'british', {
-      '\x23': '\u00a3'   // # -> british-pound
+      '\x23': '\u00a3',  // # -> british-pound
     });
 
 /**
@@ -149,7 +149,7 @@ hterm.VT.CharacterMap.maps['4'] = new hterm.VT.CharacterMap(
       '\x7b': '\u00a8',  // { -> two dots
       '\x7c': '\u0066',  // | -> f
       '\x7d': '\u00bc',  // } -> 1/4
-      '\x7e': '\u00b4'   // ~ -> acute
+      '\x7e': '\u00b4',  // ~ -> acute
     });
 
 /**
@@ -169,7 +169,7 @@ hterm.VT.CharacterMap.maps['5'] = new hterm.VT.CharacterMap(
       '\x7b': '\u00e4',  // { -> 'a' umlaut
       '\x7c': '\u00f6',  // | -> 'o' umlaut
       '\x7d': '\u00e5',  // } -> 'a' ring
-      '\x7e': '\u00fc'   // ~ -> 'u' umlaut
+      '\x7e': '\u00fc',  // ~ -> 'u' umlaut
     });
 
 /**
@@ -189,7 +189,7 @@ hterm.VT.CharacterMap.maps['R'] = new hterm.VT.CharacterMap(
       '\x7b': '\u00e9',  // { -> 'e' acute
       '\x7c': '\u00f9',  // | -> 'u' grave
       '\x7d': '\u00e8',  // } -> 'e' grave
-      '\x7e': '\u00a8'   // ~ -> umlaut
+      '\x7e': '\u00a8',  // ~ -> umlaut
     });
 
 /**
@@ -210,7 +210,7 @@ hterm.VT.CharacterMap.maps['Q'] = new hterm.VT.CharacterMap(
       '\x7b': '\u00e9',  // { -> 'e' acute
       '\x7c': '\u00f9',  // | -> 'u' grave
       '\x7d': '\u00e8',  // } -> 'e' grave
-      '\x7e': '\u00fb'   // ~ -> 'u' circumflex
+      '\x7e': '\u00fb',  // ~ -> 'u' circumflex
     });
 
 /**
@@ -228,7 +228,7 @@ hterm.VT.CharacterMap.maps['K'] = new hterm.VT.CharacterMap(
       '\x7b': '\u00e4',  // { -> 'a' umlaut
       '\x7c': '\u00f6',  // | -> 'o' umlaut
       '\x7d': '\u00fc',  // } -> 'u' umlaut
-      '\x7e': '\u00df'   // ~ -> eszett
+      '\x7e': '\u00df',  // ~ -> eszett
     });
 
 /**
@@ -250,7 +250,7 @@ hterm.VT.CharacterMap.maps['Y'] = new hterm.VT.CharacterMap(
       '\x7b': '\u00e0',  // { -> 'a' grave
       '\x7c': '\u00f2',  // | -> 'o' grave
       '\x7d': '\u00e8',  // } -> 'e' grave
-      '\x7e': '\u00ec'   // ~ -> 'i' grave
+      '\x7e': '\u00ec',  // ~ -> 'i' grave
     });
 
 /**
@@ -272,7 +272,7 @@ hterm.VT.CharacterMap.maps['6'] = new hterm.VT.CharacterMap(
       '\x7b': '\u00e6',  // { -> 'ae' ligature
       '\x7c': '\u00f8',  // | -> 'o' stroke
       '\x7d': '\u00e5',  // } -> 'a' ring
-      '\x7e': '\u00fc'   // ~ -> 'u' umlaut
+      '\x7e': '\u00fc',  // ~ -> 'u' umlaut
     });
 
 /**
@@ -291,7 +291,7 @@ hterm.VT.CharacterMap.maps['Z'] = new hterm.VT.CharacterMap(
 
       '\x7b': '\u00b0',  // { -> ring
       '\x7c': '\u00f1',  // | -> 'n' tilde
-      '\x7d': '\u00e7'   // } -> 'c' cedilla
+      '\x7d': '\u00e7',  // } -> 'c' cedilla
     });
 
 /**
@@ -313,7 +313,7 @@ hterm.VT.CharacterMap.maps['H'] = new hterm.VT.CharacterMap(
       '\x7b': '\u00e4',  // { -> 'a' umlaut
       '\x7c': '\u00f6',  // | -> 'o' umlaut
       '\x7d': '\u00e5',  // } -> 'a' ring
-      '\x7e': '\u00fc'   // ~ -> 'u' umlaut
+      '\x7e': '\u00fc',  // ~ -> 'u' umlaut
     });
 
 /**
@@ -337,5 +337,5 @@ hterm.VT.CharacterMap.maps['='] = new hterm.VT.CharacterMap(
       '\x7b': '\u00e4',  // { -> 'a' umlaut
       '\x7c': '\u00f6',  // | -> 'o' umlaut
       '\x7d': '\u00fc',  // } -> 'u' umlaut
-      '\x7e': '\u00fb'   // ~ -> 'u' circumflex
+      '\x7e': '\u00fb',  // ~ -> 'u' circumflex
     });

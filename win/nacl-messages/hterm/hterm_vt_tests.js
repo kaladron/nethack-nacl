@@ -19,7 +19,7 @@ hterm.VT.Tests = new lib.TestManager.Suite('hterm.VT.Tests');
 hterm.VT.Tests.prototype.setup = function(cx) {
   this.setDefaults(cx,
       { visibleColumnCount: 15,
-        visibleRowCount: 6
+        visibleRowCount: 6,
       });
 };
 
@@ -772,14 +772,14 @@ hterm.VT.Tests.addTest('device-attributes', function(result, cx) {
  * TODO(rginda): Test the clear tabstops on this line command.
  */
 hterm.VT.Tests.disableTest('clear-line-tabstops', function(result, cx) {
-    //'[0g';
+    '[0g';
   });
 
 /**
  * TODO(rginda): Test the clear all tabstops command.
  */
 hterm.VT.Tests.disableTest('clear-all-tabstops', function(result, cx) {
-    //'[3g';
+    '[3g';
   });
 
 /**
@@ -981,21 +981,21 @@ hterm.VT.Tests.addTest('wraparound-mode-on', function(result, cx) {
     // Should be on by default.
     result.assertEQ(this.terminal.options_.wraparound, true);
 
-    this.terminal.interpret('-----  1  -----');
-    this.terminal.interpret('-----  2  -----');
-    this.terminal.interpret('-----  3  -----');
-    this.terminal.interpret('-----  4  -----');
-    this.terminal.interpret('-----  5  -----');
-    this.terminal.interpret('-----  6  -----');
+    this.terminal.interpret('-----  1  ----a');
+    this.terminal.interpret('-----  2  ----b');
+    this.terminal.interpret('-----  3  ----c');
+    this.terminal.interpret('-----  4  ----d');
+    this.terminal.interpret('-----  5  ----e');
+    this.terminal.interpret('-----  6  ----f');
 
     var text = this.terminal.getRowsText(0, 6);
     result.assertEQ(text,
-                    '-----  1  -----\n' +
-                    '-----  2  -----\n' +
-                    '-----  3  -----\n' +
-                    '-----  4  -----\n' +
-                    '-----  5  -----\n' +
-                    '-----  6  -----');
+                    '-----  1  ----a\n' +
+                    '-----  2  ----b\n' +
+                    '-----  3  ----c\n' +
+                    '-----  4  ----d\n' +
+                    '-----  5  ----e\n' +
+                    '-----  6  ----f');
 
     result.assertEQ(this.terminal.getCursorRow(), 5);
     result.assertEQ(this.terminal.getCursorColumn(), 14);
@@ -1007,16 +1007,16 @@ hterm.VT.Tests.addTest('wraparound-mode-off', function(result, cx) {
     this.terminal.interpret('\x1b[?7l');
     result.assertEQ(this.terminal.options_.wraparound, false);
 
-    this.terminal.interpret('-----  1  -----');
-    this.terminal.interpret('-----  2  -----');
-    this.terminal.interpret('-----  3  -----');
-    this.terminal.interpret('-----  4  -----');
-    this.terminal.interpret('-----  5  -----');
-    this.terminal.interpret('-----  6  -----');
+    this.terminal.interpret('-----  1  ----a');
+    this.terminal.interpret('-----  2  ----b');
+    this.terminal.interpret('-----  3  ----c');
+    this.terminal.interpret('-----  4  ----d');
+    this.terminal.interpret('-----  5  ----e');
+    this.terminal.interpret('-----  6  ----f');
 
     var text = this.terminal.getRowsText(0, 6);
     result.assertEQ(text,
-                    '-----  1  -----\n' +
+                    '-----  1  ----f\n' +
                     '\n' +
                     '\n' +
                     '\n' +
@@ -1053,6 +1053,23 @@ hterm.VT.Tests.addTest('insert-wrap', function(result, cx) {
                     '              A\n' +
                     'XXAAA\n' +
                     'XX            A');
+    result.pass();
+  });
+
+/**
+ * Test a line that is long enough to need to be wrapped more than once.
+ */
+hterm.VT.Tests.addTest('long-wrap', function(result, cx) {
+    var str = '';
+    for (var i = 0; i < this.visibleColumnCount * 3; i++)
+      str += 'X';
+
+    this.terminal.interpret(str);
+    var text = this.terminal.getRowsText(0, 3);
+    result.assertEQ(text,
+                    'XXXXXXXXXXXXXXX\n' +
+                    'XXXXXXXXXXXXXXX\n' +
+                    'XXXXXXXXXXXXXXX');
     result.pass();
   });
 
@@ -1137,6 +1154,22 @@ hterm.VT.Tests.addTest('alternate-screen', function(result, cx) {
     result.assertEQ(text, '1\n2\n3\n4\n\n\n    XX\n\n\n');
 
     result.pass();
+  });
+
+/**
+ * Test that we can use OSC 52 to copy to the system clipboard.
+ */
+hterm.VT.Tests.addTest('OSC-52', function(result, cx) {
+    // Mock this out since we can't document.execCommand from the
+    // test harness.
+    hterm.copySelectionToClipboard = function(document) {
+      var s = document.getSelection();
+      result.assertEQ(s.anchorNode.textContent, 'copypasta!');
+      result.pass();
+    };
+
+    this.terminal.interpret('\x1b]52;c;Y29weXBhc3RhIQ==\x07');
+    result.requestTime(200);
   });
 
 hterm.VT.Tests.addTest('fullscreen', function(result, cx) {

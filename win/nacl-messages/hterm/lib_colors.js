@@ -62,7 +62,7 @@ lib.colors.re_ = {
   x11rgb: /^\s*rgb:([a-f0-9]{1,4})\/([a-f0-9]{1,4})\/([a-f0-9]{1,4})\s*$/i,
 
   // English color name.
-  name: /[a-z][a-z0-9\s]+/
+  name: /[a-z][a-z0-9\s]+/,
 };
 
 /**

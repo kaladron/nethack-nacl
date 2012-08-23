@@ -76,22 +76,22 @@ hterm.PubSub.Tests.addTest('forever-alone', function(result, cx) {
     result.pass();
     return;
 
-    //var calledLast = false;
+    var calledLast = false;
 
-    //function last(param) { calledLast = true }
+    function last(param) { calledLast = true }
 
-    //var obj = {};
-    //hterm.PubSub.addBehavior(obj);
+    var obj = {};
+    hterm.PubSub.addBehavior(obj);
 
-    //obj.publish('test', null, last);
+    obj.publish('test', null, last);
 
-    //setTimeout(function() {
-    //    result.assert(calledLast);
-    //    console.log('PASS');
-    //    result.pass();
-    //  }, 100);
+    setTimeout(function() {
+        result.assert(calledLast);
+        console.log('PASS');
+        result.pass();
+      }, 100);
 
-    //result.requestTime(200);
+    result.requestTime(200);
   });
 
 /**

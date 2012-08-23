@@ -46,7 +46,7 @@ lib.f.replaceVars = function(str, vars) {
  */
 lib.f.replaceVars.functions = {
   encodeURI: encodeURI,
-  encodeURIComponent: encodeURIComponent
+  encodeURIComponent: encodeURIComponent,
 };
 
 /**

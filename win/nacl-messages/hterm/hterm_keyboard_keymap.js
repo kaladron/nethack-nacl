@@ -267,7 +267,7 @@ hterm.Keyboard.KeyMap.prototype.reset = function() {
     [67,  'cC',   DEFAULT, call('onCtrlC_'),       DEFAULT, call('onMetaC_')],
     [86,  'vV',   DEFAULT, sh(ctl('V'), PASS),     DEFAULT, PASS],
     [66,  'bB',   DEFAULT, sh(ctl('B'), PASS),     DEFAULT, sh(DEFAULT, PASS)],
-    [78,  'nN',   DEFAULT, ctl('N'),               DEFAULT, DEFAULT],
+    [78,  'nN',   DEFAULT, call('onCtrlN_'),       DEFAULT, call('onMetaN_')],
     [77,  'mM',   DEFAULT, ctl('M'),               DEFAULT, DEFAULT],
     [188, ',<',   DEFAULT, STRIP,                  DEFAULT, DEFAULT],
     [190, '.>',   DEFAULT, STRIP,                  DEFAULT, DEFAULT],
@@ -286,7 +286,7 @@ hterm.Keyboard.KeyMap.prototype.reset = function() {
     [19,  '[BREAK]',  PASS, PASS, PASS, PASS],
 
     // The block of six keys above the arrows.
-    [45,  '[INSERT]', CSI + '2~',             DEFAULT, DEFAULT, DEFAULT],
+    [45,  '[INSERT]', call('onKeyInsert_'),   DEFAULT, DEFAULT, DEFAULT],
     [36,  '[HOME]',   call('onKeyHome_'),     DEFAULT, DEFAULT, DEFAULT],
     [33,  '[PGUP]',   call('onKeyPageUp_'),   DEFAULT, DEFAULT, DEFAULT],
     [46,  '[DEL]',    CSI + '3~',             DEFAULT, DEFAULT, DEFAULT],
@@ -322,6 +322,16 @@ hterm.Keyboard.KeyMap.prototype.reset = function() {
     [111, '[KP/]', ak(DEFAULT, SS3 + 'o'),  DEFAULT, DEFAULT, DEFAULT],
     [110, '[KP.]', ak(DEFAULT, CSI + '3~'), DEFAULT, DEFAULT, DEFAULT]
   );
+};
+
+/**
+ * Either allow the paste or send a key sequence.
+ */
+hterm.Keyboard.KeyMap.prototype.onKeyInsert_ = function(e) {
+  if (this.keyboard.shiftInsertPaste && e.shiftKey)
+    return hterm.Keyboard.KeyActions.PASS;
+
+  return '\x1b[2~';
 };
 
 /**
@@ -401,6 +411,36 @@ hterm.Keyboard.KeyMap.prototype.onCtrlC_ = function(e, keyDef) {
   // Otherwise let the browser handle it as a copy command.
   setTimeout(function() { document.getSelection().collapseToEnd() }, 50);
   return hterm.Keyboard.KeyActions.PASS;
+};
+
+/**
+ * Either send a ^N or open a new window to the same location.
+ */
+hterm.Keyboard.KeyMap.prototype.onCtrlN_ = function(e, keyDef) {
+  if (e.shiftKey) {
+    window.open(document.location.href, '',
+                'chrome=no,close=yes,resize=yes,scrollbars=yes,' +
+                'minimizable=yes,width=' + window.outerWidth +
+                ',height=' + window.outerHeight);
+    return hterm.Keyboard.KeyActions.CANCEL;
+  }
+
+  return '\x0e';
+};
+
+/**
+ * Either the default action or open a new window to the same location.
+ */
+hterm.Keyboard.KeyMap.prototype.onMetaN_ = function(e, keyDef) {
+  if (e.shiftKey) {
+    window.open(document.location.href, '',
+                'chrome=no,close=yes,resize=yes,scrollbars=yes,' +
+                'minimizable=yes,width=' + window.outerWidth +
+                ',height=' + window.outerHeight);
+    return hterm.Keyboard.KeyActions.CANCEL;
+  }
+
+  return hterm.Keyboard.KeyActions.DEFAULT;
 };
 
 /**

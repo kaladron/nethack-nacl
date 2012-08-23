@@ -13,7 +13,7 @@ hterm.Terminal.Tests = new lib.TestManager.Suite('hterm.Terminal.Tests');
 hterm.Terminal.Tests.prototype.setup = function(cx) {
   this.setDefaults(cx,
       { visibleColumnCount: 80,
-        visibleRowCount: 24
+        visibleRowCount: 24,
       });
 };
 
