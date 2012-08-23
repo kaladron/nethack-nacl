@@ -836,7 +836,7 @@ cl_eos()			/* free after Robert Viduya */
 
 #include <curses.h>
 
-#ifndef LINUX
+#ifndef NCURSES_VERSION
 extern char *tparm();
 #endif
 

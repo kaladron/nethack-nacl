@@ -32,7 +32,6 @@
 #define VAR_PLAYGROUND "/mnt/playground/nethack"
 #define NOCWD_ASSUMPTIONS
 
-#undef TERMINFO /* no curses.h */
 #undef SHELL /* Don't allow escaping to a shell */
 #undef COMPRESS
 #undef MAIL
@@ -42,5 +41,5 @@
 #define NO_FILE_LINKS
 #define LOCKDIR VAR_PLAYGROUND
 
-void regularize(char *);
+// void regularize(char *);
 
