@@ -2,8 +2,6 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
-#include <errno.h>
-
 #include "hack.h"
 #include "lev.h"
 #include "quest.h"
@@ -706,10 +704,8 @@ bufon(fd)
     if(bw_fd >= 0)
 	panic("double buffering unexpected");
     bw_fd = fd;
-    if((bw_FILE = fdopen(fd, "w")) == 0) {
-        fprintf(stderr, "%s\n", strerror(errno));
+    if((bw_FILE = fdopen(fd, "w")) == 0)
 	panic("buffering of file %d failed", fd);
-    }
 #endif
     buffering = TRUE;
 }

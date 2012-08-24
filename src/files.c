@@ -869,7 +869,6 @@ create_savefile()
 # ifdef MAC
 	fd = maccreat(fq_save, SAVE_TYPE);
 # else
-	fprintf(stderr, "SAVING %s\n", fq_save);
 	fd = creat(fq_save, FCMASK);
 # endif
 # if defined(VMS) && !defined(SECURE)
@@ -930,9 +929,7 @@ restore_saved_game()
 	fq_save = fqname(SAVEF, SAVEPREFIX, 0);
 
 	uncompress(fq_save);
-	fprintf(stderr, "trying to restore %s\n", fq_save);
 	if ((fd = open_savefile()) < 0) return fd;
-	fprintf(stderr, "was able to open %s\n", fq_save);
 
 	if (!uptodate(fd, fq_save)) {
 	    (void) close(fd),  fd = -1;

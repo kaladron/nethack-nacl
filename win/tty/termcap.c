@@ -570,7 +570,6 @@ void
 xputs(s)
 const char *s;
 {
-if (s == 0) return;
 # ifndef TERMLIB
 	(void) fputs(s, stdout);
 # else
