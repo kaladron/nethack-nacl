@@ -308,22 +308,30 @@ AWK	= nawk
 # For Native Client, uncomment these:
 ifneq ($(NACL_PACKAGES_BITSIZE),)
 
+ifeq ($(NACL_PACKAGES_BITSIZE),32)
+CC = i686-nacl-gcc
+CXX = i686-nacl-g++
+INCLUDES = -I${NACL_SDK_ROOT}/toolchain/$(NACL_OS_TYPE)_x86_glibc/i686-nacl/usr/include/ncurses
+GAME     = nethack_x86-32.nexe
+endif
+
+ifeq ($(NACL_PACKAGES_BITSIZE),64)
+CC = x86_64-nacl-gcc
+CXX = x86_64-nacl-g++
+INCLUDES = -I${NACL_SDK_ROOT}/toolchain/$(NACL_OS_TYPE)_x86_glibc/x86_64-nacl/usr/include/ncurses
+GAME     = nethack_x86-64.nexe
+endif
+
 VPATH=../src
 
 SYSTEM = Sysnacl
 
 WINTTYLIB = -lncurses
 
-CC = i686-nacl-gcc
-CXX = i686-nacl-g++
-
 NACL_OS_TYPE=$(shell getos.py)
-INCL32 = -I${NACL_SDK_ROOT}/toolchain/$(NACL_OS_TYPE)_x86_glibc/i686-nacl/usr/include/ncurses
 
-CFLAGS = -O -I../include $(INCL32)
+CFLAGS = -O -I../include $(INCLUDES)
 LIBS = -lnacl-mounts -lppapi -lppapi_cpp 
-
-GAME     = nethack_x86-32.nexe
 
 WINSRC = $(WINNACLSRC)
 WINOBJ = $(WINNACLOBJ)
