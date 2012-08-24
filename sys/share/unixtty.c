@@ -197,7 +197,7 @@ gettty()
 		setctty();
 	}
 	settty_needed = TRUE;
-#endif 0 // solve this later.
+#endif // solve this later.
 }
 
 /* reset terminal to original state */
