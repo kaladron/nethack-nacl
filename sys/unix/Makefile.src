@@ -22,6 +22,7 @@
 #	'SysV-AT'	-- Microport 286 UNIX (put -DDUMB in CFLAGS)
 #	'Systos'	-- Atari
 #	'SysBe'		-- BeOS
+#	'Sysnacl'	-- Native Client
 SYSTEM = Sysunix
 
 #
@@ -182,6 +183,13 @@ WINX11SRC = ../win/X11/Window.c ../win/X11/dialogs.c ../win/X11/winX.c \
 	../win/X11/winval.c tile.c
 WINX11OBJ = Window.o dialogs.o winX.o winmap.o winmenu.o winmesg.o \
 	winmisc.o winstat.o wintext.o winval.o tile.o
+
+#
+# Files for a NaCl port
+#
+WINNACLSRC = $(WINTTYSRC) ../src/tile.c ../sys/nacl/create_module.cc ../win/nacl-messages/naclimpl.cc ../win/nacl-messages/naclmsg.cc ../win/nacl-messages/naclbind.cc
+WINNACLOBJ = $(WINTTYOBJ) tile.o create_module.o naclimpl.o naclmsg.o naclbind.o
+
 #
 # Files for a Qt port
 #
@@ -297,6 +305,30 @@ RANDOBJ =
 # used by `make depend' to reconstruct this Makefile; you shouldn't need this
 AWK	= nawk
 
+# For Native Client, uncomment these:
+ifneq ($(NACL_PACKAGES_BITSIZE),)
+
+VPATH=../src
+
+SYSTEM = Sysnacl
+
+WINTTYLIB = -lncurses
+
+CC = i686-nacl-gcc
+CXX = i686-nacl-g++
+
+NACL_OS_TYPE=$(shell getos.py)
+INCL32 = -I${NACL_SDK_ROOT}/toolchain/$(NACL_OS_TYPE)_x86_glibc/i686-nacl/usr/include/ncurses
+
+CFLAGS = -O -I../include $(INCL32)
+LIBS = -lnacl-mounts -lppapi -lppapi_cpp 
+
+GAME     = nethack_x86-32.nexe
+
+WINSRC = $(WINNACLSRC)
+WINOBJ = $(WINNACLOBJ)
+endif
+
 # ----------------------------------------
 #
 # Nothing below this line should have to be changed.
@@ -395,6 +427,12 @@ Sysunix:	$(HOBJ) Makefile
 	$(LINK) $(LFLAGS) -o $(GAME) $(HOBJ) $(WINLIB) $(LIBS)
 	@touch Sysunix
 
+Sysnacl:	$(HOBJ) Makefile
+	@echo "Loading ..."
+	#$(CXX) $(LFLAGS) -o $(GAME) -Wl,--start-group $(HOBJ) $(WINLIB) $(LIBS) -Wl,--end-group
+	$(CXX) $(LFLAGS) -o $(GAME) $(HOBJ) $(WINLIB) $(LIBS)
+	@touch Sysunix
+
 Sys3B2:	$(HOBJ) Makefile
 	@echo "Loading ..."
 	@$(LINK) $(LFLAGS) -o $(GAME) $(HOBJ) $(WINLIB) -lmalloc
@@ -452,12 +490,24 @@ all:	$(GAME)
 # special rules, to force update of makedefs, real dependencies should be
 # below in the 'make depend' output.
 monst.o:
-	$(CC) $(CFLAGS) -c monst.c
+	$(CC) $(CFLAGS) -c ../src/monst.c
 	@rm -f $(MAKEDEFS)
 
 objects.o:
-	$(CC) $(CFLAGS) -c objects.c
+	$(CC) $(CFLAGS) -c ../src/objects.c
 	@rm -f $(MAKEDEFS)
+
+create_module.o:
+	$(CXX) $(CFLAGS) -c ../sys/nacl/create_module.cc
+
+naclimpl.o:
+	$(CXX) $(CFLAGS) -c ../win/nacl-messages/naclimpl.cc
+
+naclmsg.o:
+	$(CXX) $(CFLAGS) -c ../win/nacl-messages/naclmsg.cc
+
+naclbind.o:
+	$(CXX) $(CFLAGS) -c ../win/nacl-messages/naclbind.cc
 
 # Qt windowport meta-object-compiler output
 qt_kde0.moc: ../include/qt_kde0.h
