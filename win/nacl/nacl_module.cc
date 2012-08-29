@@ -16,7 +16,7 @@
 #include "nacl-mounts/console/JSPipeMount.h"
 #include "nacl-mounts/console/JSPostMessageBridge.h"
 #include "nacl-mounts/pepper/PepperMount.h"
-#include "../../win/nacl-messages/naclmsg.h"
+#include "naclmsg.h"
 
 #define TARFILE "nethack.tar"
 #define USE_PSEUDO_THREADS

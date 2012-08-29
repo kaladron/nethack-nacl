@@ -375,7 +375,7 @@ SYSCSRC = ../sys/atari/tos.c ../sys/share/pcmain.c ../sys/share/pcsys.c \
 	../sys/unix/unixunix.c ../sys/unix/unixres.c ../sys/be/bemain.c
 
 # generated source files (tile.c is handled separately via WINxxxSRC)
-GENCSRC = monstr.c vis_tab.c	#tile.c
+GENCSRC = ../src/monstr.c ../src/vis_tab.c	#tile.c
 
 # all windowing-system-dependent .c (for dependencies and such)
 WINCSRC = $(WINTTYSRC) $(WINX11SRC) $(WINGNOMESRC) $(WINGEMSRC)
@@ -538,13 +538,13 @@ $(MAKEDEFS): ../util/makedefs.c  $(CONFIG_H) ../include/permonst.h \
 	@( cd ../util ; $(MAKE) ../include/onames.h )
 ../include/pm.h: $(MAKEDEFS)
 	@( cd ../util ; $(MAKE) ../include/pm.h )
-monstr.c: $(MAKEDEFS)
+../src/monstr.c: $(MAKEDEFS)
 	@( cd ../util ; $(MAKE) ../src/monstr.c )
 ../include/vis_tab.h: $(MAKEDEFS)
 	@( cd ../util ; $(MAKE) ../include/vis_tab.h )
 # makedefs -z makes both vis_tab.h and vis_tab.c, but writes the .h first
-vis_tab.c: ../include/vis_tab.h
-tile.c: ../win/share/tilemap.c $(HACK_H)
+../src/vis_tab.c: ../include/vis_tab.h
+../src/tile.c: ../win/share/tilemap.c $(HACK_H)
 	@( cd ../util ; $(MAKE) ../src/tile.c )
 
 ../win/gnome/gn_rip.h: ../win/X11/rip.xpm
@@ -603,6 +603,12 @@ depend: ../sys/unix/depend.awk \
 	@echo '# see make depend above' >> Makefile
 	- diff Makefile.bak Makefile
 	@rm -f Makefile.bak
+
+# There's a good chance that Make Depends won't work for the .cc files
+naclbind.o: $(HACK_H)
+naclimpl.o: $(HACK_H)
+nacl_module.o: $(HACK_H)
+naclmsg.o: $(HACK_H)
 
 # DO NOT DELETE THIS LINE OR CHANGE ANYTHING BEYOND IT
 
