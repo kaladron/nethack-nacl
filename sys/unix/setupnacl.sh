@@ -3,8 +3,8 @@
 
 echo "Copying Makefiles."
 
-mkdir ../../obj32
-mkdir ../../obj64
+[ -d ../../obj32 ] || mkdir ../../obj32
+[ -d ../../obj64 ] || mkdir ../../obj64
 
 cp Makefile.nacl ../../Makefile
 cp Makefile.dat ../../dat/Makefile
