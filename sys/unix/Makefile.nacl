@@ -8,7 +8,7 @@ OBJEXTENSION = $(OBJPUBLISH)/extension
 NETHACK32 = $(OBJEXTENSION)/nethack_x86-32.nexe
 NETHACK64 = $(OBJEXTENSION)/nethack_x86-64.nexe
 
-GAME := game
+GAME := $(OBJ32)/nethack_x86-32.nexe $(OBJ64)/nethack_x86-64.nexe
 
 
 VARDATD = data oracles options quest.dat rumors

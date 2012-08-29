@@ -439,7 +439,7 @@ Sysnacl:	$(HOBJ) Makefile
 	@echo "Loading ..."
 	#$(CXX) $(LFLAGS) -o $(GAME) -Wl,--start-group $(HOBJ) $(WINLIB) $(LIBS) -Wl,--end-group
 	$(CXX) $(LFLAGS) -o $(GAME) $(HOBJ) $(WINLIB) $(LIBS)
-	@touch Sysunix
+	@touch Sysnacl
 
 Sys3B2:	$(HOBJ) Makefile
 	@echo "Loading ..."
