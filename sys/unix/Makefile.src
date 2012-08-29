@@ -583,7 +583,8 @@ clean:
 spotless: clean
 	-rm -f a.out core $(GAME) Sys*
 	-rm -f ../include/date.h ../include/onames.h ../include/pm.h
-	-rm -f monstr.c ../include/vis_tab.h vis_tab.c tile.c *.moc
+	-rm -f ../src/monstr.c ../include/vis_tab.h ../src/vis_tab.c 
+	-rm -f ../src/tile.c *.moc
 	-rm -f ../win/gnome/gn_rip.h
 
 

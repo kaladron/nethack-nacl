@@ -116,6 +116,12 @@ LEXYYC = lex.yy.c
 # YTABH = y_tab.h
 # LEXYYC = lexyy.c
 
+#ifneq ($(NACL_PACKAGES_BITSIZE),)
+CFLAGS = -D__native_client__ -O -I../include -m32
+OBJDIR = .
+LFLAGS = -m32
+#endif
+
 
 
 # ----------------------------------------

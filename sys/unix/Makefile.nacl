@@ -1,0 +1,153 @@
+# NaCl-specific configs
+
+NACL_OS_TYPE=$(shell getos.py)
+
+OBJPUBLISH = publish
+OBJEXTENSION = $(OBJPUBLISH)/extension
+
+NETHACK32 = $(OBJEXTENSION)/nethack_x86-32.nexe
+NETHACK64 = $(OBJEXTENSION)/nethack_x86-64.nexe
+
+GAME := game
+
+
+VARDATD = data oracles options quest.dat rumors
+VARDAT = $(VARDATD) $(VARDATND)
+
+DATHELP = help hh cmdhelp history opthelp wizhelp
+
+SPEC_LEVS = asmodeus.lev baalz.lev bigrm-?.lev castle.lev fakewiz?.lev \
+	juiblex.lev knox.lev medusa-?.lev minend-?.lev minefill.lev \
+	minetn-?.lev oracle.lev orcus.lev sanctum.lev soko?-?.lev \
+	tower?.lev valley.lev wizard?.lev \
+	astral.lev air.lev earth.lev fire.lev water.lev
+QUEST_LEVS = ???-goal.lev ???-fil?.lev ???-loca.lev ???-strt.lev
+
+DATNODLB = $(VARDATND) license
+DATDLB = $(DATHELP) dungeon $(SPEC_LEVS) $(QUEST_LEVS) $(VARDATD)
+DAT = $(DATNODLB) $(DATDLB)
+
+$(GAME):
+	$(MAKE) -C obj32 NACL_PACKAGES_BITSIZE=32
+	$(MAKE) -C obj64 NACL_PACKAGES_BITSIZE=64
+
+all:	$(GAME) $(VARDAT) dungeon spec_levs check-dlb extension
+	@echo "Done."
+
+$(NETHACK32): $(GAME)
+	mkdir -p $(OBJEXTENSION)
+	cp obj32/nethack_x86-32.nexe $@
+
+$(NETHACK64): $(GAME)
+	mkdir -p $(OBJEXTENSION)
+	cp obj64/nethack_x86-64.nexe $@
+
+extension: $(OBJEXTENSION)/nethack.nmf $(OBJEXTENSION)/nethack.tar
+	cp -a \
+	  win/nacl-messages/*.css \
+	  win/nacl-messages/*.html \
+	  win/nacl-messages/*.js \
+	  win/nacl-messages/*.json \
+	  win/nacl-messages/*.png \
+	  win/nacl-messages/hterm \
+	  $(OBJEXTENSION)
+
+$(OBJEXTENSION)/nethack.nmf: $(NETHACK32) $(NETHACK64)
+	cd $(OBJEXTENSION) && create_nmf.py $(notdir $^) -L ${NACL_SDK_ROOT}/toolchain/$(NACL_OS_TYPE)_x86_glibc/x86_64-nacl/lib32 -L ${NACL_SDK_ROOT}/toolchain/$(NACL_OS_TYPE)_x86_glibc/x86_64-nacl/lib64 -D x86_64-nacl-objdump -o $(notdir $@) -s .
+
+$(OBJEXTENSION)/nethack.tar: dlb
+	tar -cf $@ -C dat nhdat
+
+data: $(GAME)
+	( cd dat ; $(MAKE) data )
+
+rumors: $(GAME)
+	( cd dat ; $(MAKE) rumors )
+
+oracles: $(GAME)
+	( cd dat ; $(MAKE) oracles )
+
+#	Note: options should have already been made with make, but...
+options: $(GAME)
+	( cd dat ; $(MAKE) options )
+
+quest.dat: $(GAME)
+	( cd dat ; $(MAKE) quest.dat )
+
+spec_levs: dungeon
+	( cd util ; $(MAKE) lev_comp )
+	( cd dat ; $(MAKE) spec_levs )
+	( cd dat ; $(MAKE) quest_levs )
+
+dungeon: $(GAME)
+	( cd util ; $(MAKE) dgn_comp )
+	( cd dat ; $(MAKE) dungeon )
+
+nhtiles.bmp: $(GAME)
+	( cd dat ; $(MAKE) nhtiles.bmp )
+
+x11tiles: $(GAME)
+	( cd util ; $(MAKE) tile2x11 )
+	( cd dat ; $(MAKE) x11tiles )
+
+beostiles: $(GAME)
+	( cd util ; $(MAKE) tile2beos )
+	( cd dat ; $(MAKE) beostiles )
+
+NetHack.ad: $(GAME)
+	( cd dat ; $(MAKE) NetHack.ad )
+
+pet_mark.xbm:
+	( cd dat ; $(MAKE) pet_mark.xbm )
+
+rip.xpm:
+	( cd dat ; $(MAKE) rip.xpm )
+
+mapbg.xpm:
+	(cd dat ; $(MAKE) mapbg.xpm )
+
+nhsplash.xpm:
+	( cd dat ; $(MAKE) nhsplash.xpm )
+
+nh16.img: $(GAME)
+	( cd util ; $(MAKE) tile2img.ttp )
+	( cd dat ; $(MAKE) nh16.img )
+
+rip.img:
+	( cd util ; $(MAKE) xpm2img.ttp )
+	( cd dat ; $(MAKE) rip.img )
+GEM_RSC.RSC:
+	( cd dat ; $(MAKE) GEM_RSC.RSC )
+
+title.img:
+	( cd dat ; $(MAKE) title.img )
+
+check-dlb: options
+	@if egrep -s librarian dat/options ; then $(MAKE) dlb ; else true ; fi
+
+dlb:
+	( cd util ; $(MAKE) dlb )
+	( cd dat ; ../util/dlb cf nhdat $(DATDLB) )
+
+# recover can be used when INSURANCE is defined in include/config.h
+# and the checkpoint option is true
+recover: $(GAME)
+	( cd util ; $(MAKE) recover )
+
+
+# 'make clean' removes all the .o files, but leaves around all the executables
+# and compiled data files
+clean:
+	( cd obj32 ; $(MAKE) clean )
+	( cd obj64 ; $(MAKE) clean )
+	( cd util ; $(MAKE) clean )
+
+# 'make spotless' returns the source tree to near-distribution condition.
+# it removes .o files, executables, and compiled data files
+spotless:
+	( cd obj32 ; $(MAKE) spotless )
+	( cd obj64 ; $(MAKE) spotless )
+	( cd util ; $(MAKE) spotless )
+	( cd dat ; $(MAKE) spotless )
+	( cd doc ; $(MAKE) spotless )
+	rm -rf $(OBJEXTENSION)

@@ -6,7 +6,7 @@ echo "Copying Makefiles."
 mkdir ../../obj32
 mkdir ../../obj64
 
-cp Makefile.top ../../Makefile
+cp Makefile.nacl ../../Makefile
 cp Makefile.dat ../../dat/Makefile
 cp Makefile.doc ../../doc/Makefile
 cp Makefile.utl ../../util/Makefile
