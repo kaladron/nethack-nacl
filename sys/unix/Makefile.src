@@ -187,7 +187,7 @@ WINX11OBJ = Window.o dialogs.o winX.o winmap.o winmenu.o winmesg.o \
 #
 # Files for a NaCl port
 #
-WINNACLSRC = $(WINTTYSRC) ../src/tile.c ../win/nacl-messages/nacl_module.cc ../win/nacl-messages/naclimpl.cc ../win/nacl-messages/naclmsg.cc ../win/nacl-messages/naclbind.cc
+WINNACLSRC = $(WINTTYSRC) ../src/tile.c ../win/nacl/nacl_module.cc ../win/nacl/naclimpl.cc ../win/nacl/naclmsg.cc ../win/nacl/naclbind.cc
 WINNACLOBJ = $(WINTTYOBJ) tile.o nacl_module.o naclimpl.o naclmsg.o naclbind.o
 
 #
@@ -506,16 +506,16 @@ objects.o:
 	@rm -f $(MAKEDEFS)
 
 nacl_module.o:
-	$(CXX) $(CFLAGS) -c ../win/nacl-messages/nacl_module.cc
+	$(CXX) $(CFLAGS) -c ../win/nacl/nacl_module.cc
 
 naclimpl.o:
-	$(CXX) $(CFLAGS) -c ../win/nacl-messages/naclimpl.cc
+	$(CXX) $(CFLAGS) -c ../win/nacl/naclimpl.cc
 
 naclmsg.o:
-	$(CXX) $(CFLAGS) -c ../win/nacl-messages/naclmsg.cc
+	$(CXX) $(CFLAGS) -c ../win/nacl/naclmsg.cc
 
 naclbind.o:
-	$(CXX) $(CFLAGS) -c ../win/nacl-messages/naclbind.cc
+	$(CXX) $(CFLAGS) -c ../win/nacl/naclbind.cc
 
 # Qt windowport meta-object-compiler output
 qt_kde0.moc: ../include/qt_kde0.h

@@ -44,12 +44,12 @@ $(NETHACK64): $(GAME)
 
 extension: $(OBJEXTENSION)/nethack.nmf $(OBJEXTENSION)/nethack.tar
 	cp -a \
-	  win/nacl-messages/*.css \
-	  win/nacl-messages/*.html \
-	  win/nacl-messages/*.js \
-	  win/nacl-messages/*.json \
-	  win/nacl-messages/*.png \
-	  win/nacl-messages/hterm \
+	  win/nacl/*.css \
+	  win/nacl/*.html \
+	  win/nacl/*.js \
+	  win/nacl/*.json \
+	  win/nacl/*.png \
+	  win/nacl/hterm \
 	  $(OBJEXTENSION)
 
 $(OBJEXTENSION)/nethack.nmf: $(NETHACK32) $(NETHACK64)
