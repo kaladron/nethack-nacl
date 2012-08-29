@@ -24,6 +24,7 @@
 #ifdef __native_client__
 # define NEED_VARARGS
 # define USE_STDARG
+# define DLB
 #endif
 
 #ifdef __TURBOC__
