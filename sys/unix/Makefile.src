@@ -187,8 +187,8 @@ WINX11OBJ = Window.o dialogs.o winX.o winmap.o winmenu.o winmesg.o \
 #
 # Files for a NaCl port
 #
-WINNACLSRC = $(WINTTYSRC) ../src/tile.c ../sys/nacl/create_module.cc ../win/nacl-messages/naclimpl.cc ../win/nacl-messages/naclmsg.cc ../win/nacl-messages/naclbind.cc
-WINNACLOBJ = $(WINTTYOBJ) tile.o create_module.o naclimpl.o naclmsg.o naclbind.o
+WINNACLSRC = $(WINTTYSRC) ../src/tile.c ../win/nacl-messages/nacl_module.cc ../win/nacl-messages/naclimpl.cc ../win/nacl-messages/naclmsg.cc ../win/nacl-messages/naclbind.cc
+WINNACLOBJ = $(WINTTYOBJ) tile.o nacl_module.o naclimpl.o naclmsg.o naclbind.o
 
 #
 # Files for a Qt port
@@ -505,8 +505,8 @@ objects.o:
 	$(CC) $(CFLAGS) -c ../src/objects.c
 	@rm -f $(MAKEDEFS)
 
-create_module.o:
-	$(CXX) $(CFLAGS) -c ../sys/nacl/create_module.cc
+nacl_module.o:
+	$(CXX) $(CFLAGS) -c ../win/nacl-messages/nacl_module.cc
 
 naclimpl.o:
 	$(CXX) $(CFLAGS) -c ../win/nacl-messages/naclimpl.cc
