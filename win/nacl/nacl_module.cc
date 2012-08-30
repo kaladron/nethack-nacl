@@ -25,7 +25,7 @@ extern "C" {
 }
 
 #define TARFILE "nethack.tar"
-//define USE_PSEUDO_THREADS
+#define USE_PSEUDO_THREADS
 
 extern "C" {
 int nethack_main(int argc, char *argv[]);
@@ -171,8 +171,11 @@ class NethackInstance : public pp::Instance {
       jspipe_->set_outbound_bridge(jsbridge_);
 #else
       pthread_t id;
-      pthread_create(&id, NULL, &WinchThread, this);
-      pthread_join(id, NULL);
+      pthread_attr_t attr;
+      pthread_attr_init(&attr);
+      pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+      pthread_create(&id, &attr, &WinchThread, this);
+      pthread_attr_destroy(&attr);
 #endif
     }
 
