@@ -505,17 +505,17 @@ objects.o:
 	$(CC) $(CFLAGS) -c ../src/objects.c
 	@rm -f $(MAKEDEFS)
 
-nacl_module.o:
-	$(CXX) $(CFLAGS) -c ../win/nacl/nacl_module.cc
+nacl_module.o: ../win/nacl/nacl_module.cc
+	$(CXX) $(CFLAGS) -c $<
 
-naclimpl.o:
-	$(CXX) $(CFLAGS) -c ../win/nacl/naclimpl.cc
+naclimpl.o: ../win/nacl/naclimpl.cc
+	$(CXX) $(CFLAGS) -c $<
 
-naclmsg.o:
-	$(CXX) $(CFLAGS) -c ../win/nacl/naclmsg.cc
+naclmsg.o: ../win/nacl/naclmsg.cc
+	$(CXX) $(CFLAGS) -c $<
 
-naclbind.o:
-	$(CXX) $(CFLAGS) -c ../win/nacl/naclbind.cc
+naclbind.o: ../win/nacl/naclbind.cc
+	$(CXX) $(CFLAGS) -c $<
 
 # Qt windowport meta-object-compiler output
 qt_kde0.moc: ../include/qt_kde0.h
