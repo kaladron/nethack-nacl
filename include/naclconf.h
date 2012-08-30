@@ -41,5 +41,5 @@
 #define NO_FILE_LINKS
 #define LOCKDIR VAR_PLAYGROUND
 
-// void regularize(char *);
-
+extern int nacl_LI;
+extern int nacl_CO;

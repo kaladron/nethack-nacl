@@ -197,8 +197,8 @@ const char *mesg;
     /*NOTREACHED*/
 }
 
-#if defined(SIGWINCH) && defined(CLIPPING)
-STATIC_OVL void
+#if (defined(SIGWINCH) || defined(__native_client__)) && defined(CLIPPING)
+void
 winch()
 {
     int oldLI = LI, oldCO = CO, i;

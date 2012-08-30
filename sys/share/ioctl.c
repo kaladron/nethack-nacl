@@ -107,6 +107,10 @@ getwindowsz()
 	    CO = ttsz.ws_col;
     }
 #endif
+#ifdef __native_client__
+    LI = nacl_LI;
+    CO = nacl_CO;
+#endif
 }
 
 void

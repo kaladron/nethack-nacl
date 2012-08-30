@@ -8,6 +8,8 @@
 #include <fcntl.h>
 #include <pthread.h>
 #include <stdio.h>
+#include <sstream>
+#include <string>
 #include <sys/stat.h>
 #include <ppapi/cpp/instance.h>
 #include "nacl-mounts/base/KernelProxy.h"
@@ -18,14 +20,21 @@
 #include "nacl-mounts/pepper/PepperMount.h"
 #include "naclmsg.h"
 
+extern "C" {
+#include "hack.h"
+}
+
 #define TARFILE "nethack.tar"
-#define USE_PSEUDO_THREADS
+//define USE_PSEUDO_THREADS
 
 extern "C" {
 int nethack_main(int argc, char *argv[]);
 int simple_tar_extract_to(const char *path, const char *dst);
-}
+void winch();
 
+int nacl_CO;
+int nacl_LI;
+}
 
 class NethackInstance : public pp::Instance {
  public:
@@ -34,10 +43,19 @@ class NethackInstance : public pp::Instance {
     jspipe_ = NULL;
     jsbridge_ = NULL;
     fs_ = NULL;
+    runner_ = NULL;
+#ifdef USE_PSEUDO_THREADS
+    runner_sigwinch_ = NULL;
+    jsbridge_sigwinch_ = NULL;
+#endif
   }
 
   virtual ~NethackInstance() {
     if (runner_) delete runner_;
+#ifdef USE_PSEUDO_THREADS
+    if (runner_sigwinch_) delete runner_sigwinch_;
+    if (jsbridge_sigwinch_) delete jsbridge_sigwinch_;
+#endif
     if (jspipe_) delete jspipe_;
     if (jsbridge_) delete jsbridge_;
     if (fs_) delete fs_;
@@ -47,6 +65,13 @@ class NethackInstance : public pp::Instance {
   static void *GameThread(void *arg) {
     NethackInstance *inst = static_cast<NethackInstance*>(arg);
     inst->Run();
+    return 0;
+  }
+
+  static void *WinchThread(void *arg) {
+    fprintf(stderr, "starting...");
+    winch();
+    fprintf(stderr, "ending...");
     return 0;
   }
 
@@ -107,6 +132,8 @@ class NethackInstance : public pp::Instance {
     jspipe_->set_outbound_bridge(jsbridge_);
 #ifdef USE_PSEUDO_THREADS
     jspipe_->set_using_pseudo_thread(true);
+    runner_sigwinch_ = new MainThreadRunner(this);
+    jsbridge_sigwinch_ = new JSPostMessageBridge(runner_sigwinch_);
 #endif
     // Replace stdin, stdout with js console.
     kp_->mount("/jspipe", jspipe_);
@@ -131,6 +158,24 @@ class NethackInstance : public pp::Instance {
 
   virtual void HandleMessage(const pp::Var& message) {
     std::string msg = message.AsString();
+    const std::string BASE = "WINCH:";
+    if (msg.compare(0, BASE.length(), BASE, 0, BASE.length()) == 0) {
+      std::stringstream convertor(msg.substr(BASE.length()));
+      char colon;
+      convertor >> nacl_CO >> colon >> nacl_LI;
+      fprintf(stderr, "Width: %d height: %d\n", nacl_CO, nacl_LI);
+#ifdef USE_PSEUDO_THREADS
+      jspipe_->set_outbound_bridge(jsbridge_sigwinch_);
+      MainThreadRunner::PseudoThreadHeadroomFork(
+          640 * 1024 * 2, &WinchThread, this);
+      jspipe_->set_outbound_bridge(jsbridge_);
+#else
+      pthread_t id;
+      pthread_create(&id, NULL, &WinchThread, this);
+      pthread_join(id, NULL);
+#endif
+    }
+
     jspipe_->Receive(msg.c_str(), msg.size());
   }
 
@@ -139,6 +184,10 @@ class NethackInstance : public pp::Instance {
   JSPipeMount* jspipe_;
   JSPostMessageBridge* jsbridge_;
   MainThreadRunner *runner_;
+#ifdef USE_PSEUDO_THREADS
+  MainThreadRunner *runner_sigwinch_;
+  JSPostMessageBridge* jsbridge_sigwinch_;
+#endif
   KernelProxy *kp_;
   pp::FileSystem *fs_;
 };
