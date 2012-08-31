@@ -145,9 +145,11 @@ clean:
 # 'make spotless' returns the source tree to near-distribution condition.
 # it removes .o files, executables, and compiled data files
 spotless:
-	( cd obj32 ; $(MAKE) spotless )
-	( cd obj64 ; $(MAKE) spotless )
 	( cd util ; $(MAKE) spotless )
 	( cd dat ; $(MAKE) spotless )
 	( cd doc ; $(MAKE) spotless )
-	rm -rf $(OBJEXTENSION)
+	rm -rf publish obj32 obj64
+	rm util/Makefile
+	rm dat/Makefile
+	rm doc/Makefile
+	rm Makefile
