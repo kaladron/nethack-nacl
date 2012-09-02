@@ -16,7 +16,7 @@ onmessage = function(e) {
 
   fstatus.exclusive = true;
 
-  var confFile = fs.root.getFile('/nethack-userdata/home/NetHack.cnf', fstatus);
+  var confFile = fs.root.getFile('/nethack-userdata/home/.nethackrc', fstatus);
   var writer = confFile.createWriter();
   var blob = new Blob(
     ['OPTIONS=windowtype:tty,hilite_pet,color\n',

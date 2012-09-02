@@ -85,8 +85,10 @@ class NethackInstance : public pp::Instance {
     setenv("LOGNAME", "", 1);
     /* Indicate where we decompress things. */
     setenv("HACKDIR", "/nethack", 1);
+    // TODO(jeffbailey): Use this to pass in command-line options
+    // from the web, and fix the location of the config file.
     /* Set location of config file. */
-    setenv("NETHACKOPTIONS", "/mnt/home/NetHack.cnf", 1);
+    // setenv("NETHACKOPTIONS", "/mnt/home/NetHack.cnf", 1);
 
     // Setup game directory.
     kp_->mkdir("/nethack", 0777);
