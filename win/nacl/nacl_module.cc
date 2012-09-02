@@ -85,10 +85,6 @@ class NethackInstance : public pp::Instance {
     setenv("LOGNAME", "", 1);
     /* Indicate where we decompress things. */
     setenv("HACKDIR", "/nethack", 1);
-    // TODO(jeffbailey): Use this to pass in command-line options
-    // from the web, and fix the location of the config file.
-    /* Set location of config file. */
-    // setenv("NETHACKOPTIONS", "/mnt/home/NetHack.cnf", 1);
 
     // Setup game directory.
     kp_->mkdir("/nethack", 0777);
@@ -128,6 +124,33 @@ class NethackInstance : public pp::Instance {
     fs_ = new pp::FileSystem(this, PP_FILESYSTEMTYPE_LOCALPERSISTENT);
     runner_ = new MainThreadRunner(this);
     kp_ = KernelProxy::KPInstance();
+
+    std::stringstream options;
+    int argcount = 0;
+    const char**argnwalk = argn;
+    const char**argvwalk = argv;
+    uint32_t argcwalk = 0;
+    while (argcwalk < argc) {
+      if (!strcmp(*argnwalk, "width")) {
+        // The browser adds on extra fields we don't need:
+        // width, height, data, type, src, @dev.
+        // TODO(jeffbailey): Find if there a definite way we can
+        // filter these without relying on magic ordering.
+        break;
+      }
+      fprintf(stderr, "argn: %s, argv: %s\n", *argnwalk, *argvwalk);
+      if (argcount > 0) {
+        options << ',';
+      }
+      options << *argnwalk << ':' << *argvwalk;
+      argnwalk++;
+      argvwalk++;
+      argcwalk++;
+      argcount++;
+    }
+    const std::string& optstr = options.str();
+    setenv("NETHACKOPTIONS", optstr.c_str(), 1);
+    fprintf(stderr, "%s\n", optstr.c_str());
 
     jsbridge_ = new JSPostMessageBridge(runner_);
     jspipe_ = new JSPipeMount();
