@@ -806,6 +806,9 @@ static const char *window_opts[] = {
 #ifdef BEOS_GRAPHICS
 		"BeOS InterfaceKit",
 #endif
+#ifdef __native_client__
+		"Native Client",
+#endif
 		0
 	};
 
