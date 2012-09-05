@@ -118,6 +118,10 @@ Nethack.prototype.run = function() {
   worker.postMessage(true);
 };
 
+Nethack.prototype.resize_ = function(width, height) {
+  nethackEmbed.postMessage('WINCH:' + width + ':' + height);
+}
+
 Nethack.prototype.startGame = function(event) {
   this.io = this.argv_.io.push();
 
@@ -137,6 +141,8 @@ Nethack.prototype.startGame = function(event) {
   document.getElementById('listener').appendChild(nethackEmbed);
 
   this.io.onVTKeystroke = got;
+
+  this.onTerminalResize = this.resize_.bind(this);
 
   return;
   // TODO(jeffbailey): 
