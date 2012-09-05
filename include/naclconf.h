@@ -13,7 +13,7 @@
 
 #define FILENAME 80
 #define FCMASK  0660    /* file creation mask */
-#define NO_SIGNAL
+//define NO_SIGNAL
 
 // define STRNCMPI
 #define TEXTCOLOR
