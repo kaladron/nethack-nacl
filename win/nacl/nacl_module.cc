@@ -25,7 +25,7 @@ extern "C" {
 }
 
 #define TARFILE "nethack.tar"
-#define USE_PSEUDO_THREADS
+//define USE_PSEUDO_THREADS
 
 extern "C" {
 int nethack_main(int argc, char *argv[]);
