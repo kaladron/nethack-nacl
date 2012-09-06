@@ -142,7 +142,7 @@ Nethack.prototype.startGame = function(event) {
 
   this.io.onVTKeystroke = got;
 
-  this.onTerminalResize = this.resize_.bind(this);
+  this.io.onTerminalResize = this.resize_.bind(this);
 
   return;
   // TODO(jeffbailey): 
