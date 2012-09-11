@@ -37,6 +37,7 @@
 #undef MAIL
 #undef DEF_MAILREADER
 #undef SUSPEND
+#undef NEWS
 
 #define NO_FILE_LINKS
 #define LOCKDIR VAR_PLAYGROUND
