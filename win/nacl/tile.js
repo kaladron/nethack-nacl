@@ -66,6 +66,8 @@ function pm(out) {
   nethackEmbed.postMessage(PREFIX + out);
 }
 
+var win_num = 1;
+
 handleMessage = function(event) {
   // Make sure it's the right kind of event we got
   // Check to make sure it starts with PREFIX
@@ -76,6 +78,18 @@ handleMessage = function(event) {
     break;
   case NaclMsg.ASKNAME:
     pm('bob');
+    break;
+  case NaclMsg.GET_NH_EVENT:
+    throw "Not Implemented!";
+  case NaclMsg.EXIT_NHWINDOWS:
+    throw "Not Implemented!";
+  case NaclMsg.SUSPEND_NHWINDOWS:
+    throw "Not Implemented!";
+  case NaclMsg.RESUME_NHWINDOWS:
+    throw "Not Implemented!";
+  case NaclMsg.CREATE_NHWINDOW:
+    pm('' + win_num);
+    win_num++;
     break;
   }
 }
