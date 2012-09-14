@@ -292,6 +292,9 @@ void nacl_clear_nhwindow(winid wid) {
 
 void nacl_display_nhwindow(winid wid, BOOLEAN_P block) {
   NaClMessage() << NACL_MSG_DISPLAY_NHWINDOW << wid << block << eom;
+  if (block) {
+    std::string ack = NaClMessage::GetReply();
+  }
 }
 
 void nacl_destroy_nhwindow(winid wid) {
