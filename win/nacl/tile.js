@@ -40,6 +40,13 @@ NaclMsg.END_SCREEN = 37;
 NaclMsg.OUTRIP = 38;
 NaclMsg.DELETE_NHWINDOW_BY_REFERENCE = 39;
 
+NHWin = {};
+NHWin.MESSAGE = 1;
+NHWin.STATUS = 2;
+NHWin.MAP = 3;
+NHWin.MENU = 4;
+NHWin.TEXT = 5;
+
 var nethackEmbed;
 
 startGame = function() {
@@ -68,6 +75,8 @@ function pm(out) {
 
 var win_num = 1;
 
+var win_array = new Array();
+
 handleMessage = function(event) {
   // Make sure it's the right kind of event we got
   // Check to make sure it starts with PREFIX
@@ -88,8 +97,22 @@ handleMessage = function(event) {
   case NaclMsg.RESUME_NHWINDOWS:
     throw "Not Implemented!";
   case NaclMsg.CREATE_NHWINDOW:
+    // msg[1]: type
+  //  switch(msg[1]) {
+  //  case NHWin.MENU:
+      var menu_win = document.createElement('x-modal');
+      win_array[win_num] = menu_win;
+  //    break;
+  //  }
+
     pm('' + win_num);
     win_num++;
+    break;
+  case NaclMsg.DISPLAY_NHWINDOW:
+    document.body.appendChild(win_array[msg[1]]);
+  case NaclMsg.PUTSTR:
+    var text = document.createTextNode(msg[3]);
+    win_array[msg[1]].appendChild(text);
     break;
   }
 }
