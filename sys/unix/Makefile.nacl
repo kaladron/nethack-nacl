@@ -50,6 +50,7 @@ extension: $(OBJEXTENSION)/nethack.nmf $(OBJEXTENSION)/nethack.tar
 	  win/nacl/*.json \
 	  win/nacl/*.png \
 	  win/nacl/hterm \
+	  win/nacl/x-tag \
 	  $(OBJEXTENSION)
 
 $(OBJEXTENSION)/nethack.nmf: $(NETHACK32) $(NETHACK64)

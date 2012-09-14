@@ -109,7 +109,13 @@ handleMessage = function(event) {
     win_num++;
     break;
   case NaclMsg.DISPLAY_NHWINDOW:
+    // msg[1]: winid
+    // We'll handle root windows ourselves.
+    if (msg[1] < 4) {
+      break;
+    }
     document.body.appendChild(win_array[msg[1]]);
+    break;
   case NaclMsg.PUTSTR:
     var text = document.createTextNode(msg[3]);
     win_array[msg[1]].appendChild(text);
