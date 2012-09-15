@@ -1,3 +1,5 @@
+"use strict";
+
 var NaclMsg = {};
 NaclMsg.INIT_NHWINDOWS = 0;
 NaclMsg.PLAYER_SELECTION = 1;
@@ -40,16 +42,31 @@ NaclMsg.END_SCREEN = 37;
 NaclMsg.OUTRIP = 38;
 NaclMsg.DELETE_NHWINDOW_BY_REFERENCE = 39;
 
-NHWin = {};
+var NHWin = {};
 NHWin.MESSAGE = 1;
 NHWin.STATUS = 2;
 NHWin.MAP = 3;
 NHWin.MENU = 4;
 NHWin.TEXT = 5;
 
+var DisplayWindow = function() {
+  this.menu_win = document.createElement('x-modal');
+  this.pre = document.createElement('pre');
+  this.menu_win.appendChild(this.pre);
+};
+
+DisplayWindow.prototype.display = function() {
+  document.body.appendChild(this.menu_win);
+};
+
+DisplayWindow.prototype.putStr = function(text) {
+  var text = document.createTextNode(text + '\n');
+  this.pre.appendChild(text);
+};
+
 var nethackEmbed;
 
-startGame = function() {
+var startGame = function() {
 
   // Create the object for Nethack.
   nethackEmbed = document.createElement('object');
@@ -77,7 +94,7 @@ var win_num = 1;
 
 var win_array = new Array();
 
-handleMessage = function(event) {
+var handleMessage = function(event) {
   // Make sure it's the right kind of event we got
   // Check to make sure it starts with PREFIX
   var msg = JSON.parse(event.data.substr(PREFIX.length));
@@ -100,8 +117,7 @@ handleMessage = function(event) {
     // msg[1]: type
   //  switch(msg[1]) {
   //  case NHWin.MENU:
-      var menu_win = document.createElement('x-modal');
-      win_array[win_num] = menu_win;
+      win_array[win_num] = new DisplayWindow();
   //    break;
   //  }
 
@@ -114,11 +130,10 @@ handleMessage = function(event) {
     if (msg[1] < 4) {
       break;
     }
-    document.body.appendChild(win_array[msg[1]]);
+    win_array[msg[1]].display();
     break;
   case NaclMsg.PUTSTR:
-    var text = document.createTextNode(msg[3]);
-    win_array[msg[1]].appendChild(text);
+    win_array[msg[1]].putStr(msg[3]);
     break;
   }
 }
