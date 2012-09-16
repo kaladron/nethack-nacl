@@ -53,15 +53,36 @@ var DisplayWindow = function() {
   this.menu_win = document.createElement('x-modal');
   this.pre = document.createElement('pre');
   this.menu_win.appendChild(this.pre);
+  var button = document.createElement('button');
+  button.type = 'button';
+  var ok = document.createTextNode('OK');
+  button.appendChild(ok);
+  button.addEventListener('click', this.okButton.bind(this));
+  this.menu_win.appendChild(button);
+  this.block = false;
 };
 
-DisplayWindow.prototype.display = function() {
+DisplayWindow.prototype.display = function(block) {
   document.body.appendChild(this.menu_win);
+  if (block == 1) {
+    this.block = true;
+  }
+};
+
+DisplayWindow.prototype.okButton = function() {
+  if (this.block) {
+    pm('OK');
+    this.block = false;
+  }
 };
 
 DisplayWindow.prototype.putStr = function(text) {
   var text = document.createTextNode(text + '\n');
   this.pre.appendChild(text);
+};
+
+DisplayWindow.prototype.close = function() {
+  document.body.removeChild(this.menu_win);
 };
 
 var nethackEmbed;
@@ -130,7 +151,11 @@ var handleMessage = function(event) {
     if (msg[1] < 4) {
       break;
     }
-    win_array[msg[1]].display();
+    win_array[msg[1]].display(msg[2]);
+    break;
+  case NaclMsg.DESTROY_NHWINDOW:
+    win_array[msg[1]].close();
+    win_array[msg[1]] = null;
     break;
   case NaclMsg.PUTSTR:
     win_array[msg[1]].putStr(msg[3]);
