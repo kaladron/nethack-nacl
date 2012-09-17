@@ -161,6 +161,11 @@ var handleMessage = function(event) {
   case NaclMsg.PUTSTR:
     win_array[msg[1]].putStr(msg[3]);
     break;
+  case NaclMsg.RAW_PRINT:
+    var pline = document.getElementsByClassName('plineDiv')[0];
+    var text = document.createTextNode(msg[1]);
+    pline.appendChild(text);
+    break;
   }
 }
 
