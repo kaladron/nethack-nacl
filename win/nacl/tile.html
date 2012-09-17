@@ -42,13 +42,84 @@
 
 <body>
 <div id="listener"></div>
-<div id="terminal">
 <div id="header">
-<ul style="display:table-cell"><li>Nethack: TTY Mode</li><li>Options</li></ul>
+<ul style="display:table-cell"><li>Nethack: Tile Mode</li><li>Options</li></ul>
 <ul style="display:table-cell"><li><a href="terminal.html">Terminal</a></li></ul>
-<ul style="display:table-cell"><li><a href="tile.html">Tile</a></li></ul>
+<ul style="display:table-cell"><li><a href="/">Text</a></li></ul>
+</div>
+
+<div class='{style.toppart}'>
+<div class='{style.plineWindow}'>
+<div class='{style.plineDiv}' ui:field="plineContainer"></div>
+</div>
+<div class='{style.status}'>
+<h1>
+<span ui:field='heading1'>Webhack</span>
+</h1>
+<h2>The Dungeons of Doom, level 1</h2>
+<hr />
+<table width="100%">
+<tr>
+<td>
+<img src="str.png" height="40" width="40"></img>
+</td>
+<td>
+<img src="dex.png" height="40" width="40"></img>
+</td>
+<td>
+<img src="constitution.png" height="40" width="40"></img>
+</td>
+<td>
+<img src="int.png" height="40" width="40"></img>
+</td>
+<td>
+<img src="wis.png" height="40" width="40"></img>
+</td>
+<td>
+<img src="cha.png" height="40" width="40"></img>
+</td>
+</tr>
+<tr>
+<td>STR: 99</td>
+<td>DEX: 99</td>
+<td>CON: 99</td>
+<td>INT: 99</td>
+<td>WIS: 99</td>
+<td>CHA: 99</td>
+</tr>
+</table>
+<hr />
+<table width="100%">
+<tr>
+<td>
+HP:
+<span ui:field='hitpoints'>999/999</span>
+</td>
+<td>AC: 7</td>
+<td>Power: 8/8</td>
+<td>
+Au:
+<span ui:field='gold'>0</span>
+</td>
+</tr>
+</table>
+<hr />
+<table>
+<tr>
+<td>Level: 1</td>
+<td>Exp: <span ui:field='xp'>0</span></td>
+</tr>
+</table>
+<hr />
+
+</div>
+<div class='{style.equipment}'>
+<canvas width="100" height="200">
+</canvas>
+Equipment
 </div>
 </div>
+
 <script src="tile.js"></script>
 </body>
 </html>
