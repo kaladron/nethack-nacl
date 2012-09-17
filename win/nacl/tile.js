@@ -51,6 +51,7 @@ NHWin.TEXT = 5;
 
 var DisplayWindow = function() {
   this.menu_win = document.createElement('x-modal');
+  this.menu_win.className = 'dialog';
   this.pre = document.createElement('pre');
   this.menu_win.appendChild(this.pre);
   var button = document.createElement('button');
