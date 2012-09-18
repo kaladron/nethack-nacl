@@ -49,6 +49,15 @@ NHWin.MAP = 3;
 NHWin.MENU = 4;
 NHWin.TEXT = 5;
 
+var HEIGHT = 24;
+var WIDTH = 80;
+var DISPLAY_SQUARE = 16;
+var TILES_PER_ROW = 40;
+var TILE_SQUARE = 16;
+
+var ctx;
+var tiles;
+
 var DisplayWindow = function() {
   this.menu_win = document.createElement('x-modal');
   this.menu_win.className = 'dialog';
@@ -61,6 +70,7 @@ var DisplayWindow = function() {
   button.addEventListener('click', this.okButton.bind(this));
   this.menu_win.appendChild(button);
   this.block = false;
+
 };
 
 DisplayWindow.prototype.display = function(block) {
@@ -90,6 +100,19 @@ var nethackEmbed;
 
 var startGame = function() {
 
+  var pixheight = HEIGHT * DISPLAY_SQUARE;
+  var pixwidth = WIDTH * DISPLAY_SQUARE;
+
+  var canvas = document.getElementById('game');
+  ctx = canvas.getContext('2d');
+  canvas.width = pixwidth;
+  canvas.height = pixheight;
+  canvas.style.width = pixwidth;
+  canvas.style.height = pixheight;
+
+  tiles = document.createElement('img');
+  tiles.src = "x11tiles.png";
+
   // Create the object for Nethack.
   nethackEmbed = document.createElement('object');
   nethackEmbed.width = 0;
@@ -110,6 +133,22 @@ var PREFIX = 'JSPipeMount:3:';
 
 function pm(out) {
   nethackEmbed.postMessage(PREFIX + out);
+}
+
+var putTile = function(x, y, tile, pet) {
+  x--;
+
+  var tile_x = tile % TILES_PER_ROW;
+  var tile_y = Math.floor(tile / TILES_PER_ROW);
+
+  ctx.drawImage(tiles, tile_x * TILE_SQUARE,
+                tile_y * TILE_SQUARE,
+                TILE_SQUARE,
+                TILE_SQUARE,
+                x * DISPLAY_SQUARE,
+                y * DISPLAY_SQUARE,
+                DISPLAY_SQUARE,
+                DISPLAY_SQUARE);
 }
 
 var win_num = 1;
@@ -157,6 +196,9 @@ var handleMessage = function(event) {
   case NaclMsg.DESTROY_NHWINDOW:
     win_array[msg[1]].close();
     win_array[msg[1]] = null;
+    break;
+  case NaclMsg.PRINT_GLYPH:
+    putTile(msg[2], msg[3], msg[4], msg[5]);
     break;
   case NaclMsg.PUTSTR:
     win_array[msg[1]].putStr(msg[3]);
