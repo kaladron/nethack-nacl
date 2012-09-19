@@ -98,6 +98,32 @@ DisplayWindow.prototype.close = function() {
 
 var nethackEmbed;
 
+var handleKeyboard = function(evt) {
+  var cmdKey = 0;
+
+  switch (evt.which) {
+  case 37: // left Arrow
+    cmdKey = 104; // h
+    break;
+  case 39: // Right
+    cmdKey = 108; // l
+    break;
+  case 38: // Up
+    cmdKey = 107; // k
+    break;
+  case 40: // Down
+    cmdKey = 106; // j
+    break;
+  }
+
+  if (cmdKey != 0) {
+    evt.preventDefault();
+    console.log("ooga");
+    var item = [cmdKey, 0, 0, 0];
+    pm(item.join(' '));
+  }
+};
+
 var startGame = function() {
 
   var pixheight = HEIGHT * DISPLAY_SQUARE;
@@ -112,6 +138,8 @@ var startGame = function() {
 
   tiles = document.createElement('img');
   tiles.src = "x11tiles.png";
+
+  document.body.addEventListener('keydown', handleKeyboard);
 
   // Create the object for Nethack.
   nethackEmbed = document.createElement('object');
@@ -207,6 +235,7 @@ var handleMessage = function(event) {
     var pline = document.getElementsByClassName('plineDiv')[0];
     var text = document.createTextNode(msg[1]);
     pline.appendChild(text);
+    pm('ack');
     break;
   }
 }
