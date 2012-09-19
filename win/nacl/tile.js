@@ -144,15 +144,14 @@ function processInput() {
     awaitingInput = false;
     var item = eventBuffer.shift();
     var cmd = item.join(' ');
-    console.log('Output: ' + cmd);
     pm(cmd);
   }
 }
 
-var startGame = function() {
+var pixheight = HEIGHT * DISPLAY_SQUARE;
+var pixwidth = WIDTH * DISPLAY_SQUARE;
 
-  var pixheight = HEIGHT * DISPLAY_SQUARE;
-  var pixwidth = WIDTH * DISPLAY_SQUARE;
+var startGame = function() {
 
   var canvas = document.getElementById('gameCanvas');
   ctx = canvas.getContext('2d');
@@ -213,7 +212,6 @@ var handleMessage = function(event) {
   // Make sure it's the right kind of event we got
   // Check to make sure it starts with PREFIX
   var msg = JSON.parse(event.data.substr(PREFIX.length));
-  console.log(msg);
   switch(msg[0]) {
   case NaclMsg.INIT_NHWINDOWS:
     break;
@@ -268,6 +266,19 @@ var handleMessage = function(event) {
     awaitingInput = true;
     processInput();
     break;
+  case NaclMsg.YN_FUNCTION:
+    var pline = document.getElementsByClassName('plineDiv')[0];
+    var text = document.createTextNode(msg[1]);
+    pline.appendChild(text);
+    awaitingInput = true;
+    processInput();
+  case NaclMsg.CLEAR_NHWINDOW:
+    if (msg[1] == NHWin.MAP) {
+      ctx.clearRect(0, 0, pixwidth, pixheight);
+    }
+    break;
+  default:
+    console.log(msg);
   }
 }
 
