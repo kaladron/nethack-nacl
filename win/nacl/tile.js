@@ -103,7 +103,7 @@ var startGame = function() {
   var pixheight = HEIGHT * DISPLAY_SQUARE;
   var pixwidth = WIDTH * DISPLAY_SQUARE;
 
-  var canvas = document.getElementById('game');
+  var canvas = document.getElementById('gameCanvas');
   ctx = canvas.getContext('2d');
   canvas.width = pixwidth;
   canvas.height = pixheight;
