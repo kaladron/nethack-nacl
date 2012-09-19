@@ -98,7 +98,11 @@ DisplayWindow.prototype.close = function() {
 
 var nethackEmbed;
 
-var handleKeyboard = function(evt) {
+var eventBuffer = new Array();
+
+var awaitingInput = false;
+
+var handleKeyDown = function(evt) {
   var cmdKey = 0;
 
   switch (evt.which) {
@@ -114,15 +118,36 @@ var handleKeyboard = function(evt) {
   case 40: // Down
     cmdKey = 106; // j
     break;
+  case 17: // ctrl
+    return;
+  }
+
+  if (evt.ctrlKey == true) {
+    cmdKey = evt.which & 0x1F;
   }
 
   if (cmdKey != 0) {
     evt.preventDefault();
-    console.log("ooga");
     var item = [cmdKey, 0, 0, 0];
-    pm(item.join(' '));
+    eventBuffer.push(item);
+    processInput();
   }
 };
+
+var handleKeyPress = function(evt) {
+  eventBuffer.push([evt.which, 0, 0, 0]);
+  processInput();
+};
+
+function processInput() {
+  if (awaitingInput && eventBuffer.length > 0) {
+    awaitingInput = false;
+    var item = eventBuffer.shift();
+    var cmd = item.join(' ');
+    console.log('Output: ' + cmd);
+    pm(cmd);
+  }
+}
 
 var startGame = function() {
 
@@ -139,7 +164,8 @@ var startGame = function() {
   tiles = document.createElement('img');
   tiles.src = "x11tiles.png";
 
-  document.body.addEventListener('keydown', handleKeyboard);
+  document.body.addEventListener('keydown', handleKeyDown);
+  document.body.addEventListener('keypress', handleKeyPress);
 
   // Create the object for Nethack.
   nethackEmbed = document.createElement('object');
@@ -236,6 +262,11 @@ var handleMessage = function(event) {
     var text = document.createTextNode(msg[1]);
     pline.appendChild(text);
     pm('ack');
+    break;
+  case NaclMsg.NH_POSKEY:
+  case NaclMsg.NHGETCH:
+    awaitingInput = true;
+    processInput();
     break;
   }
 }
