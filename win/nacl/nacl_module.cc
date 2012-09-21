@@ -36,6 +36,13 @@ int nacl_CO;
 int nacl_LI;
 }
 
+void
+stdio_write(const char *out) {
+  ssize_t size = strlen(out);
+  ssize_t i = write(1, out, size);
+  fprintf(stderr, "%Zd chars written\n", i);
+}
+
 class NethackInstance : public pp::Instance {
  public:
   explicit NethackInstance(PP_Instance instance) : pp::Instance(instance) {
@@ -69,9 +76,7 @@ class NethackInstance : public pp::Instance {
   }
 
   static void *WinchThread(void *arg) {
-    fprintf(stderr, "starting...");
     winch();
-    fprintf(stderr, "ending...");
     return 0;
   }
 
@@ -187,7 +192,15 @@ class NethackInstance : public pp::Instance {
     if (msg.compare(0, BASE.length(), BASE, 0, BASE.length()) == 0) {
       std::stringstream convertor(msg.substr(BASE.length()));
       char colon;
-      convertor >> nacl_CO >> colon >> nacl_LI;
+      int new_CO;
+      int new_LI;
+      convertor >> new_CO >> colon >> new_LI;
+      if (nacl_CO == new_CO && nacl_LI == new_LI) {
+        fprintf(stderr, "Dupe resize!");
+        return;
+      }
+      nacl_CO = new_CO;
+      nacl_LI = new_LI;
       fprintf(stderr, "Width: %d height: %d\n", nacl_CO, nacl_LI);
 #ifdef USE_PSEUDO_THREADS
       jspipe_->set_outbound_bridge(jsbridge_sigwinch_);
@@ -198,10 +211,11 @@ class NethackInstance : public pp::Instance {
       pthread_t id;
       pthread_attr_t attr;
       pthread_attr_init(&attr);
-      pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+//      pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
       pthread_create(&id, &attr, &WinchThread, this);
       pthread_attr_destroy(&attr);
 #endif
+      return;
     }
 
     jspipe_->Receive(msg.c_str(), msg.size());
