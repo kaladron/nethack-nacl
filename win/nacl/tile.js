@@ -212,6 +212,7 @@ var handleMessage = function(event) {
   // Make sure it's the right kind of event we got
   // Check to make sure it starts with PREFIX
   var msg = JSON.parse(event.data.substr(PREFIX.length));
+  console.log(msg);
   switch(msg[0]) {
   case NaclMsg.INIT_NHWINDOWS:
     break;
@@ -277,8 +278,20 @@ var handleMessage = function(event) {
       ctx.clearRect(0, 0, pixwidth, pixheight);
     }
     break;
-  default:
-    console.log(msg);
+  case NaclMsg.START_MENU:
+    // 1: Window Number
+    win_array[msg[1]] = new DisplayWindow();
+    break;
+  case NaclMsg.ADD_MENU:
+    // 1: Window Number, 2: tile, 3: identifier, 4: accelerator
+    // 5: group accel, 6: attribute, 7: string, 8: presel
+    
+    break;
+  case NaclMsg.END_MENU:
+    // 1: Window ID, 2: Prompt
+    break;
+  //default:
+  //  console.log(msg);
   }
 }
 
