@@ -990,11 +990,11 @@ hterm.VT.Tests.addTest('wraparound-mode-on', function(result, cx) {
 
     var text = this.terminal.getRowsText(0, 6);
     result.assertEQ(text,
-                    '-----  1  ----a\n' +
-                    '-----  2  ----b\n' +
-                    '-----  3  ----c\n' +
-                    '-----  4  ----d\n' +
-                    '-----  5  ----e\n' +
+                    '-----  1  ----a' +
+                    '-----  2  ----b' +
+                    '-----  3  ----c' +
+                    '-----  4  ----d' +
+                    '-----  5  ----e' +
                     '-----  6  ----f');
 
     result.assertEQ(this.terminal.getCursorRow(), 5);
@@ -1045,14 +1045,13 @@ hterm.VT.Tests.addTest('insert-wrap', function(result, cx) {
                             '[4l[?7l' +  // Insert off, wrap off.
                             '[15GAAAA[1GXX');
 
-    var text = this.terminal.getRowsText(0, 6);
-    result.assertEQ(text,
-                    '              A\n' +
-                    'XXA\n' +
-                    'XX             \n' +
-                    '              A\n' +
-                    'XXAAA\n' +
-                    'XX            A');
+    result.assertEQ(this.terminal.getRowText(0), '              A');
+    result.assertEQ(this.terminal.getRowText(1), 'XXA');
+    result.assertEQ(this.terminal.getRowText(2), 'XX             ');
+    result.assertEQ(this.terminal.getRowText(3), '              A');
+    result.assertEQ(this.terminal.getRowText(4), 'XXAAA');
+    result.assertEQ(this.terminal.getRowText(5), 'XX            A');
+
     result.pass();
   });
 
@@ -1065,11 +1064,11 @@ hterm.VT.Tests.addTest('long-wrap', function(result, cx) {
       str += 'X';
 
     this.terminal.interpret(str);
-    var text = this.terminal.getRowsText(0, 3);
-    result.assertEQ(text,
-                    'XXXXXXXXXXXXXXX\n' +
-                    'XXXXXXXXXXXXXXX\n' +
-                    'XXXXXXXXXXXXXXX');
+
+    result.assertEQ(this.terminal.getRowText(0), 'XXXXXXXXXXXXXXX');
+    result.assertEQ(this.terminal.getRowText(1), 'XXXXXXXXXXXXXXX');
+    result.assertEQ(this.terminal.getRowText(2), 'XXXXXXXXXXXXXXX');
+
     result.pass();
   });
 
@@ -1107,11 +1106,11 @@ hterm.VT.Tests.addTest('cursor-overflow', function(result, cx) {
 
     var text = this.terminal.getRowsText(0, 6);
     result.assertEQ(text,
-                    '-----  1  -----\n' +
-                    '-----  2  -----\n' +
-                    '-----  3  -----\n' +
-                    '-----  4  -----\n' +
-                    '-----  5  -----\n' +
+                    '-----  1  -----' +
+                    '-----  2  -----' +
+                    '-----  3  -----' +
+                    '-----  4  -----' +
+                    '-----  5  -----' +
                     '              -');
 
     result.assertEQ(this.terminal.getCursorRow(), 5);
@@ -1170,6 +1169,60 @@ hterm.VT.Tests.addTest('OSC-52', function(result, cx) {
 
     this.terminal.interpret('\x1b]52;c;Y29weXBhc3RhIQ==\x07');
     result.requestTime(200);
+  });
+
+/**
+ * Test that OSC 52 works when large strings are split across multiple interpret
+ * calls.
+ */
+hterm.VT.Tests.addTest('OSC-52-big', function(result, cx) {
+    // Mock this out since we can't document.execCommand from the
+    // test harness.
+    hterm.copySelectionToClipboard = function(document) {
+      var s = document.getSelection();
+      result.assertEQ(s.anchorNode.textContent, expect);
+      result.pass();
+    };
+
+    var expect = '';
+    for (var i = 0; i < 996; i++) {
+      expect += 'x';
+    }
+
+    var encode = '';
+    for (var i = 0; i < expect.length / 6; i++) {
+      encode += 'eHh4';
+    }
+
+    this.terminal.vt.maxStringSequence = expect.length * 3;
+
+    this.terminal.interpret('\x1b]52;c;');
+    this.terminal.interpret(encode);
+    this.terminal.interpret(encode);
+    this.terminal.interpret('\x07');
+    result.requestTime(200);
+  });
+
+hterm.VT.Tests.addTest('OSC-4', function(result, cx) {
+    var resultString;
+
+    this.terminal.io.sendString = function(str) { resultString = str };
+    // Change the terminal palette, then read it back.
+    this.terminal.interpret('\x1b]4;1;rgb:0100/0100/0100;' +
+                            '2;rgb:beef/beef/beef\x07');
+    this.terminal.interpret('\x1b]4;1;?;2;?\x07');
+    // The values go through some normalization, so what we read isn't
+    // *exactly* what went in.
+    result.assertEQ(resultString, '\x1b]4;1;rgb:0101/0101/0101;' +
+                    '2;rgb:bebe/bebe/bebe\x07');
+
+    // Round trip the normalized values, to check that the normalization is
+    // idempotent.
+    this.terminal.interpret('\x1b]4;1;rgb:0101/0101/0101;2;' +
+                            'rgb:bebe/bebe/bebe\x07');
+    result.assertEQ(resultString, '\x1b]4;1;rgb:0101/0101/0101;' +
+                    '2;rgb:bebe/bebe/bebe\x07');
+    result.pass();
   });
 
 hterm.VT.Tests.addTest('fullscreen', function(result, cx) {

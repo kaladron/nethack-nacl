@@ -51,6 +51,7 @@ hterm.Terminal = function(opt_profileName) {
   this.scrollPort_.subscribe('resize', this.onResize_.bind(this));
   this.scrollPort_.subscribe('scroll', this.onScroll_.bind(this));
   this.scrollPort_.subscribe('paste', this.onPaste_.bind(this));
+  this.scrollPort_.onCopy = this.onCopy_.bind(this);
 
   // The div that contains this terminal.
   this.div_ = null;
@@ -235,6 +236,11 @@ hterm.Terminal.prototype.setProfile = function(profileName) {
     ],
 
     /**
+     * Whether or not to close the window when the command exits.
+     */
+    ['close-on-exit', true, null],
+
+    /**
      * Whether or not to blink the cursor by default.
      */
     ['cursor-blink', false, function(v) {
@@ -277,6 +283,11 @@ hterm.Terminal.prototype.setProfile = function(profileName) {
         self.syncBoldSafeState();
       }
     ],
+
+    /**
+     * Allow the host to write directly to the system clipboard.
+     */
+    ['enable-clipboard-notice', true, null],
 
     /**
      * Allow the host to write directly to the system clipboard.
@@ -332,7 +343,7 @@ hterm.Terminal.prototype.setProfile = function(profileName) {
      * Max length of a DCS, OSC, PM, or APS sequence before we give up and
      * ignore the code.
      */
-    ['max-string-sequence', 1024, function(v) {
+    ['max-string-sequence', 100000, function(v) {
         self.vt.maxStringSequence = v;
       }
     ],
@@ -515,6 +526,8 @@ hterm.Terminal.prototype.runCommandClass = function(commandClass, argString) {
           self.io.println(hterm.msg('COMMAND_COMPLETE',
                                     [self.command.commandName, code]));
           self.uninstallKeyboard();
+          if (self.prefs_.get('close-on-exit'))
+              window.close();
         }
       });
 
@@ -740,6 +753,9 @@ hterm.Terminal.prototype.realizeSize_ = function(columnCount, rowCount) {
  * in the correct state yet when the next escape sequence hits.
  */
 hterm.Terminal.prototype.realizeWidth_ = function(columnCount) {
+  if (columnCount <= 0)
+    throw new Error('Attempt to realize bad width: ' + columnCount);
+
   var deltaColumns = columnCount - this.screen_.getWidth();
 
   this.screenSize.width = columnCount;
@@ -772,6 +788,9 @@ hterm.Terminal.prototype.realizeWidth_ = function(columnCount) {
  * in the correct state yet when the next escape sequence hits.
  */
 hterm.Terminal.prototype.realizeHeight_ = function(rowCount) {
+  if (rowCount <= 0)
+    throw new Error('Attempt to realize bad height: ' + rowCount);
+
   var deltaRows = rowCount - this.screen_.getHeight();
 
   this.screenSize.height = rowCount;
@@ -1159,9 +1178,11 @@ hterm.Terminal.prototype.getRowsText = function(start, end) {
   for (var i = start; i < end; i++) {
     var node = this.getRowNode(i);
     ary.push(node.textContent);
+    if (i < end - 1 && !node.getAttribute('line-overflow'))
+      ary.push('\n');
   }
 
-  return ary.join('\n');
+  return ary.join('');
 };
 
 /**
@@ -1290,8 +1311,10 @@ hterm.Terminal.prototype.print = function(str) {
   var startOffset = 0;
 
   while (startOffset < str.length) {
-    if (this.options_.wraparound && this.screen_.cursorPosition.overflow)
+    if (this.options_.wraparound && this.screen_.cursorPosition.overflow) {
+      this.screen_.commitLineOverflow();
       this.newLine();
+    }
 
     var count = str.length - startOffset;
     var didOverflow = false;
@@ -2269,7 +2292,10 @@ hterm.Terminal.prototype.paste = function() {
  * Note: If there is a selected range in the terminal, it'll be cleared.
  */
 hterm.Terminal.prototype.copyStringToClipboard = function(str) {
-  var copySource = this.document_.createElement('div');
+  if (this.prefs_.get('enable-clipboard-notice'))
+    setTimeout(this.showOverlay.bind(this, hterm.msg('NOTIFY_COPY'), 500), 200);
+
+  var copySource = this.document_.createElement('pre');
   copySource.textContent = str;
   copySource.style.cssText = (
       '-webkit-user-select: text;' +
@@ -2277,12 +2303,60 @@ hterm.Terminal.prototype.copyStringToClipboard = function(str) {
       'top: -99px');
 
   this.document_.body.appendChild(copySource);
+
   var selection = this.document_.getSelection();
+  var anchorNode = selection.anchorNode;
+  var anchorOffset = selection.anchorOffset;
+  var focusNode = selection.focusNode;
+  var focusOffset = selection.focusOffset;
+
   selection.selectAllChildren(copySource);
 
-  this.copySelectionToClipboard();
+  hterm.copySelectionToClipboard(this.document_);
+
+  selection.collapse(anchorNode, anchorOffset);
+  selection.extend(focusNode, focusOffset);
 
   copySource.parentNode.removeChild(copySource);
+};
+
+hterm.Terminal.prototype.getSelectionText = function() {
+  var selection = this.scrollPort_.selection;
+  selection.sync();
+
+  if (selection.isCollapsed)
+    return null;
+
+
+  // Start offset measures from the beginning of the line.
+  var startOffset = selection.startOffset;
+  var node = selection.startNode;
+  if (node.nodeName != 'X-ROW') {
+    // If the selection doesn't start on an x-row node, then it must be
+    // somewhere inside the x-row.  Add any characters from previous siblings
+    // into the start offset.
+    while (node.previousSibling) {
+      node = node.previousSibling;
+      startOffset += node.textContent.length;
+    }
+  }
+
+  // End offset measures from the end of the line.
+  var endOffset = selection.endNode.textContent.length - selection.endOffset;
+  var node = selection.endNode;
+  if (node.nodeName != 'X-ROW') {
+    // If the selection doesn't end on an x-row node, then it must be
+    // somewhere inside the x-row.  Add any characters from following siblings
+    // into the end offset.
+    while (node.nextSibling) {
+      node = node.nextSibling;
+      endOffset += node.textContent.length;
+    }
+  }
+
+  var rv = this.getRowsText(selection.startRow.rowIndex,
+                            selection.endRow.rowIndex + 1);
+  return rv.substring(startOffset, rv.length - endOffset);
 };
 
 /**
@@ -2290,18 +2364,9 @@ hterm.Terminal.prototype.copyStringToClipboard = function(str) {
  * short delay.
  */
 hterm.Terminal.prototype.copySelectionToClipboard = function() {
-  hterm.copySelectionToClipboard(this.document_);
-  this.showOverlay(hterm.msg('NOTIFY_COPY'), 500);
-
-  if (this.copyTimeout_)
-    clearTimeout(this.copyTimeout_);
-
-  this.copyTimeout_ = setTimeout(function() {
-      var selection = this.document_.getSelection();
-      if (!selection.isCollapsed)
-        selection.collapseToEnd();
-      this.copyTimeout_ = null;
-    }.bind(this), 500);
+  var text = this.getSelectionText();
+  if (text != null)
+    this.copyStringToClipboard(text);
 };
 
 hterm.Terminal.prototype.overlaySize = function() {
@@ -2328,6 +2393,19 @@ hterm.Terminal.prototype.onVTKeystroke = function(string) {
  * coordinates for the mouse event.
  */
 hterm.Terminal.prototype.onMouse_ = function(e) {
+  if (e.processedByTerminalHandler_) {
+    // We register our event handlers on the document, as well as the cursor
+    // and the scroll blocker.  Mouse events that occur on the cursor or
+    // scroll blocker will also appear on the document, but we don't want to
+    // process them twice.
+    //
+    // We can't just prevent bubbling because that has other side effects, so
+    // we decorate the event object with this property instead.
+    return;
+  }
+
+  e.processedByTerminalHandler_ = true;
+
   if (e.type == 'mousedown' && e.which == this.mousePasteButton) {
     this.paste();
     return;
@@ -2335,7 +2413,7 @@ hterm.Terminal.prototype.onMouse_ = function(e) {
 
   if (e.type == 'mouseup' && e.which == 1 && this.copyOnSelect &&
       !this.document_.getSelection().isCollapsed) {
-    this.copySelectionToClipboard();
+    hterm.copySelectionToClipboard(this.document_);
     return;
   }
 
@@ -2364,18 +2442,7 @@ hterm.Terminal.prototype.onMouse_ = function(e) {
     this.scrollBlockerNode_.style.top = '-99px';
   }
 
-  if (!e.processedByTerminalHandler_) {
-    // We register our event handlers on the document, as well as the cursor
-    // and the scroll blocker.  Mouse events that occur on the cursor or
-    // scroll blocker will also appear on the document, but we don't want to
-    // process them twice.
-    //
-    // We can't just prevent bubbling because that has other side effects, so
-    // we decorate the event object with this property instead.
-    e.processedByTerminalHandler_ = true;
-
-    this.onMouse(e);
-  }
+  this.onMouse(e);
 };
 
 /**
@@ -2408,6 +2475,14 @@ hterm.Terminal.prototype.onPaste_ = function(e) {
 };
 
 /**
+ * React when the user tries to copy from the scrollPort.
+ */
+hterm.Terminal.prototype.onCopy_ = function(e) {
+  e.preventDefault();
+  this.copySelectionToClipboard();
+};
+
+/**
  * React when the ScrollPort is resized.
  *
  * Note: This function should not directly contain code that alters the internal
@@ -2421,9 +2496,10 @@ hterm.Terminal.prototype.onResize_ = function() {
   var rowCount = Math.floor(this.scrollPort_.getScreenHeight() /
                             this.scrollPort_.characterSize.height);
 
-  if (!(columnCount || rowCount)) {
+  if (columnCount <= 0 || rowCount <= 0) {
     // We avoid these situations since they happen sometimes when the terminal
-    // gets removed from the document, and we can't deal with that.
+    // gets removed from the document or during the initial load, and we can't
+    // deal with that.
     return;
   }
 

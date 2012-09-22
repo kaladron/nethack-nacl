@@ -195,19 +195,19 @@ hterm.Keyboard.KeyMap.prototype.reset = function() {
     [0,   '[UNKNOWN]', PASS, PASS, PASS, PASS],
 
     // First row.
-    [27,  '[ESC]', ESC,                       DEFAULT, DEFAULT, DEFAULT],
-    [112, '[F1]',  mod(SS3 + 'P', CSI + 'P'), DEFAULT, DEFAULT, DEFAULT],
-    [113, '[F2]',  mod(SS3 + 'Q', CSI + 'Q'), DEFAULT, DEFAULT, DEFAULT],
-    [114, '[F3]',  mod(SS3 + 'R', CSI + 'R'), DEFAULT, DEFAULT, DEFAULT],
-    [115, '[F4]',  mod(SS3 + 'S', CSI + 'S'), DEFAULT, DEFAULT, DEFAULT],
-    [116, '[F5]',  CSI + '15~',               DEFAULT, DEFAULT, DEFAULT],
-    [117, '[F6]',  CSI + '17~',               DEFAULT, DEFAULT, DEFAULT],
-    [118, '[F7]',  CSI + '18~',               DEFAULT, DEFAULT, DEFAULT],
-    [119, '[F8]',  CSI + '19~',               DEFAULT, DEFAULT, DEFAULT],
-    [120, '[F9]',  CSI + '20~',               DEFAULT, DEFAULT, DEFAULT],
-    [121, '[F10]', CSI + '21~',               DEFAULT, DEFAULT, DEFAULT],
-    [122, '[F11]', CSI + '23~',               DEFAULT, DEFAULT, DEFAULT],
-    [123, '[F12]', CSI + '24~',               DEFAULT, DEFAULT, DEFAULT],
+    [27,  '[ESC]', ESC,                       DEFAULT, DEFAULT,     DEFAULT],
+    [112, '[F1]',  mod(SS3 + 'P', CSI + 'P'), DEFAULT, CSI + "23~", DEFAULT],
+    [113, '[F2]',  mod(SS3 + 'Q', CSI + 'Q'), DEFAULT, CSI + "24~", DEFAULT],
+    [114, '[F3]',  mod(SS3 + 'R', CSI + 'R'), DEFAULT, CSI + "25~", DEFAULT],
+    [115, '[F4]',  mod(SS3 + 'S', CSI + 'S'), DEFAULT, CSI + "26~", DEFAULT],
+    [116, '[F5]',  CSI + '15~',               DEFAULT, CSI + "28~", DEFAULT],
+    [117, '[F6]',  CSI + '17~',               DEFAULT, CSI + "29~", DEFAULT],
+    [118, '[F7]',  CSI + '18~',               DEFAULT, CSI + "31~", DEFAULT],
+    [119, '[F8]',  CSI + '19~',               DEFAULT, CSI + "32~", DEFAULT],
+    [120, '[F9]',  CSI + '20~',               DEFAULT, CSI + "33~", DEFAULT],
+    [121, '[F10]', CSI + '21~',               DEFAULT, CSI + "34~", DEFAULT],
+    [122, '[F11]', CSI + '23~',               DEFAULT, CSI + "42~", DEFAULT],
+    [123, '[F12]', CSI + '24~',               DEFAULT, CSI + "43~", DEFAULT],
 
     // Second row.
     [192, '`~', DEFAULT, sh(ctl('@'), ctl('^')),        DEFAULT,        PASS],
@@ -401,15 +401,16 @@ hterm.Keyboard.KeyMap.prototype.onKeyPageDown_ = function(e) {
  * the key again.
  */
 hterm.Keyboard.KeyMap.prototype.onCtrlC_ = function(e, keyDef) {
-  var document = this.keyboard.terminal.getDocument();
-  if (e.shiftKey || document.getSelection().isCollapsed) {
-    // If the shift key is being held, or there is no document selection, send
-    // a ^C.
+  var selection = this.keyboard.terminal.getDocument().getSelection();
+  if (e.shiftKey || selection.isCollapsed) {
+    // If the shift key is being held or there is no document selection, then
+    // send a ^C.
     return '\x03';
   }
 
-  // Otherwise let the browser handle it as a copy command.
-  setTimeout(function() { document.getSelection().collapseToEnd() }, 50);
+  // Otherwise let the browser handle it as a copy command.  Clear the selection
+  // soon after a Ctrl-C copy, so that it frees up Ctrl-C to send ^C.
+  setTimeout(selection.collapseToEnd.bind(selection), 750);
   return hterm.Keyboard.KeyActions.PASS;
 };
 
@@ -420,8 +421,7 @@ hterm.Keyboard.KeyMap.prototype.onCtrlN_ = function(e, keyDef) {
   if (e.shiftKey) {
     window.open(document.location.href, '',
                 'chrome=no,close=yes,resize=yes,scrollbars=yes,' +
-                'minimizable=yes,width=' + window.outerWidth +
-                ',height=' + window.outerHeight);
+                'minimizable=yes');
     return hterm.Keyboard.KeyActions.CANCEL;
   }
 
