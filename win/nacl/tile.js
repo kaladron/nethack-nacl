@@ -58,11 +58,12 @@ var TILE_SQUARE = 16;
 var ctx;
 var tiles;
 
-var DisplayWindow = function() {
+var DisplayWindow = function(content) {
   this.menu_win = document.createElement('x-modal');
   this.menu_win.className = 'dialog';
-  this.pre = document.createElement('pre');
-  this.menu_win.appendChild(this.pre);
+  this.content = content;
+  console.log(this.content);
+  this.menu_win.appendChild(content);
   var button = document.createElement('button');
   button.type = 'button';
   var ok = document.createTextNode('OK');
@@ -89,7 +90,7 @@ DisplayWindow.prototype.okButton = function() {
 
 DisplayWindow.prototype.putStr = function(text) {
   var text = document.createTextNode(text + '\n');
-  this.pre.appendChild(text);
+  this.content.appendChild(text);
 };
 
 DisplayWindow.prototype.close = function() {
@@ -231,7 +232,7 @@ var handleMessage = function(event) {
     // msg[1]: type
   //  switch(msg[1]) {
   //  case NHWin.MENU:
-      win_array[win_num] = new DisplayWindow();
+      win_array[win_num] = new DisplayWindow(document.createElement('pre'));
   //    break;
   //  }
 
@@ -280,12 +281,17 @@ var handleMessage = function(event) {
     break;
   case NaclMsg.START_MENU:
     // 1: Window Number
-    win_array[msg[1]] = new DisplayWindow();
+    win_array[msg[1]] = new DisplayWindow(document.createElement('table'));
     break;
   case NaclMsg.ADD_MENU:
     // 1: Window Number, 2: tile, 3: identifier, 4: accelerator
     // 5: group accel, 6: attribute, 7: string, 8: presel
-    
+    var tr = document.createElement('tr');
+    var td = document.createElement('td');
+    td.text = msg[7];
+    tr.appendChild(td);
+    win_array[msg[1]].content.appendChild(tr);
+        
     break;
   case NaclMsg.END_MENU:
     // 1: Window ID, 2: Prompt
