@@ -288,13 +288,14 @@ var handleMessage = function(event) {
     // 5: group accel, 6: attribute, 7: string, 8: presel
     var tr = document.createElement('tr');
     var td = document.createElement('td');
-    td.text = msg[7];
+    td.textContent = msg[7];
     tr.appendChild(td);
     win_array[msg[1]].content.appendChild(tr);
         
     break;
   case NaclMsg.END_MENU:
     // 1: Window ID, 2: Prompt
+    win_array[msg[1]].display(0);
     break;
   //default:
   //  console.log(msg);
