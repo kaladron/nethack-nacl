@@ -57,21 +57,19 @@ var TILE_SQUARE = 16;
 
 var ctx;
 var tiles;
+var petmark;
 
 var DisplayWindow = function(content) {
   this.menu_win = document.createElement('x-modal');
   this.menu_win.className = 'dialog';
   this.content = content;
-  console.log(this.content);
   this.menu_win.appendChild(content);
   var button = document.createElement('button');
   button.type = 'button';
-  var ok = document.createTextNode('OK');
-  button.appendChild(ok);
+  button.textContent = 'OK';
   button.addEventListener('click', this.okButton.bind(this));
   this.menu_win.appendChild(button);
   this.block = false;
-
 };
 
 DisplayWindow.prototype.display = function(block) {
@@ -96,6 +94,49 @@ DisplayWindow.prototype.putStr = function(text) {
 DisplayWindow.prototype.close = function() {
   document.body.removeChild(this.menu_win);
 };
+
+var MenuWindow = function(content) {
+  this.menu_win = document.createElement('x-modal');
+  this.menu_win.className = 'dialog';
+  this.content = content;
+  this.menu_win.appendChild(content);
+
+  var okButton = document.createElement('button');
+  okButton.type = 'button';
+  okButton.textContent = 'OK';
+  okButton.addEventListener('click', this.okButtonAction.bind(this));
+  this.menu_win.appendChild(okButton);
+
+  var cancelButton = document.createElement('button');
+  cancelButton.type = 'button';
+  cancelButton.textContent = 'Cancel';
+  cancelButton.addEventListener('click', this.cancelButtonAction.bind(this));
+  this.menu_win.appendChild(cancelButton);
+};
+
+MenuWindow.prototype.display = function(block) {
+  document.body.appendChild(this.menu_win);
+  if (block == 1) {
+    this.block = true;
+  }
+};
+
+MenuWindow.prototype.okButtonAction = function() {
+  pm('OK');
+  this.close();
+};
+
+MenuWindow.prototype.cancelButtonAction = function() {
+  pm('-1');
+  this.close();
+};
+
+MenuWindow.prototype.close = function() {
+  document.body.removeChild(this.menu_win);
+};
+
+
+
 
 var nethackEmbed;
 
@@ -162,7 +203,10 @@ var startGame = function() {
   canvas.style.height = pixheight;
 
   tiles = document.createElement('img');
-  tiles.src = "x11tiles.png";
+  tiles.src = 'x11tiles.png';
+
+  petmark = document.createElement('img');
+  petmark.src = 'petmark.png';
 
   document.body.addEventListener('keydown', handleKeyDown);
   document.body.addEventListener('keypress', handleKeyPress);
@@ -203,6 +247,12 @@ var putTile = function(x, y, tile, pet) {
                 y * DISPLAY_SQUARE,
                 DISPLAY_SQUARE,
                 DISPLAY_SQUARE);
+
+  if (pet == 1) {
+    ctx.drawImage(petmark,
+                  x * DISPLAY_SQUARE,
+                  y * DISPLAY_SQUARE);  
+  }
 }
 
 var win_num = 1;
@@ -281,7 +331,7 @@ var handleMessage = function(event) {
     break;
   case NaclMsg.START_MENU:
     // 1: Window Number
-    win_array[msg[1]] = new DisplayWindow(document.createElement('table'));
+    win_array[msg[1]] = new MenuWindow(document.createElement('table'));
     break;
   case NaclMsg.ADD_MENU:
     // 1: Window Number, 2: tile, 3: identifier, 4: accelerator
