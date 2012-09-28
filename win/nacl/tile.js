@@ -201,6 +201,7 @@ var startGame = function() {
   canvas.height = pixheight;
   canvas.style.width = pixwidth;
   canvas.style.height = pixheight;
+  canvas.addEventListener('mousedown', mouseNav);
 
   tiles = document.createElement('img');
   tiles.src = 'x11tiles.png';
@@ -225,6 +226,14 @@ var startGame = function() {
   nethackEmbed.appendChild(param);
 
   document.getElementById('listener').appendChild(nethackEmbed);
+}
+
+function mouseNav(evt) {
+  var x = Math.floor(evt.offsetX / TILE_SQUARE) + 1;
+  var y = Math.floor(evt.offsetY / TILE_SQUARE);
+  var item = [0, x, y, 0];
+  eventBuffer.push(item);
+  processInput();
 }
 
 var PREFIX = 'JSPipeMount:3:';
