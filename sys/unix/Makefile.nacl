@@ -12,7 +12,8 @@ EXTENSION_ITEMS = \
 	$(OBJEXTENSION)/nethack.nmf \
 	$(OBJEXTENSION)/nethack.tar \
 	$(OBJEXTENSION)/mapbg.png \
-	$(OBJEXTENSION)/pet_mark.png
+	$(OBJEXTENSION)/pet_mark.png \
+	$(OBJEXTENSION)/x11tiles.png
 
 GAME := $(OBJ32)/nethack_x86-32.nexe $(OBJ64)/nethack_x86-64.nexe
 
@@ -70,6 +71,9 @@ $(OBJEXTENSION)/mapbg.png: win/gnome/mapbg.xpm
 
 $(OBJEXTENSION)/pet_mark.png: win/X11/pet_mark.xbm
 	convert $< -transparent white -fill red -colorize 100%% $@
+
+$(OBJEXTENSION)/x11tiles.png: x11tiles
+	convert dat/x11tiles $@
 
 data: $(GAME)
 	( cd dat ; $(MAKE) data )

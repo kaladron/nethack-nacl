@@ -84,6 +84,8 @@
 
 #ifdef __native_client__
 # define NACL_GRAPHICS
+# define USE_XPM		/* Use XPM format for images (required) */
+# define GRAPHIC_TOMBSTONE	/* Use graphical tombstone (rip.ppm) */
 #endif
 
 #ifdef QT_GRAPHICS
