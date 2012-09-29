@@ -306,7 +306,21 @@ void nacl_curs(winid wid, int x, int y) {
 }
 
 void nacl_putstr(winid wid, int attr, const char *text) {
-  NaClMessage() << NACL_MSG_PUTSTR << wid << attr << text << eom;
+  if (wid != 2) {
+    NaClMessage() << NACL_MSG_PUTSTR << wid << attr << text << eom;
+  } else {
+    // Name, Class
+    // Dname, Dlevel
+    // Str, Dex, Con. Int, Wis, Cha
+    // HP, AC, Power, AU
+    // Level, Exp, Time, Score
+    // Alignment, Hunger, Confusion, Blind, Stunned, Hallucination, Sick, Enc
+    NaClMessage()
+      << NACL_MSG_UPDATE_STATS
+      << dungeons[u.uz.dnum].dname
+      << depth(&u.uz)
+      << eom;
+  }
 }
 
 void nacl_display_file(const char *filename, BOOLEAN_P must_exist) {

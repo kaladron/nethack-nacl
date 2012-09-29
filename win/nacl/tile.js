@@ -41,6 +41,7 @@ NaclMsg.START_SCREEN = 36;
 NaclMsg.END_SCREEN = 37;
 NaclMsg.OUTRIP = 38;
 NaclMsg.DELETE_NHWINDOW_BY_REFERENCE = 39;
+NaclMsg.UPDATE_STATS = 40;
 
 var NHWin = {};
 NHWin.MESSAGE = 1;
@@ -355,6 +356,10 @@ var handleMessage = function(event) {
   case NaclMsg.END_MENU:
     // 1: Window ID, 2: Prompt
     win_array[msg[1]].display(0);
+    break;
+  case NaclMsg.UPDATE_STATS:
+    document.getElementById('dname').textContent = msg[1];
+    document.getElementById('dlevel').textContent = msg[2];
     break;
   //default:
   //  console.log(msg);
