@@ -8,6 +8,12 @@ OBJEXTENSION = $(OBJPUBLISH)/extension
 NETHACK32 = $(OBJEXTENSION)/nethack_x86-32.nexe
 NETHACK64 = $(OBJEXTENSION)/nethack_x86-64.nexe
 
+EXTENSION_ITEMS = \
+	$(OBJEXTENSION)/nethack.nmf \
+	$(OBJEXTENSION)/nethack.tar \
+	$(OBJEXTENSION)/mapbg.png \
+	$(OBJEXTENSION)/pet_mark.png
+
 GAME := $(OBJ32)/nethack_x86-32.nexe $(OBJ64)/nethack_x86-64.nexe
 
 
@@ -42,7 +48,7 @@ $(NETHACK64): $(GAME)
 	mkdir -p $(OBJEXTENSION)
 	cp obj64/nethack_x86-64.nexe $@
 
-extension: $(OBJEXTENSION)/nethack.nmf $(OBJEXTENSION)/nethack.tar
+extension: $(EXTENSION_ITEMS)
 	cp -a \
 	  win/nacl/*.css \
 	  win/nacl/*.html \
@@ -58,6 +64,12 @@ $(OBJEXTENSION)/nethack.nmf: $(NETHACK32) $(NETHACK64)
 
 $(OBJEXTENSION)/nethack.tar: dlb
 	tar -cf $@ -C dat nhdat
+
+$(OBJEXTENSION)/mapbg.png: win/gnome/mapbg.xpm
+	convert $< $@
+
+$(OBJEXTENSION)/pet_mark.png: win/X11/pet_mark.xbm
+	convert $< -transparent white -fill red -colorize 100%% $@
 
 data: $(GAME)
 	( cd dat ; $(MAKE) data )

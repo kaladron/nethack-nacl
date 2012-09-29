@@ -207,7 +207,7 @@ var startGame = function() {
   tiles.src = 'x11tiles.png';
 
   petmark = document.createElement('img');
-  petmark.src = 'petmark.png';
+  petmark.src = 'pet_mark.png';
 
   document.body.addEventListener('keydown', handleKeyDown);
   document.body.addEventListener('keypress', handleKeyPress);
