@@ -272,8 +272,10 @@ var win_array = new Array();
 var handleMessage = function(event) {
   // Make sure it's the right kind of event we got
   // Check to make sure it starts with PREFIX
+  console.log(event.data.substr(PREFIX.length));
   var msg = JSON.parse(event.data.substr(PREFIX.length));
   console.log(msg);
+
   switch(msg[0]) {
   case NaclMsg.INIT_NHWINDOWS:
     break;
@@ -362,6 +364,12 @@ var handleMessage = function(event) {
     document.getElementById('rank').textContent = msg[2];
     document.getElementById('dname').textContent = msg[3];
     document.getElementById('dlevel').textContent = msg[4];
+    document.getElementById('str').textContent = msg[5];
+    document.getElementById('dex').textContent = msg[6];
+    document.getElementById('con').textContent = msg[7];
+    document.getElementById('int').textContent = msg[8];
+    document.getElementById('wis').textContent = msg[9];
+    document.getElementById('cha').textContent = msg[10];
     break;
   //default:
   //  console.log(msg);

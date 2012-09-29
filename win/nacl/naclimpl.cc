@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sstream>
+#include <iomanip>
 
 extern "C" {
   #include "func_tab.h"
@@ -326,12 +327,29 @@ void nacl_putstr(winid wid, int attr, const char *text) {
     }
     rank[0] = toupper(rank[0]);
 
+    std::stringstream str_buf;
+    if (ACURR(A_STR) > 118) {
+      str_buf << ACURR(A_STR)-100;
+    } else if (ACURR(A_STR)==118) {
+      str_buf << "18/**";
+    } else if(ACURR(A_STR) > 18) {
+      str_buf << "18/" << std::setw(2) << std::setfill('0') << ACURR(A_STR)-18;
+    } else {
+      str_buf << (int)ACURR(A_STR);
+    }
+
     NaClMessage()
       << NACL_MSG_UPDATE_STATS
       << plname_display
       << rank 
       << dungeons[u.uz.dnum].dname
       << depth(&u.uz)
+      << str_buf.str()
+      << ACURR(A_DEX)
+      << ACURR(A_CON)
+      << ACURR(A_INT)
+      << ACURR(A_WIS)
+      << ACURR(A_CHA)
       << eom;
   }
 }
