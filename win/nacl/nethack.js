@@ -242,3 +242,6 @@ Nethack.prototype.exit = function(code) {
     this.argv_.onExit(code);
 };
 
+window.onbeforeunload = function() {
+  return 'You will lose any unsaved progress!';
+};

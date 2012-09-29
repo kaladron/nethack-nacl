@@ -361,4 +361,8 @@ var handleMessage = function(event) {
   }
 }
 
+window.onbeforeunload = function() {
+  return 'You will lose any unsaved progress!';
+};
+
 startGame();
