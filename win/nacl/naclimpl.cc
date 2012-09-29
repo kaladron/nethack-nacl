@@ -315,8 +315,21 @@ void nacl_putstr(winid wid, int attr, const char *text) {
     // HP, AC, Power, AU
     // Level, Exp, Time, Score
     // Alignment, Hunger, Confusion, Blind, Stunned, Hallucination, Sick, Enc
+    std::string plname_display = plname;
+    plname_display[0] = toupper(plname_display[0]);
+    std::string rank;
+
+    if (u.mtimedone) {
+      rank = mons[u.umonnum].mname;
+    } else {
+      rank = rank_of(u.ulevel, pl_character[0], flags.female);
+    }
+    rank[0] = toupper(rank[0]);
+
     NaClMessage()
       << NACL_MSG_UPDATE_STATS
+      << plname_display
+      << rank 
       << dungeons[u.uz.dnum].dname
       << depth(&u.uz)
       << eom;

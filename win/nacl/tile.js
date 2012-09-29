@@ -358,8 +358,10 @@ var handleMessage = function(event) {
     win_array[msg[1]].display(0);
     break;
   case NaclMsg.UPDATE_STATS:
-    document.getElementById('dname').textContent = msg[1];
-    document.getElementById('dlevel').textContent = msg[2];
+    document.getElementById('plname').textContent = msg[1];
+    document.getElementById('rank').textContent = msg[2];
+    document.getElementById('dname').textContent = msg[3];
+    document.getElementById('dlevel').textContent = msg[4];
     break;
   //default:
   //  console.log(msg);
