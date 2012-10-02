@@ -376,6 +376,10 @@ var handleMessage = function(event) {
     document.getElementById('power').textContent = msg[14];
     document.getElementById('maxpower').textContent = msg[15];
     document.getElementById('gold').textContent = msg[16];
+    document.getElementById('level').textContent = msg[17];
+    document.getElementById('xp').textContent = msg[18];
+    document.getElementById('time').textContent = msg[19];
+    document.getElementById('score').textContent = msg[20];
     break;
   //default:
   //  console.log(msg);

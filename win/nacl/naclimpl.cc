@@ -364,6 +364,9 @@ void nacl_putstr(winid wid, int attr, const char *text) {
       << u.uen
       << u.uenmax
       << au
+      << u.ulevel
+      << u.uexp
+      << moves
       << eom;
   }
 }
