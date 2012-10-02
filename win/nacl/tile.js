@@ -370,6 +370,12 @@ var handleMessage = function(event) {
     document.getElementById('int').textContent = msg[8];
     document.getElementById('wis').textContent = msg[9];
     document.getElementById('cha').textContent = msg[10];
+    document.getElementById('hp').textContent = msg[11];
+    document.getElementById('maxhp').textContent = msg[12];
+    document.getElementById('ac').textContent = msg[13];
+    document.getElementById('power').textContent = msg[14];
+    document.getElementById('maxpower').textContent = msg[15];
+    document.getElementById('gold').textContent = msg[16];
     break;
   //default:
   //  console.log(msg);

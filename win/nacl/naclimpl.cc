@@ -338,6 +338,14 @@ void nacl_putstr(winid wid, int attr, const char *text) {
       str_buf << (int)ACURR(A_STR);
     }
 
+    long au;
+#ifndef GOLDOBJ
+    au = u.ugold;
+#else
+    au = money_cnt(invent);
+#endif
+
+
     NaClMessage()
       << NACL_MSG_UPDATE_STATS
       << plname_display
@@ -350,6 +358,12 @@ void nacl_putstr(winid wid, int attr, const char *text) {
       << ACURR(A_INT)
       << ACURR(A_WIS)
       << ACURR(A_CHA)
+      << ( (u.uhp  > 0)? u.uhp  : 0)
+      << u.uhpmax
+      << u.uac
+      << u.uen
+      << u.uenmax
+      << au
       << eom;
   }
 }
