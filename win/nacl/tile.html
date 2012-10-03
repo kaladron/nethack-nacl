@@ -34,13 +34,6 @@
 	height: 100%;
 }
 
-.status {
-	display: table-cell;
-	vertical-align: top;
-	width: 400px;
-	background-color: #cfd4d0;
-}
-
 .equipment {
 	display: table-cell;
 	vertical-align: top;
@@ -74,38 +67,38 @@
 <body>
 <div id="listener"></div>
 <div id="header">
-<ul style="display:table-cell"><li>Nethack: Tile Mode</li><li>Options</li></ul>
-<ul style="display:table-cell"><li><a href="terminal.html">Terminal</a></li></ul>
-<ul style="display:table-cell"><li><a href="/">Text</a></li></ul>
+<ul><li>Nethack: Tile Mode</li><li>Options</li></ul>
+<ul><li><a href='terminal.html'>Terminal</a></li></ul>
+<ul><li><a href='index.html'>Text</a></li></ul>
 </div>
 
 <div class='toppart'>
   <div class='plineWindow'>
     <div class='plineDiv'></div>
   </div>
-  <div class='status'>
+  <div id='tile-status'>
     <h1>
     <span id='plname'>Player</span> the <span id='rank'>rank</span>
     </h1>
     <h2><span id="dname">The Dungeons of Doom</span>, level <span id="dlevel">1</span></h2>
     <hr>
-    <ul style="display: table; width: 100%">
-    <li style="display: table-cell">
+    <ul>
+    <li>
     <img src="str.png" height="40" width="40"></img><br>
     STR: <span id="str">99</span>
-    <li style="display: table-cell">
+    <li>
     <img src="dex.png" height="40" width="40"></img><br>
     DEX: <span id="dex">99</span>
-    <li style="display: table-cell">
+    <li>
     <img src="constitution.png" height="40" width="40"></img><br>
     CON: <span id="con">99</span>
-    <li style="display: table-cell">
+    <li>
     <img src="int.png" height="40" width="40"></img><br>
     INT: <span id="int">99</span>
-    <li style="display: table-cell">
+    <li>
     <img src="wis.png" height="40" width="40"></img><br>
     WIS: <span id="wis">99</span>
-    <li style="display: table-cell">
+    <li>
     <img src="cha.png" height="40" width="40"></img><br>
     CHA: <span id="cha">99</span>
     </ul>
