@@ -51,7 +51,17 @@ div#header ul li:last-child::after { content: '' }
   text-align: center;
 }
 
-div#tile-status ul {
+#tile-status h1 {
+  margin: 0;
+  padding: 0;
+}
+
+#tile-status h2 {
+  margin: 0;
+  padding: 0;
+}
+
+#tile-status ul {
   display: table;
   list-style-type: none;
   margin: 0;
@@ -59,6 +69,6 @@ div#tile-status ul {
   width: 100%;
 }
 
-div#tile-status li {
+#tile-status ul li {
   display: table-cell;
 }
