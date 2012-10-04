@@ -1,15 +1,43 @@
-div#header ul {
+body {
+  padding: 0;
+  margin: 0;
+}
+
+#header ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
   display: table-cell;
 }
 
-div#header ul li {
+#header ul li {
   display: inline;
 }
-div#header ul li::after { content: ' | ' }
-div#header ul li:last-child::after { content: '' }
+
+#header ul li::after { content: ' | ' }
+#header ul li:last-child::after { content: '' }
+
+#tile-plinewin {
+  display: table-cell;
+  vertical-align: top;
+  background-color: white;
+  overflow-y: scroll;
+}
+
+#tile-plinecontent {
+  height: 0;
+}
+
+#tile-plinewin p {
+  margin: 0;
+  padding: 0;
+}
+
+#tile-toppart {
+  display: table;
+  width: 100%;
+  border: 1px solid black;
+}
 
 #header {
   display: table;

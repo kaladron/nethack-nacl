@@ -320,9 +320,7 @@ var handleMessage = function(event) {
     win_array[msg[1]].putStr(msg[3]);
     break;
   case NaclMsg.RAW_PRINT:
-    var pline = document.getElementsByClassName('plineDiv')[0];
-    var text = document.createTextNode(msg[1]);
-    pline.appendChild(text);
+    plineput(msg[1]);
     pm('ack');
     break;
   case NaclMsg.NH_POSKEY:
@@ -331,9 +329,7 @@ var handleMessage = function(event) {
     processInput();
     break;
   case NaclMsg.YN_FUNCTION:
-    var pline = document.getElementsByClassName('plineDiv')[0];
-    var text = document.createTextNode(msg[1]);
-    pline.appendChild(text);
+    plineput(msg[1]);
     awaitingInput = true;
     processInput();
   case NaclMsg.CLEAR_NHWINDOW:
@@ -383,6 +379,15 @@ var handleMessage = function(event) {
   //default:
   //  console.log(msg);
   }
+}
+
+function plineput(text) {
+  var plinecontent = document.getElementById('tile-plinecontent');
+  var p = document.createElement('p');
+  p.textContent = text;
+  plinecontent.appendChild(p);
+  var plinewin = document.getElementById('tile-plinewin');
+  plinewin.scrollTop = plinewin.scrollHeight;
 }
 
 window.onbeforeunload = function() {
