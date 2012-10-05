@@ -17,6 +17,17 @@ body {
 #header ul li::after { content: ' | ' }
 #header ul li:last-child::after { content: '' }
 
+#tile-menu ul {
+  list-style-type: none;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+#tile-menu ul li {
+  display: inline;
+}
+
 #tile-plinewin {
   display: table-cell;
   vertical-align: top;
