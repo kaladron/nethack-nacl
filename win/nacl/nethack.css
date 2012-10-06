@@ -28,6 +28,19 @@ body {
   display: inline;
 }
 
+#tile-menu ul li ul {
+  display: none;
+}
+
+#tile-menu ul li:hover {
+  position: absolute;
+  z-index: 200;
+}
+
+#tile-menu ul li:hover > ul {
+  display: block;
+}
+
 #tile-plinewin {
   display: table-cell;
   vertical-align: top;
