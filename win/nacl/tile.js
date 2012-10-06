@@ -123,7 +123,7 @@ MenuWindow.prototype.display = function(block) {
 };
 
 MenuWindow.prototype.okButtonAction = function() {
-  pm('OK');
+  pm('0');
   this.close();
 };
 
