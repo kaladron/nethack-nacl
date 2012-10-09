@@ -226,6 +226,12 @@ var startGame = function() {
   param.value = 'nacl';
   nethackEmbed.appendChild(param);
 
+  addMenus();
+
+  document.getElementById('listener').appendChild(nethackEmbed);
+}
+
+function addMenus() {
   addMenu('game', 'Change Settings...', ooga);
   addSeparator('game');
   addMenu('game', 'Version', ooga);
@@ -240,7 +246,71 @@ var startGame = function() {
   addMenu('game', 'Edit Options File...', ooga);
   addMenu('game', 'Quit', ooga);
 
-  document.getElementById('listener').appendChild(nethackEmbed);
+  addMenu('edit', 'Inventory', ooga);
+  addMenu('edit', 'Discoveried', ooga);
+  addMenu('edit', 'List/reorder your spells', ooga);
+  addMenu('edit', 'Adjust letters', ooga);
+  addSeparator('edit');
+  addMenu('edit', 'Name object', ooga);
+  addMenu('edit', 'Name creature', ooga);
+  addSeparator('edit');
+  addMenu('edit', 'Qualifications', ooga);
+
+  addMenu('apparel', 'Wield Weapon', ooga);
+  addMenu('apparel', 'Remove Apparel...', ooga);
+  addSeparator('apparel');
+  addMenu('apparel', 'Wear Armor', ooga);
+  addMenu('apparel', 'Take off Armor', ooga);
+  addMenu('apparel', 'Put on non-armor', ooga);
+  addMenu('apparel', 'Remove non-armor', ooga);
+
+  addMenu('action', 'Get', ooga);
+  addMenu('action', 'Loot', ooga);
+  addMenu('action', 'Sit', ooga);
+  addMenu('action', 'Force', ooga);
+  addMenu('action', 'Kick', ooga);
+  addMenu('action', 'Jump', ooga);
+  addMenu('action', 'Ride', ooga);
+  addMenu('action', 'Wipe face', ooga);
+  addMenu('action', 'Throw/Shoot', ooga);
+  addMenu('action', 'Quiver/Ready', ooga);
+  addMenu('action', 'Open Door', ooga);
+  addMenu('action', 'Close Door', ooga);
+  addSeparator('action');
+  addMenu('action', 'Drop', ooga);
+  addMenu('action', 'Drop Many', ooga);
+  addMenu('action', 'Eat', ooga);
+  addMenu('action', 'Engrave', ooga);
+  addMenu('action', 'Apply', ooga);
+  addSeparator('action');
+  addMenu('action', 'Up', ooga);
+  addMenu('action', 'Down', ooga);
+  addMenu('action', 'Rest', ooga);
+  addMenu('action', 'Search', ooga);
+  addSeparator('action');
+  addMenu('action', 'Chat', ooga);
+  addMenu('action', 'Pay', ooga);
+
+  addMenu('magic', 'Quaff potion', ooga);
+  addMenu('magic', 'Read Book/Scroll', ooga);
+  addMenu('magic', 'Zap Wand', ooga);
+  addMenu('magic', 'Zap Spell', ooga);
+  addMenu('magic', 'Dip', ooga);
+  addMenu('magic', 'Rub', ooga);
+  addMenu('magic', 'Invoke', ooga);
+  addMenu('magic', 'Offer', ooga);
+  addMenu('magic', 'Pray', ooga);
+  addMenu('magic', 'Teleport', ooga);
+  addMenu('magic', 'Monster Action', ooga);
+  addMenu('magic', 'Turn Undead', ooga);
+
+  addMenu('help', 'About...', ooga);
+  addMenu('help', 'Help', ooga);
+  addSeparator('help');
+  addMenu('help', 'What is here', ooga);
+  addMenu('help', 'What is that', ooga);
+  addMenu('help', 'Identify a map symbol', ooga);
+
 }
 
 function addMenu(menu, text, func) {
