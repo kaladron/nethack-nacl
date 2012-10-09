@@ -19,25 +19,27 @@ body {
 
 #tile-menu ul {
   list-style-type: none;
-  display: inline-block;
+  display: block;
   margin: 0;
   padding: 0;
 }
 
 #tile-menu ul li {
-  display: inline;
+  display: inline-block;
+  margin-left: 5px;
 }
 
-#tile-menu ul li ul {
+#tile-menu > ul > li > ul {
   display: none;
 }
 
-#tile-menu ul li:hover {
-  position: absolute;
-  z-index: 200;
+#tile-menu > ul > li:hover > ul {
+  display: block;
+  position: absolute; 
+  background-color: #cfd4d0;
 }
 
-#tile-menu ul li:hover > ul {
+#tile-menu > ul > li > ul > li {
   display: block;
 }
 
