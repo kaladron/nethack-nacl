@@ -226,7 +226,38 @@ var startGame = function() {
   param.value = 'nacl';
   nethackEmbed.appendChild(param);
 
+  addMenu('game', 'Change Settings...', ooga);
+  addSeparator('game');
+  addMenu('game', 'Version', ooga);
+  addMenu('game', 'History...', ooga);
+  addMenu('game', 'Compilation...', ooga);
+  addMenu('game', 'Options...', ooga);
+  addMenu('game', 'Explore Mode...', ooga);
+  addSeparator('game');
+  addMenu('game', 'New Game', ooga);
+  addMenu('game', 'Save Game', ooga);
+  addMenu('game', 'Switch to TTY mode', ooga);
+  addMenu('game', 'Edit Options File...', ooga);
+  addMenu('game', 'Quit', ooga);
+
   document.getElementById('listener').appendChild(nethackEmbed);
+}
+
+function addMenu(menu, text, func) {
+  var li = document.createElement('li');
+  li.textContent = text;
+  li.addEventListener('click', func);
+  li.className = 'tile-menuitem';
+  document.getElementById('tile-menu-' + menu).appendChild(li);  
+}
+
+function addSeparator(menu) {
+  var br = document.createElement('br');
+  document.getElementById('tile-menu-' + menu).appendChild(br);
+}
+
+function ooga(evt) {
+  alert('foo');
 }
 
 function mouseNav(evt) {

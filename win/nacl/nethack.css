@@ -3,6 +3,11 @@ body {
   margin: 0;
 }
 
+#listener {
+  width: 0;
+  height: 0;
+}
+
 #header ul {
   list-style-type: none;
   margin: 0;
@@ -41,6 +46,10 @@ body {
 
 #tile-menu > ul > li > ul > li {
   display: block;
+}
+
+.tile-menuitem:hover {
+  background-color: blue;
 }
 
 #tile-plinewin {
