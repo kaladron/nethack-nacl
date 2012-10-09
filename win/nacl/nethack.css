@@ -42,17 +42,21 @@ body {
 }
 
 #tile-menu > ul > li:hover > ul {
+  border: 1px solid #ccc;
   display: block;
   position: absolute; 
   background-color: #cfd4d0;
+  box-shadow: 5px 5px 2px rgba(0,0,0,.6);
 }
 
 #tile-menu > ul > li > ul > li {
   display: block;
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
 
 .tile-menuitem:hover {
-  background-color: blue;
+  background-color: #aba698;
 }
 
 #tile-plinewin {
@@ -138,3 +142,4 @@ body {
 #tile-status ul li {
   display: table-cell;
 }
+

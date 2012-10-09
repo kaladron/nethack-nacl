@@ -322,8 +322,8 @@ function addMenu(menu, text, func) {
 }
 
 function addSeparator(menu) {
-  var br = document.createElement('br');
-  document.getElementById('tile-menu-' + menu).appendChild(br);
+  var hr = document.createElement('hr');
+  document.getElementById('tile-menu-' + menu).appendChild(hr);
 }
 
 function ooga(evt) {
