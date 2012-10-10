@@ -315,7 +315,7 @@ function addMenus() {
 
 function addMenu(menu, text, func) {
   var li = document.createElement('li');
-  li.textContent = text;
+  li.innerHTML = text;
   li.addEventListener('click', func);
   li.className = 'tile-menuitem';
   document.getElementById('tile-menu-' + menu).appendChild(li);  
