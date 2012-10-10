@@ -69,7 +69,8 @@ body {
 }
 
 #tile-plinecontent {
-  height: 0;
+  height: 1em;
+  min-height: 1em;
 }
 
 #tile-plinewin p {
