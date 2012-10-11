@@ -141,7 +141,10 @@ var InputWindow = function(content, callback) {
   this.callback = callback;
   this.win = document.createElement('x-modal');
   this.win.className = 'dialog';
-  this.content = content;
+  
+  var caption = document.createElement('div');
+  caption.textContent = content;
+  this.win.appendChild(caption);
 
   this.inputBox = document.createElement('input');
   this.win.appendChild(this.inputBox); 
@@ -411,7 +414,7 @@ var handleMessage = function(event) {
   case NaclMsg.INIT_NHWINDOWS:
     break;
   case NaclMsg.ASKNAME:
-    var getlineWin = new InputWindow("What Character Name?", pm);
+    var getlineWin = new InputWindow("What is your name?", pm);
     getlineWin.display();
     break;
   case NaclMsg.GET_NH_EVENT:
