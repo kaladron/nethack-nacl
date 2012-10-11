@@ -137,6 +137,36 @@ MenuWindow.prototype.close = function() {
 };
 
 
+var InputWindow = function(content, callback) {
+  this.callback = callback;
+  this.win = document.createElement('x-modal');
+  this.win.className = 'dialog';
+  this.content = content;
+
+  this.inputBox = document.createElement('input');
+  this.win.appendChild(this.inputBox); 
+
+  var okButton = document.createElement('button');
+  okButton.type = 'button';
+  okButton.textContent = 'OK';
+  okButton.addEventListener('click', this.okButtonAction.bind(this));
+  this.win.appendChild(okButton);
+};
+
+InputWindow.prototype.display = function(block) {
+  document.body.appendChild(this.win);
+};
+
+InputWindow.prototype.okButtonAction = function() {
+  this.callback(this.inputBox.value);
+  this.close();
+};
+
+InputWindow.prototype.close = function() {
+  document.body.removeChild(this.win);
+};
+
+
 
 
 var nethackEmbed;
@@ -455,6 +485,10 @@ var handleMessage = function(event) {
   case NaclMsg.END_MENU:
     // 1: Window ID, 2: Prompt
     win_array[msg[1]].display(0);
+    break;
+  case NaclMsg.GETLIN:
+    var getlineWin = new InputWindow("What?", pm);
+    getlineWin.display();
     break;
   case NaclMsg.UPDATE_STATS:
     document.getElementById('plname').textContent = msg[1];
