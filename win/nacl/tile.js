@@ -411,7 +411,8 @@ var handleMessage = function(event) {
   case NaclMsg.INIT_NHWINDOWS:
     break;
   case NaclMsg.ASKNAME:
-    pm('bob');
+    var getlineWin = new InputWindow("What Character Name?", pm);
+    getlineWin.display();
     break;
   case NaclMsg.GET_NH_EVENT:
     throw "Not Implemented!";
@@ -487,7 +488,7 @@ var handleMessage = function(event) {
     win_array[msg[1]].display(0);
     break;
   case NaclMsg.GETLIN:
-    var getlineWin = new InputWindow("What?", pm);
+    var getlineWin = new InputWindow(msg[1], pm);
     getlineWin.display();
     break;
   case NaclMsg.UPDATE_STATS:
