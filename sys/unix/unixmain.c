@@ -18,6 +18,10 @@
 #include <fcntl.h>
 #endif
 
+#ifdef __native_client__
+#include <pthread.h>
+#endif
+
 #if !defined(_BULL_SOURCE) && !defined(__sgi) && !defined(_M_UNIX)
 # if !defined(SUNOS4) && !(defined(ULTRIX) && defined(__GNUC__))
 #  if defined(POSIX_TYPES) || defined(SVR4) || defined(HPUX)
@@ -551,5 +555,13 @@ char *name;
 	}
 	return;
 }
+
+#ifdef __native_client__
+void nethack_exit(unused)
+int unused;
+{
+  pthread_exit(NULL);
+}
+#endif
 
 /*unixmain.c*/
