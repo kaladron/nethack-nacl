@@ -440,6 +440,9 @@ var handleMessage = function(event) {
     // msg[1]: winid
     // We'll handle root windows ourselves.
     if (msg[1] < 4) {
+      if (msg[2] == '1') {
+        pm('ACK');
+      }
       break;
     }
     win_array[msg[1]].display(msg[2]);
