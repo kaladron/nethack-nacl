@@ -67,11 +67,11 @@ var DisplayWindow = function(content) {
   this.menu_win.className = 'dialog';
   this.content = content;
   this.menu_win.appendChild(content);
-  var button = document.createElement('button');
-  button.type = 'button';
-  button.textContent = 'OK';
-  button.addEventListener('click', this.okButton.bind(this));
-  this.menu_win.appendChild(button);
+  this.button = document.createElement('button');
+  this.button.type = 'button';
+  this.button.textContent = 'OK';
+  this.button.addEventListener('click', this.okButton.bind(this));
+  this.menu_win.appendChild(this.button);
   this.block = false;
 };
 
@@ -80,6 +80,7 @@ DisplayWindow.prototype.display = function(block) {
   if (block == 1) {
     this.block = true;
   }
+  this.button.focus();
 };
 
 DisplayWindow.prototype.okButton = function() {
