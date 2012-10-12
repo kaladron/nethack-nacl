@@ -56,6 +56,8 @@ var DISPLAY_SQUARE = 16;
 var TILES_PER_ROW = 40;
 var TILE_SQUARE = 16;
 
+var glyphTable;
+
 var ctx;
 var tiles;
 var petmark;
@@ -227,7 +229,28 @@ function processInput() {
 var pixheight = HEIGHT * DISPLAY_SQUARE;
 var pixwidth = WIDTH * DISPLAY_SQUARE;
 
+var glyph = function() {
+  this.glyph = null;
+  this.petmark = false;
+};
+
+function clearGlyphs() {
+  glyphTable = [];
+  for (var x = 0; x != WIDTH; x++) {
+    glyphTable[x] = [];
+    for (var y = 0; y != HEIGHT; y++) {
+      glyphTable[x][y] = new glyph();
+    }
+  }
+}
+
+var cursor = {};
+
 var startGame = function() {
+  cursor.x = 0;
+  cursor.y = 0;
+
+  clearGlyphs();
 
   var canvas = document.getElementById('gameCanvas');
   ctx = canvas.getContext('2d');
@@ -377,9 +400,49 @@ function pm(out) {
   nethackEmbed.postMessage(PREFIX + out);
 }
 
-var putTile = function(x, y, tile, pet) {
-  x--;
+var saveCurs = function(x, y) {
+  cursor.x = x;
+  cursor.y = y;
+};
 
+var putCurs = function() {
+  var x = cursor.x - 1;
+  var y = cursor.y;
+
+  var x1 = x * TILE_SQUARE - 1;
+  var y1 = y * TILE_SQUARE - 1;
+  var x2 = x1 + TILE_SQUARE + 2;
+  var y2 = y1 + TILE_SQUARE + 2;
+
+  //TODO(jeffbailey): Colour the cursor
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y1);
+  ctx.lineTo(x2, y2);
+  ctx.lineTo(x1, y2);
+  ctx.lineTo(x1, y1);
+  ctx.stroke();
+};
+
+var saveGlyph = function(x, y, tile, pet) {
+  x--;
+  glyphTable[x][y].glyph = tile;
+  glyphTable[x][y].petmark = pet;
+};
+
+function displayMap() {
+  ctx.clearRect(0, 0, pixwidth, pixheight);
+  for (var x = 0; x < WIDTH; x++) {
+    for (var y = 0; y < HEIGHT; y++) {
+      if (glyphTable[x][y].glyph !== null) {
+        putTile(x, y, glyphTable[x][y].glyph, glyphTable[x][y].petmark);
+      }
+    }
+  }
+  putCurs();
+}
+
+var putTile = function(x, y, tile, pet) {
   var tile_x = tile % TILES_PER_ROW;
   var tile_y = Math.floor(tile / TILES_PER_ROW);
 
@@ -408,7 +471,7 @@ var handleMessage = function(event) {
   // Check to make sure it starts with PREFIX
   console.log(event.data.substr(PREFIX.length));
   var msg = JSON.parse(event.data.substr(PREFIX.length));
-  console.log(msg);
+  // console.log(msg);
 
   switch(msg[0]) {
   case NaclMsg.INIT_NHWINDOWS:
@@ -443,16 +506,21 @@ var handleMessage = function(event) {
       if (msg[2] == '1') {
         pm('ACK');
       }
+      if (msg[1] == NHWin.MAP) {
+        displayMap();
+      }
       break;
     }
     win_array[msg[1]].display(msg[2]);
+    // TODO(jeffbailey): Window isn't displaying for specifying an object
+    // by cursor and then asking for more info.
     break;
   case NaclMsg.DESTROY_NHWINDOW:
     win_array[msg[1]].close();
     win_array[msg[1]] = null;
     break;
   case NaclMsg.PRINT_GLYPH:
-    putTile(msg[2], msg[3], msg[4], msg[5]);
+    saveGlyph(msg[2], msg[3], msg[4], msg[5]);
     break;
   case NaclMsg.PUTSTR:
     win_array[msg[1]].putStr(msg[3]);
@@ -471,8 +539,9 @@ var handleMessage = function(event) {
     awaitingInput = true;
     processInput();
   case NaclMsg.CLEAR_NHWINDOW:
+    // 1: Window Number
     if (msg[1] == NHWin.MAP) {
-      ctx.clearRect(0, 0, pixwidth, pixheight);
+      clearGlyphs();
     }
     break;
   case NaclMsg.START_MENU:
@@ -518,8 +587,12 @@ var handleMessage = function(event) {
     document.getElementById('xp').textContent = msg[18];
     document.getElementById('time').textContent = msg[19];
     break;
-  //default:
-  //  console.log(msg);
+  case NaclMsg.CURS:
+    // Window, X, Y
+    saveCurs(msg[2], msg[3]);
+    break;
+  default:
+    console.log(event.data.substr(PREFIX.length));
   }
 }
 
