@@ -150,6 +150,8 @@ var InputWindow = function(content, callback) {
   this.win.appendChild(caption);
 
   this.inputBox = document.createElement('input');
+  this.inputBox.addEventListener('keypress', this.enterKeyWatch.bind(this));
+
   this.win.appendChild(this.inputBox); 
 
   var okButton = document.createElement('button');
@@ -159,8 +161,15 @@ var InputWindow = function(content, callback) {
   this.win.appendChild(okButton);
 };
 
+InputWindow.prototype.enterKeyWatch = function(evt) {
+  if (evt.which == 13) {
+    this.okButtonAction();
+  }
+};
+
 InputWindow.prototype.display = function(block) {
   document.body.appendChild(this.win);
+  this.inputBox.focus();
 };
 
 InputWindow.prototype.okButtonAction = function() {
@@ -182,6 +191,7 @@ var eventBuffer = new Array();
 var awaitingInput = false;
 
 var handleKeyDown = function(evt) {
+  console.log(evt);
   var cmdKey = 0;
 
   switch (evt.which) {
@@ -247,6 +257,8 @@ function clearGlyphs() {
 
 var cursor = {};
 
+var gameScreen;
+
 var startGame = function() {
   cursor.x = 0;
   cursor.y = 0;
@@ -267,8 +279,10 @@ var startGame = function() {
   petmark = document.createElement('img');
   petmark.src = 'pet_mark.png';
 
-  document.body.addEventListener('keydown', handleKeyDown);
-  document.body.addEventListener('keypress', handleKeyPress);
+  gameScreen = document.getElementById('tile-gamescreen');
+  gameScreen.addEventListener('keydown', handleKeyDown);
+  gameScreen.addEventListener('keypress', handleKeyPress);
+  gameScreen.tabIndex = 1;
 
   // Create the object for Nethack.
   nethackEmbed = document.createElement('object');
@@ -470,7 +484,7 @@ var win_array = new Array();
 var handleMessage = function(event) {
   // Make sure it's the right kind of event we got
   // Check to make sure it starts with PREFIX
-  console.log(event.data.substr(PREFIX.length));
+  //console.log(event.data.substr(PREFIX.length));
   var msg = JSON.parse(event.data.substr(PREFIX.length));
   // console.log(msg);
 
@@ -534,6 +548,7 @@ var handleMessage = function(event) {
   case NaclMsg.NHGETCH:
     awaitingInput = true;
     processInput();
+    gameScreen.focus();
     break;
   case NaclMsg.YN_FUNCTION:
     plineput(msg[1]);
