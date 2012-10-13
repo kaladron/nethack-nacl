@@ -303,92 +303,95 @@ var startGame = function() {
 }
 
 function addMenus() {
-  addMenu('game', 'Change Settings...', ooga);
+  addMenu('game', 'Change Settings...', 'Change Game Settings', ooga);
   addSeparator('game');
-  addMenu('game', 'Version', ooga);
-  addMenu('game', 'History...', ooga);
-  addMenu('game', 'Compilation...', ooga);
-  addMenu('game', 'Options...', ooga);
-  addMenu('game', 'Explore Mode...', ooga);
+  addMenu('game', 'Version', null, ooga);
+  addMenu('game', 'History...', null, ooga);
+  addMenu('game', 'Compilation...', null, ooga);
+  addMenu('game', 'Options...', null, ooga);
+  addMenu('game', 'Explore Mode...', null, ooga);
   addSeparator('game');
-  addMenu('game', 'New Game', ooga);
-  addMenu('game', 'Save Game', ooga);
-  addMenu('game', 'Switch to TTY mode', ooga);
-  addMenu('game', 'Edit Options File...', ooga);
-  addMenu('game', 'Quit', ooga);
+  addMenu('game', 'New Game', null, ooga);
+  addMenu('game', 'Save Game', null, ooga);
+  addMenu('game', 'Switch to TTY mode', null, ooga);
+  addMenu('game', 'Edit Options File...', null, ooga);
+  addMenu('game', 'Exit', null, ooga);
 
-  addMenu('edit', 'Inventory', ooga);
-  addMenu('edit', 'Discoveried', ooga);
-  addMenu('edit', 'List/reorder your spells', ooga);
-  addMenu('edit', 'Adjust letters', ooga);
+  addMenu('edit', 'Inventory', 'Edit/View your inventory', ooga);
+  addMenu('edit', 'Discoveried', 'Edit/View your Discoveries', ooga);
+  addMenu('edit', 'List/reorder your spells', 'List/reorder your spells', ooga);
+  addMenu('edit', 'Adjust letters', 'Adjust letter for items in your Inventory', ooga);
   addSeparator('edit');
-  addMenu('edit', 'Name object', ooga);
-  addMenu('edit', 'Name creature', ooga);
+  addMenu('edit', 'Name object', 'Assign a name to an object', ooga);
+  addMenu('edit', 'Name creature', 'Assign a name to a creature', ooga);
   addSeparator('edit');
-  addMenu('edit', 'Qualifications', ooga);
+  addMenu('edit', 'Qualifications', 'Edit your Qualifications', ooga);
 
-  addMenu('apparel', 'Wield Weapon', ooga);
-  addMenu('apparel', 'Remove Apparel...', ooga);
+  addMenu('apparel', 'Wield Weapon', 'Select a weapon to fight with', ooga);
+  addMenu('apparel', 'Remove Apparel...', 'Remove apparel dialog box', ooga);
   addSeparator('apparel');
-  addMenu('apparel', 'Wear Armor', ooga);
-  addMenu('apparel', 'Take off Armor', ooga);
-  addMenu('apparel', 'Put on non-armor', ooga);
-  addMenu('apparel', 'Remove non-armor', ooga);
+  addMenu('apparel', 'Wear Armor', 'Put on armor', ooga);
+  addMenu('apparel', 'Take off Armor', 'Take off armor you are wearing', ooga);
+  addMenu('apparel', 'Put on non-armor', 'Put on non-armor apparel', ooga);
+  addMenu('apparel', 'Remove non-armor', 'Remove non-armor apparel you are wearing', ooga);
 
-  addMenu('action', 'Get', ooga);
-  addMenu('action', 'Loot', ooga);
-  addMenu('action', 'Sit', ooga);
-  addMenu('action', 'Force', ooga);
-  addMenu('action', 'Kick', ooga);
-  addMenu('action', 'Jump', ooga);
-  addMenu('action', 'Ride', ooga);
-  addMenu('action', 'Wipe face', ooga);
-  addMenu('action', 'Throw/Shoot', ooga);
-  addMenu('action', 'Quiver/Ready', ooga);
-  addMenu('action', 'Open Door', ooga);
-  addMenu('action', 'Close Door', ooga);
+  addMenu('action', 'Get', 'Pick up things at the current location', ooga);
+  addMenu('action', 'Loot', 'Loot a box on the floor', ooga);
+  addMenu('action', 'Sit', 'Sit Down', ooga);
+  addMenu('action', 'Force', 'Force a lock', ooga);
+  addMenu('action', 'Kick', 'Kick something (usually a door)', ooga);
+  addMenu('action', 'Jump', 'Jump to another location', ooga);
+  addMenu('action', 'Ride', 'Ride (or stop riding) a monster', ooga);
+  addMenu('action', 'Wipe face', 'Wipe off your face', ooga);
+  addMenu('action', 'Throw/Shoot', 'Throw or shoot a weapon', ooga);
+  addMenu('action', 'Quiver/Ready', 'Ready or quiver some ammunition', ooga);
+  addMenu('action', 'Open Door', 'Open a door', ooga);
+  addMenu('action', 'Close Door', 'Close a door', ooga);
   addSeparator('action');
-  addMenu('action', 'Drop', ooga);
-  addMenu('action', 'Drop Many', ooga);
-  addMenu('action', 'Eat', ooga);
-  addMenu('action', 'Engrave', ooga);
-  addMenu('action', 'Apply', ooga);
+  addMenu('action', 'Drop', 'Drop an object', ooga);
+  addMenu('action', 'Drop Many', 'Drop selected types of objects', ooga);
+  addMenu('action', 'Eat', 'Eat something', ooga);
+  addMenu('action', 'Engrave', 'Write a message in the dust on the floor', ooga);
+  addMenu('action', 'Apply', 'Apply or use a tool (pick-axe, key, camera, etc.)', ooga);
   addSeparator('action');
-  addMenu('action', 'Up', ooga);
-  addMenu('action', 'Down', ooga);
-  addMenu('action', 'Rest', ooga);
-  addMenu('action', 'Search', ooga);
+  addMenu('action', 'Up', 'Go up the stairs', ooga);
+  addMenu('action', 'Down', 'Go down the stairs', ooga);
+  addMenu('action', 'Rest', 'Wait for a moment', ooga);
+  addMenu('action', 'Search', 'Search for secret doors, hidden traps and monsters', ooga);
   addSeparator('action');
-  addMenu('action', 'Chat', ooga);
-  addMenu('action', 'Pay', ooga);
+  addMenu('action', 'Chat', 'Talk to someone', ooga);
+  addMenu('action', 'Pay', 'Pay your bill to the shopkeeper', ooga);
 
-  addMenu('magic', 'Quaff potion', ooga);
-  addMenu('magic', 'Read Book/Scroll', ooga);
-  addMenu('magic', 'Zap Wand', ooga);
-  addMenu('magic', 'Zap Spell', ooga);
-  addMenu('magic', 'Dip', ooga);
-  addMenu('magic', 'Rub', ooga);
-  addMenu('magic', 'Invoke', ooga);
-  addMenu('magic', 'Offer', ooga);
-  addMenu('magic', 'Pray', ooga);
-  addMenu('magic', 'Teleport', ooga);
-  addMenu('magic', 'Monster Action', ooga);
-  addMenu('magic', 'Turn Undead', ooga);
+  addMenu('magic', 'Quaff potion', 'Drink a potion', ooga);
+  addMenu('magic', 'Read Book/Scroll', 'Read a spell book or a scroll', ooga);
+  addMenu('magic', 'Zap Wand', 'Zap a wand', ooga);
+  addMenu('magic', 'Zap Spell', 'Cast a spell', ooga);
+  addMenu('magic', 'Dip', 'Dip an object into something', ooga);
+  addMenu('magic', 'Rub', 'Rub something (i.e. a lamp)', ooga);
+  addMenu('magic', 'Invoke', "Invoke an object's special powers", ooga);
+  addMenu('magic', 'Offer', 'Offer a sacrifice to the gods', ooga);
+  addMenu('magic', 'Pray', 'Pray to the gods for help', ooga);
+  addMenu('magic', 'Teleport', 'Teleport (if you can)', ooga);
+  addMenu('magic', 'Monster Action', "Use a monster's special ability", ooga);
+  addMenu('magic', 'Turn Undead', 'Turn undead', ooga);
 
-  addMenu('help', 'About...', ooga);
-  addMenu('help', 'Help', ooga);
+  addMenu('help', 'About...', 'About Nethack', ooga);
+  addMenu('help', 'Help', null, ooga);
   addSeparator('help');
-  addMenu('help', 'What is here', ooga);
-  addMenu('help', 'What is that', ooga);
-  addMenu('help', 'Identify a map symbol', ooga);
+  addMenu('help', 'What is here', 'Check what itemts occupy the current location', ooga);
+  addMenu('help', 'What is that', 'Identify an object', ooga);
+  addMenu('help', 'Identify a map symbol', 'Identify a map symbol', ooga);
 
 }
 
-function addMenu(menu, text, func) {
+function addMenu(menu, text, title, func) {
   var li = document.createElement('li');
   li.innerHTML = text;
   li.addEventListener('click', func);
   li.className = 'tile-menuitem';
+  if (title != null) {
+    li.title = title;
+  }
   document.getElementById('tile-menu-' + menu).appendChild(li);  
 }
 
