@@ -3,6 +3,15 @@ body {
   margin: 0;
 }
 
+x-modal {
+  z-index: 1000;
+}
+
+x-overlay {
+  z-index: 999;
+  background: none;
+}
+
 #listener {
   width: 0;
   height: 0;

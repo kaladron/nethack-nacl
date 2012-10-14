@@ -73,9 +73,11 @@ var DisplayWindow = function(content) {
   this.button.addEventListener('click', this.okButton.bind(this));
   this.menu_win.appendChild(this.button);
   this.block = false;
+  this.overlay = document.createElement('x-overlay');
 };
 
 DisplayWindow.prototype.display = function(block) {
+  document.body.appendChild(this.overlay);
   document.body.appendChild(this.menu_win);
   if (block == 1) {
     this.block = true;
@@ -97,6 +99,7 @@ DisplayWindow.prototype.putStr = function(text) {
 
 DisplayWindow.prototype.close = function() {
   document.body.removeChild(this.menu_win);
+  document.body.removeChild(this.overlay);
 };
 
 var MenuWindow = function(content) {
@@ -116,9 +119,11 @@ var MenuWindow = function(content) {
   cancelButton.textContent = 'Cancel';
   cancelButton.addEventListener('click', this.cancelButtonAction.bind(this));
   this.menu_win.appendChild(cancelButton);
+  this.overlay = document.createElement('x-overlay');
 };
 
 MenuWindow.prototype.display = function(block) {
+  document.body.appendChild(this.overlay);
   document.body.appendChild(this.menu_win);
   if (block == 1) {
     this.block = true;
@@ -137,6 +142,7 @@ MenuWindow.prototype.cancelButtonAction = function() {
 
 MenuWindow.prototype.close = function() {
   document.body.removeChild(this.menu_win);
+  document.body.removeChild(this.overlay);
 };
 
 
@@ -159,6 +165,8 @@ var InputWindow = function(content, callback) {
   okButton.textContent = 'OK';
   okButton.addEventListener('click', this.okButtonAction.bind(this));
   this.win.appendChild(okButton);
+
+  this.overlay = document.createElement('x-overlay');
 };
 
 InputWindow.prototype.enterKeyWatch = function(evt) {
@@ -169,6 +177,7 @@ InputWindow.prototype.enterKeyWatch = function(evt) {
 
 InputWindow.prototype.display = function(block) {
   document.body.appendChild(this.win);
+  document.body.appendChild(this.overlay);
   this.inputBox.focus();
 };
 
@@ -179,6 +188,7 @@ InputWindow.prototype.okButtonAction = function() {
 
 InputWindow.prototype.close = function() {
   document.body.removeChild(this.win);
+  document.body.removeChild(this.overlay);
 };
 
 
@@ -208,6 +218,7 @@ var ExtCmdWindow = function(msg) {
   this.cancelButton.textContent = 'Cancel';
   this.cancelButton.addEventListener('click', this.cancelButtonAction.bind(this));
   this.win.appendChild(this.cancelButton);
+  this.overlay = document.createElement('x-overlay');
 };
 
 ExtCmdWindow.prototype.buttonAction = function(evt) {
@@ -216,6 +227,7 @@ ExtCmdWindow.prototype.buttonAction = function(evt) {
 };
 
 ExtCmdWindow.prototype.display = function(block) {
+  document.body.appendChild(this.overlay);
   document.body.appendChild(this.win);
   this.cancelButton.focus();
 };
@@ -227,6 +239,7 @@ ExtCmdWindow.prototype.cancelButtonAction = function() {
 
 ExtCmdWindow.prototype.close = function() {
   document.body.removeChild(this.win);
+  document.body.removeChild(this.overlay);
 };
 
 
