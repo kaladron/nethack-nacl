@@ -192,13 +192,15 @@ var ExtCmdWindow = function(msg) {
 
   // Start at 1 to skip the message name
   for (var i = 1; i < msg.length; i++) {
+    var div = document.createElement('div');
     var button = document.createElement('button');
     button.dataset.index = (i-1)/2;
     button.textContent = msg[i];
     button.addEventListener('click', this.buttonAction.bind(this));
     // Keep this last because of the increment
     button.title = msg[++i];
-    this.win.appendChild(button);
+    div.appendChild(button);
+    this.win.appendChild(div);
   }
 
   this.cancelButton = document.createElement('button');
