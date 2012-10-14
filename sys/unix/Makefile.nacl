@@ -34,6 +34,8 @@ DATNODLB = $(VARDATND) license
 DATDLB = $(DATHELP) dungeon $(SPEC_LEVS) $(QUEST_LEVS) $(VARDATD)
 DAT = $(DATNODLB) $(DATDLB)
 
+DATFILES = dat/help dat/wizhelp dat/hh dat/options dat/license dat/history
+
 $(GAME):
 	$(MAKE) -C obj32 NACL_PACKAGES_BITSIZE=32
 	$(MAKE) -C obj64 NACL_PACKAGES_BITSIZE=64
@@ -59,6 +61,7 @@ extension: $(EXTENSION_ITEMS)
 	  win/nacl/hterm \
 	  win/nacl/x-tag \
 	  $(OBJEXTENSION)
+	cp -a $(DATFILES) $(OBJEXTENSION)
 
 $(OBJEXTENSION)/nethack.nmf: $(NETHACK32) $(NETHACK64)
 	cd $(OBJEXTENSION) && create_nmf.py $(notdir $^) -L ${NACL_SDK_ROOT}/toolchain/$(NACL_OS_TYPE)_x86_glibc/x86_64-nacl/lib32 -L ${NACL_SDK_ROOT}/toolchain/$(NACL_OS_TYPE)_x86_glibc/x86_64-nacl/lib64 -D x86_64-nacl-objdump -o $(notdir $@) -s .
