@@ -191,7 +191,6 @@ var eventBuffer = new Array();
 var awaitingInput = false;
 
 var handleKeyDown = function(evt) {
-  console.log(evt);
   var cmdKey = 0;
 
   switch (evt.which) {

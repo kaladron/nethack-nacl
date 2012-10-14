@@ -508,14 +508,11 @@ char nacl_yn_function(const char *question, const char *choices,
 
 void nacl_getlin(const char *question, char *input) {
   NaClMessage() << NACL_MSG_GETLIN << question << eom;
-  // TODO store to input.
   std::string reply = NaClMessage::GetReply();
   strcpy(input, reply.c_str());
 }
 
 int nacl_get_ext_cmd(void) {
-  // TODO(jeffbailey): Confirm that extcmdlist is static and send
-  // it over in an init message rather than every time a # is hit.
   NaClMessage msgBuilder = NaClMessage();
   msgBuilder << NACL_MSG_GET_EXT_CMD;
   for (struct ext_func_tab* itr = extcmdlist; itr->ef_txt != 0; itr++) {
