@@ -182,6 +182,49 @@ InputWindow.prototype.close = function() {
 };
 
 
+var ExtCmdWindow = function(msg) {
+  this.win = document.createElement('x-modal');
+  this.win.className = 'dialog';
+  
+  var caption = document.createElement('div');
+  caption.textContent = "Extended Commands";
+  this.win.appendChild(caption);
+
+  // Start at 1 to skip the message name
+  for (var i = 1; i < msg.length; i++) {
+    var button = document.createElement('button');
+    button.dataset.index = (i-1)/2;
+    button.textContent = msg[i];
+    button.addEventListener('click', this.buttonAction.bind(this));
+    // Keep this last because of the increment
+    button.title = msg[++i];
+    this.win.appendChild(button);
+  }
+
+  this.cancelButton = document.createElement('button');
+  this.cancelButton.textContent = 'Cancel';
+  this.cancelButton.addEventListener('click', this.cancelButtonAction.bind(this));
+  this.win.appendChild(this.cancelButton);
+};
+
+ExtCmdWindow.prototype.buttonAction = function(evt) {
+  pm(evt.target.dataset.index);
+  this.close();
+};
+
+ExtCmdWindow.prototype.display = function(block) {
+  document.body.appendChild(this.win);
+  this.cancelButton.focus();
+};
+
+ExtCmdWindow.prototype.cancelButtonAction = function() {
+  pm('-1');
+  this.close();
+};
+
+ExtCmdWindow.prototype.close = function() {
+  document.body.removeChild(this.win);
+};
 
 
 var nethackEmbed;
@@ -486,7 +529,7 @@ var win_array = new Array();
 var handleMessage = function(event) {
   // Make sure it's the right kind of event we got
   // Check to make sure it starts with PREFIX
-  //console.log(event.data.substr(PREFIX.length));
+  console.log(event.data.substr(PREFIX.length));
   var msg = JSON.parse(event.data.substr(PREFIX.length));
   // console.log(msg);
 
@@ -556,6 +599,7 @@ var handleMessage = function(event) {
     plineput(msg[1]);
     awaitingInput = true;
     processInput();
+    gameScreen.focus();
   case NaclMsg.CLEAR_NHWINDOW:
     // 1: Window Number
     if (msg[1] == NHWin.MAP) {
@@ -584,6 +628,10 @@ var handleMessage = function(event) {
     var getlineWin = new InputWindow(msg[1], pm);
     getlineWin.display();
     break;
+  case NaclMsg.GET_EXT_CMD:
+    var extCmdWin = new ExtCmdWindow(msg);
+    extCmdWin.display();
+    break;
   case NaclMsg.UPDATE_STATS:
     document.getElementById('plname').textContent = msg[1];
     document.getElementById('rank').textContent = msg[2];
@@ -609,8 +657,8 @@ var handleMessage = function(event) {
     // Window, X, Y
     saveCurs(msg[2], msg[3]);
     break;
-  default:
-    console.log(event.data.substr(PREFIX.length));
+  //default:
+  //  console.log(event.data.substr(PREFIX.length));
   }
 }
 
