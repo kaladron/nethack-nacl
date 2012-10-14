@@ -199,6 +199,7 @@ var ExtCmdWindow = function(msg) {
     button.addEventListener('click', this.buttonAction.bind(this));
     // Keep this last because of the increment
     button.title = msg[++i];
+    button.className = 'tile-extcmdbutton';
     div.appendChild(button);
     this.win.appendChild(div);
   }
