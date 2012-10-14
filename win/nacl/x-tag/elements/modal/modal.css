@@ -21,3 +21,7 @@ x-modal {
 x-modal[data-modal-hidden="true"]{
 	display: none;
 }
+
+x-modal[overlay] {
+	outline: solid 9999px rgba(0,0,0, 0.5);
+}
