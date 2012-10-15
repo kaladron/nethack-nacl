@@ -62,13 +62,57 @@ var ctx;
 var tiles;
 var petmark;
 
+var panel;
+
+var FileWindow = function(file) {
+  this.menu_win = document.createElement('x-modal');
+  this.menu_win.className = 'dialog';
+
+  var pre = document.createElement('pre');
+
+  this.panel = document.createElement('x-panel');
+  this.panel.rel = file;
+  pre.appendChild(this.panel);
+  // TODO(jeffbailey): This is a hack to work around a bug in x-tags
+  // Where the element doesn't load when placed into the dom,
+  // but does when src changes later.
+  setTimeout(this.test.bind(this), 100);
+  this.menu_win.appendChild(pre);
+
+  this.button = document.createElement('button');
+  this.button.textContent = 'OK';
+  this.button.addEventListener('click', this.okButtonAction.bind(this));
+  this.menu_win.appendChild(this.button);
+
+  this.overlay = document.createElement('x-overlay');
+};
+
+FileWindow.prototype.test = function(evt) {
+  this.panel.src = this.panel.rel;
+};
+
+FileWindow.prototype.display = function(block) {
+  document.body.appendChild(this.overlay);
+  document.body.appendChild(this.menu_win);
+  this.button.focus();
+};
+
+FileWindow.prototype.okButtonAction = function() {
+  this.close();
+};
+
+FileWindow.prototype.close = function() {
+  document.body.removeChild(this.menu_win);
+  document.body.removeChild(this.overlay);
+  gameScreen.focus();
+};
+
 var DisplayWindow = function(content) {
   this.menu_win = document.createElement('x-modal');
   this.menu_win.className = 'dialog';
   this.content = content;
   this.menu_win.appendChild(content);
   this.button = document.createElement('button');
-  this.button.type = 'button';
   this.button.textContent = 'OK';
   this.button.addEventListener('click', this.okButton.bind(this));
   this.menu_win.appendChild(this.button);
@@ -600,6 +644,10 @@ var handleMessage = function(event) {
     break;
   case NaclMsg.PUTSTR:
     win_array[msg[1]].putStr(msg[3]);
+    break;
+  case NaclMsg.DISPLAY_FILE:
+    var fileWin = new FileWindow(msg[1]);
+    fileWin.display();
     break;
   case NaclMsg.RAW_PRINT:
     plineput(msg[1]);
