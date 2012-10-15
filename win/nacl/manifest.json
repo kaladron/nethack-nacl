@@ -1,6 +1,7 @@
 {
   "minimum_chrome_version": "20",
   "manifest_version": 2,
+  "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
   "offline_enabled": true,
   "name": "Nethack",
   "description": "Nethack",
