@@ -64,6 +64,9 @@ var petmark;
 
 var panel;
 
+var hp;
+var maxhp;
+
 var FileWindow = function(file) {
   this.menu_win = document.createElement('x-modal');
   this.menu_win.className = 'dialog';
@@ -534,9 +537,16 @@ var putCurs = function() {
   var x2 = x1 + TILE_SQUARE + 2;
   var y2 = y1 + TILE_SQUARE + 2;
 
-  //TODO(jeffbailey): Colour the cursor
+  var hr = hp/maxhp;
+
+  var r = 255;
+  var g = (hr >= 0.75) ? 255             : (hr >= 0.25 ? 255*2*(hr-0.25) : 0);
+  var b = (hr >= 0.75) ? 255*4*(hr-0.75) : (hr >= 0.25 ? 0 : 255*4*(0.25-hr));
+
   ctx.beginPath();
   ctx.moveTo(x1, y1);
+  var color = 'rgb('+Math.floor(r)+','+Math.floor(g)+','+Math.floor(b)+')';
+  ctx.strokeStyle = color;
   ctx.lineTo(x2, y1);
   ctx.lineTo(x2, y2);
   ctx.lineTo(x1, y2);
@@ -707,7 +717,9 @@ var handleMessage = function(event) {
     document.getElementById('int').textContent = msg[8];
     document.getElementById('wis').textContent = msg[9];
     document.getElementById('cha').textContent = msg[10];
+    hp = msg[11];
     document.getElementById('hp').textContent = msg[11];
+    maxhp = msg[12];
     document.getElementById('maxhp').textContent = msg[12];
     document.getElementById('ac').textContent = msg[13];
     document.getElementById('power').textContent = msg[14];
