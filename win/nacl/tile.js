@@ -137,6 +137,7 @@ DisplayWindow.prototype.okButton = function() {
     pm('OK');
     this.block = false;
   }
+  this.close();
 };
 
 DisplayWindow.prototype.putStr = function(text) {
@@ -642,11 +643,12 @@ var handleMessage = function(event) {
       break;
     }
     win_array[msg[1]].display(msg[2]);
-    // TODO(jeffbailey): Window isn't displaying for specifying an object
-    // by cursor and then asking for more info.
     break;
   case NaclMsg.DESTROY_NHWINDOW:
-    win_array[msg[1]].close();
+    // This shouldn't close it for non-modal windows.  Instead
+    // we'll let all the windows close themselves and leave the windows
+    // to decide if they lock down the interface for other interaction
+    // or not.
     win_array[msg[1]] = null;
     break;
   case NaclMsg.PRINT_GLYPH:
