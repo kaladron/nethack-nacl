@@ -20,8 +20,8 @@ x-overlay {
 #header {
   z-index: 1;
   position: fixed;
-  background-color: #cfd4d0;
-  color: #cfd4d0;
+  background-color: rgba(207, 212, 208, .5);
+  color: rgba(207, 212, 208, 0);
   left: 50%;
   right: 50%;
   margin-left: -20%;
