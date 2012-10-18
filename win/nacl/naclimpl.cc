@@ -12,6 +12,8 @@
 
 extern "C" {
   #include "func_tab.h"
+  extern const char *hu_stat[]; /* from eat.c */
+  extern const char *enc_stat[]; /* from botl.c */
 };
 
 
@@ -367,6 +369,16 @@ void nacl_putstr(winid wid, int attr, const char *text) {
       << u.ulevel
       << u.uexp
       << moves
+      << u.ualign.type
+      << hu_stat[u.uhs]
+      << Confusion
+      << Blind
+      << Stunned
+      << Hallucination
+      << Sick
+      << u.usick_type
+      << enc_stat[near_capacity()]
+      << near_capacity()
       << eom;
   }
 }

@@ -709,6 +709,7 @@ var handleMessage = function(event) {
     extCmdWin.display();
     break;
   case NaclMsg.UPDATE_STATS:
+    console.log(msg);
     document.getElementById('plname').textContent = msg[1];
     document.getElementById('rank').textContent = msg[2];
     document.getElementById('dname').textContent = msg[3];
@@ -730,6 +731,14 @@ var handleMessage = function(event) {
     document.getElementById('level').textContent = msg[17];
     document.getElementById('xp').textContent = msg[18];
     document.getElementById('time').textContent = msg[19];
+    setAlignment(msg[20]);
+    setHunger(msg[21]);
+    setConfusion(msg[22]);
+    setBlind(msg[23]);
+    setStunned(msg[24]);
+    setHallucination(msg[25]);
+    setSick(msg[26], msg[27]);
+    setEncumbered(msg[28], msg[29]);
     break;
   case NaclMsg.CURS:
     // Window, X, Y
@@ -739,6 +748,49 @@ var handleMessage = function(event) {
   //  console.log(event.data.substr(PREFIX.length));
   }
 }
+
+function setAlignment(align) {
+  var image = document.getElementById('tile-align-image');
+  var text = document.getElementById('tile-align-text');
+
+  switch(align) {
+  case -1:
+    image.src = 'chaotic.png';
+    text.textContent = 'Chaotic';
+    break;
+  case 0:
+    image.src = 'neutral.png';
+    text.textContent = 'Neutral';
+    break;
+  case 1:
+    image.src = 'lawful.png';
+    text.textContent = 'Lawful';
+    break;
+  }
+}
+
+function setHunger(hunger) {
+}
+
+function setConfusion(confusion) {
+}
+
+function setBlind(blind) {
+}
+
+function setStunned(stunned) {
+}
+
+function setHallucination(hallu) {
+}
+
+function setSick(sick1, sick2) {
+}
+
+function setEncumbered(enc1, enc2) {
+}
+
+
 
 function plineput(text) {
   var plinecontent = document.getElementById('tile-plinecontent');
