@@ -713,7 +713,6 @@ var handleMessage = function(event) {
     document.getElementById('plname').textContent = msg[1];
     document.getElementById('rank').textContent = msg[2];
     document.getElementById('dnamelvl').textContent = msg[3];
-    document.getElementById('dlevel').textContent = msg[4];
     document.getElementById('str').textContent = msg[5];
     document.getElementById('dex').textContent = msg[6];
     document.getElementById('con').textContent = msg[7];
