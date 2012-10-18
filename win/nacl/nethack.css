@@ -17,15 +17,47 @@ x-overlay {
   height: 0;
 }
 
+#header {
+  z-index: 1;
+  position: fixed;
+  background-color: #cfd4d0;
+  color: #cfd4d0;
+  left: 50%;
+  right: 50%;
+  margin-left: -20%;
+  margin-right: -20%;
+  padding: 2px;
+  height: 3px;
+  overflow: hidden;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+#header:hover {
+  height: 1.5em;
+  color: black;
+  -webkit-transition-property: height, color;
+  -webkit-transition-duration: 250ms;
+  -webkit-transition-timing-function: linear;
+}
+
+#header a {
+  color: inherit;
+}
+
+#header a:visited {
+  color: inherit;
+}
+
 #header ul {
+  text-align: center;
   list-style-type: none;
   margin: 0;
   padding: 0;
-  display: table-cell;
 }
 
 #header ul li {
-  display: inline;
+  display: inline-block;
 }
 
 #header ul li::after { content: ' | ' }
@@ -103,11 +135,6 @@ x-overlay {
   display: table;
   width: 100%;
   border: 1px solid black;
-}
-
-#header {
-  display: table;
-  width: 100%;
 }
 
 #textwindow {
