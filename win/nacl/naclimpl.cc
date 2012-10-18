@@ -370,6 +370,7 @@ void nacl_putstr(winid wid, int attr, const char *text) {
       << u.uexp
       << moves
       << u.ualign.type
+      << u.uhs
       << hu_stat[u.uhs]
       << Confusion
       << Blind
@@ -377,8 +378,8 @@ void nacl_putstr(winid wid, int attr, const char *text) {
       << Hallucination
       << Sick
       << u.usick_type
-      << enc_stat[near_capacity()]
       << near_capacity()
+      << enc_stat[near_capacity()]
       << eom;
   }
 }

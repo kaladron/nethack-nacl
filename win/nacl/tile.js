@@ -732,13 +732,13 @@ var handleMessage = function(event) {
     document.getElementById('xp').textContent = msg[18];
     document.getElementById('time').textContent = msg[19];
     setAlignment(msg[20]);
-    setHunger(msg[21]);
-    setConfusion(msg[22]);
-    setBlind(msg[23]);
-    setStunned(msg[24]);
-    setHallucination(msg[25]);
-    setSick(msg[26], msg[27]);
-    setEncumbered(msg[28], msg[29]);
+    setHunger(msg[21], msg[22]);
+    setConfusion(msg[23]);
+    setBlind(msg[24]);
+    setStunned(msg[25]);
+    setHallucination(msg[26]);
+    setSick(msg[27], msg[28]);
+    setEncumbered(msg[29], msg[30]);
     break;
   case NaclMsg.CURS:
     // Window, X, Y
@@ -769,25 +769,120 @@ function setAlignment(align) {
   }
 }
 
-function setHunger(hunger) {
+function setHunger(hunger, hungerText) {
+  /* hunger texts used on bottom line (each 8 chars long) */
+  var SATIATED = 0;
+  var NOT_HUNGRY = 1;
+  var HUNGRY = 2;
+  var WEAK = 3;
+  var FAINTING = 4;
+  var FAINTED = 5;
+  var STARVED = 6;
+
+  var image = document.getElementById('tile-hungry-image');
+  var text = document.getElementById('tile-hungry-text');
+
+  if (hunger == 1) {
+    image.parentElement.className = 'tile-hidden';
+    return;
+  }
+
+  image.parentElement.className = '';
+
+  if (hunger == 0) {
+    image.src = 'satiated.png';
+  } else {
+    image.src = 'hungry.png';
+  }
+
+  text.textContent = hungerText;
+}
+
+function statusHideShow(elementName, state) {
+  var element = document.getElementById(elementName);
+  switch(state) {
+  case 0:
+    element.className = 'tile-hidden';
+    break;
+  case 1:
+    element.className = '';
+    break;
+  }
 }
 
 function setConfusion(confusion) {
+  statusHideShow('tile-confu', confusion);
 }
 
 function setBlind(blind) {
+  statusHideShow('tile-blind', blind);
 }
 
 function setStunned(stunned) {
+  statusHideShow('tile-stun', stunned);
 }
 
 function setHallucination(hallu) {
+  statusHideShow('tile-hallu', hallu);
 }
 
-function setSick(sick1, sick2) {
+function setSick(sick, sick_type) {
+  var SICK_VOMITABLE = 1;
+  var SICK_NONVOMITABLE = 2;
+
+  var image = document.getElementById('tile-sick-image');
+  var text = document.getElementById('tile-sick-text');
+
+  if (sick == 0) {
+    image.parentElement.className = 'tile-hidden';
+    return;
+  }
+
+  image.parentElement.className = '';
+
+  if (sickType == 2) {
+    image.src = 'sick_il.png';
+    text.textContent = 'Ill';
+    return;
+  }
+
+  image.src = 'sick_fp.png';
+  text.textContent = 'FoodPois';
 }
 
-function setEncumbered(enc1, enc2) {
+function setEncumbered(capacity, capacityText) {
+  var UNENCUMBERED = 0;
+  var SLT_ENCUMBER = 1;       /* Burdened */
+  var MOD_ENCUMBER = 2;       /* Stressed */
+  var HVY_ENCUMBER = 3;       /* Strained */
+  var EXT_ENCUMBER = 4;       /* Overtaxed */
+  var OVERLOADED = 5;         /* Overloaded */
+
+  var image = document.getElementById('tile-enc-image');
+  var text = document.getElementById('tile-enc-text');
+
+  switch(capacity) {
+  case 0:
+    image.parentElement.className = 'tile-hidden';
+    return;
+  case 1:
+    image.src = 'slt_enc.png';
+    break;
+  case 2:
+    image.src = 'mod_enc.png';
+    break;
+  case 3:
+    image.src = 'hvy_enc.png';
+    break;
+  case 4:
+    image.src = 'ext_enc.png';
+    break;
+  case 5:
+    image.src = 'ovt_enc.png';
+    break;
+  }
+
+  image.parentElement.className = '';
 }
 
 
