@@ -81,7 +81,7 @@ var FileWindow = function(file) {
   // TODO(jeffbailey): This is a hack to work around a bug in x-tags
   // Where the element doesn't load when placed into the dom,
   // but does when src changes later.
-  setTimeout(this.test.bind(this), 100);
+  setTimeout(this.test.bind(this), 0);
   this.menu_win.appendChild(pre);
 
   this.button = document.createElement('button');
