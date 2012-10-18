@@ -29,8 +29,8 @@ x-overlay {
   padding: 2px;
   height: 3px;
   overflow: hidden;
-  border-bottom-left-radius: 3px;
-  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 
 #header:hover {
