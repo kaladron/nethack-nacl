@@ -712,7 +712,7 @@ var handleMessage = function(event) {
     console.log(msg);
     document.getElementById('plname').textContent = msg[1];
     document.getElementById('rank').textContent = msg[2];
-    document.getElementById('dname').textContent = msg[3];
+    document.getElementById('dnamelvl').textContent = msg[3];
     document.getElementById('dlevel').textContent = msg[4];
     document.getElementById('str').textContent = msg[5];
     document.getElementById('dex').textContent = msg[6];

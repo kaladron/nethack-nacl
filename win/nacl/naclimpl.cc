@@ -340,6 +340,13 @@ void nacl_putstr(winid wid, int attr, const char *text) {
       str_buf << (int)ACURR(A_STR);
     }
 
+    std::stringstream level_buf;
+    if (In_endgame(&u.uz)) {
+      level_buf << Is_astralevel(&u.uz) ? "Astral Plane" : "End Game";
+    } else {
+      level_buf << dungeons[u.uz.dnum].dname << ", level " << (int)depth(&u.uz);
+    }
+
     long au;
 #ifndef GOLDOBJ
     au = u.ugold;
@@ -352,8 +359,8 @@ void nacl_putstr(winid wid, int attr, const char *text) {
       << NACL_MSG_UPDATE_STATS
       << plname_display
       << rank 
-      << dungeons[u.uz.dnum].dname
-      << depth(&u.uz)
+      << level_buf.str()
+      << ""  // UNUSED
       << str_buf.str()
       << ACURR(A_DEX)
       << ACURR(A_CON)
