@@ -56,6 +56,8 @@ var DISPLAY_SQUARE = 16;
 var TILES_PER_ROW = 40;
 var TILE_SQUARE = 16;
 
+var MAX_SCROLL_LINES = 2000;
+
 var glyphTable;
 
 var ctx;
@@ -891,6 +893,11 @@ function plineput(text) {
   var p = document.createElement('p');
   p.textContent = text;
   plinecontent.appendChild(p);
+
+  if (plinecontent.children.length >= MAX_SCROLL_LINES) {
+    plinecontent.removeChild(plinecontent.firstChild);
+  }
+
   var plinewin = document.getElementById('tile-plinewin');
   plinewin.scrollTop = plinewin.scrollHeight;
 }
