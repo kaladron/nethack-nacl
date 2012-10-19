@@ -69,6 +69,9 @@ var panel;
 var hp;
 var maxhp;
 
+var firstTime = true;
+var attributeCache = {};
+
 var FileWindow = function(file) {
   this.menu_win = document.createElement('x-modal');
   this.menu_win.className = 'dialog';
@@ -641,6 +644,7 @@ var handleMessage = function(event) {
       }
       if (msg[1] == NHWin.MAP) {
         displayMap();
+        unboldStatus();
       }
       break;
     }
@@ -722,7 +726,7 @@ var handleMessage = function(event) {
     document.getElementById('wis').textContent = msg[9];
     document.getElementById('cha').textContent = msg[10];
     hp = msg[11];
-    document.getElementById('hp').textContent = msg[11];
+    setStatus('hp', msg[11]);
     maxhp = msg[12];
     document.getElementById('maxhp').textContent = msg[12];
     document.getElementById('ac').textContent = msg[13];
@@ -740,6 +744,7 @@ var handleMessage = function(event) {
     setHallucination(msg[26]);
     setSick(msg[27], msg[28]);
     setEncumbered(msg[29], msg[30]);
+    firstTime = false;
     break;
   case NaclMsg.CURS:
     // Window, X, Y
@@ -747,6 +752,53 @@ var handleMessage = function(event) {
     break;
   //default:
   //  console.log(event.data.substr(PREFIX.length));
+  }
+}
+
+function setStatus(tag, text) {
+  var element = document.getElementById(tag);
+  element.textContent = text;
+
+  if (firstTime) {
+    attributeCache[tag] = text;
+    return;
+  }
+
+  if (attributeCache[tag] == text) {
+    return;
+  }
+
+  var container = element.parentNode;
+
+  if (container.tagName != "LI") {
+    container = container.parentNode;
+    if (container.tagName != "LI") {
+      return;
+    }  
+  }
+
+  container.className = 'tile-statchange4';
+}
+
+function unboldStatus() {
+  var boldList = document.querySelectorAll('.tile-statchange1');
+  for (var i = 0; i < boldList.length; i++) {
+    boldList[i].className = '';
+  }
+
+  boldList = document.querySelectorAll('.tile-statchange2');
+  for (var i = 0; i < boldList.length; i++) {
+    boldList[i].className = 'tile-statchange1';
+  }
+
+  boldList = document.querySelectorAll('.tile-statchange3');
+  for (var i = 0; i < boldList.length; i++) {
+    boldList[i].className = 'tile-statchange2';
+  }
+
+  boldList = document.querySelectorAll('.tile-statchange4');
+  for (var i = 0; i < boldList.length; i++) {
+    boldList[i].className = 'tile-statchange3';
   }
 }
 

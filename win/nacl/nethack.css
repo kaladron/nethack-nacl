@@ -68,7 +68,19 @@ x-overlay {
   visibility: hidden;
 }
 
-.tile-statchange {
+.tile-statchange4 {
+  font-weight: bold;
+}
+
+.tile-statchange3 {
+  font-weight: bold;
+}
+
+.tile-statchange2 {
+  font-weight: bold;
+}
+
+.tile-statchange1 {
   font-weight: bold;
 }
 
