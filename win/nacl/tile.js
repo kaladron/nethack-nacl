@@ -715,26 +715,26 @@ var handleMessage = function(event) {
     extCmdWin.display();
     break;
   case NaclMsg.UPDATE_STATS:
-    console.log(msg);
-    document.getElementById('plname').textContent = msg[1];
-    document.getElementById('rank').textContent = msg[2];
-    document.getElementById('dnamelvl').textContent = msg[3];
-    document.getElementById('str').textContent = msg[5];
-    document.getElementById('dex').textContent = msg[6];
-    document.getElementById('con').textContent = msg[7];
-    document.getElementById('int').textContent = msg[8];
-    document.getElementById('wis').textContent = msg[9];
-    document.getElementById('cha').textContent = msg[10];
+    setStatus('plname', msg[1]);
+    setStatus('rank', msg[2]);
+    setStatus('dnamelvl', msg[3]);
+    setStatus('str', msg[5]);
+    setStatus('dex', msg[6]);
+    setStatus('con', msg[7]);
+    setStatus('int', msg[8]);
+    setStatus('wis', msg[9]);
+    setStatus('cha', msg[10]);
     hp = msg[11];
     setStatus('hp', msg[11]);
     maxhp = msg[12];
-    document.getElementById('maxhp').textContent = msg[12];
-    document.getElementById('ac').textContent = msg[13];
-    document.getElementById('power').textContent = msg[14];
-    document.getElementById('maxpower').textContent = msg[15];
-    document.getElementById('gold').textContent = msg[16];
-    document.getElementById('level').textContent = msg[17];
-    document.getElementById('xp').textContent = msg[18];
+    setStatus('maxhp', msg[12]);
+    setStatus('ac', msg[13]);
+    setStatus('power', msg[14]);
+    setStatus('maxpower', msg[15]);
+    setStatus('gold', msg[16]);
+    setStatus('level', msg[17]);
+    setStatus('xp', msg[18]);
+    // Time changes too often to be bolded.
     document.getElementById('time').textContent = msg[19];
     setAlignment(msg[20]);
     setHunger(msg[21], msg[22]);
@@ -759,6 +759,10 @@ function setStatus(tag, text) {
   var element = document.getElementById(tag);
   element.textContent = text;
 
+  boldStatus(tag, text);
+}
+
+function boldStatus(tag, text) {
   if (firstTime) {
     attributeCache[tag] = text;
     return;
@@ -767,38 +771,31 @@ function setStatus(tag, text) {
   if (attributeCache[tag] == text) {
     return;
   }
+  attributeCache[tag] = text;
 
-  var container = element.parentNode;
-
-  if (container.tagName != "LI") {
-    container = container.parentNode;
-    if (container.tagName != "LI") {
-      return;
+  // The li is me, my parent, or my grandparent
+  var element = document.getElementById(tag);
+  if (element.tagName != "LI") {
+    element = element.parentNode;
+    if (element.tagName != "LI") {
+      element = element.parentNode;
+      if (element.tagName != "LI") {
+        return;
+      }
     }  
   }
 
-  container.className = 'tile-statchange4';
+  element.classList.add('tile-statchange');
+  element.dataset.boldCount = 4;
 }
 
 function unboldStatus() {
-  var boldList = document.querySelectorAll('.tile-statchange1');
+  var boldList = document.querySelectorAll('.tile-statchange');
   for (var i = 0; i < boldList.length; i++) {
-    boldList[i].className = '';
-  }
-
-  boldList = document.querySelectorAll('.tile-statchange2');
-  for (var i = 0; i < boldList.length; i++) {
-    boldList[i].className = 'tile-statchange1';
-  }
-
-  boldList = document.querySelectorAll('.tile-statchange3');
-  for (var i = 0; i < boldList.length; i++) {
-    boldList[i].className = 'tile-statchange2';
-  }
-
-  boldList = document.querySelectorAll('.tile-statchange4');
-  for (var i = 0; i < boldList.length; i++) {
-    boldList[i].className = 'tile-statchange3';
+    boldList[i].dataset.boldCount--;
+    if (boldList[i].dataset.boldCount == 0) {
+      boldList[i].classList.remove('tile-statchange');
+    }
   }
 }
 
@@ -836,11 +833,11 @@ function setHunger(hunger, hungerText) {
   var text = document.getElementById('tile-hungry-text');
 
   if (hunger == 1) {
-    image.parentElement.className = 'tile-hidden';
+    image.parentElement.classList.add('tile-hidden');
     return;
   }
 
-  image.parentElement.className = '';
+  image.parentElement.classList.remove('tile-hidden');
 
   if (hunger == 0) {
     image.src = 'satiated.png';
@@ -855,10 +852,10 @@ function statusHideShow(elementName, state) {
   var element = document.getElementById(elementName);
   switch(state) {
   case 0:
-    element.className = 'tile-hidden';
+    element.classList.add('tile-hidden');
     break;
   case 1:
-    element.className = '';
+    element.classLlist.remove('tile-hidden');
     break;
   }
 }
@@ -887,11 +884,11 @@ function setSick(sick, sick_type) {
   var text = document.getElementById('tile-sick-text');
 
   if (sick == 0) {
-    image.parentElement.className = 'tile-hidden';
+    image.parentElement.classList.add('tile-hidden');
     return;
   }
 
-  image.parentElement.className = '';
+  image.parentElement.classList.remove('tile-hidden');
 
   if (sickType == 2) {
     image.src = 'sick_il.png';
@@ -914,9 +911,12 @@ function setEncumbered(capacity, capacityText) {
   var image = document.getElementById('tile-enc-image');
   var text = document.getElementById('tile-enc-text');
 
+  text.textContent = capacityText;
+
   switch(capacity) {
   case 0:
-    image.parentElement.className = 'tile-hidden';
+    image.parentElement.classList.add('tile-hidden');
+    boldStatus('tile-enc-image', capacityText);
     return;
   case 1:
     image.src = 'slt_enc.png';
@@ -935,7 +935,9 @@ function setEncumbered(capacity, capacityText) {
     break;
   }
 
-  image.parentElement.className = '';
+  boldStatus('tile-enc-image', capacityText);
+
+  image.parentElement.classList.remove('tile-hidden');
 }
 
 
