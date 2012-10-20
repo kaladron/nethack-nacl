@@ -803,6 +803,8 @@ function setAlignment(align) {
   var image = document.getElementById('tile-align-image');
   var text = document.getElementById('tile-align-text');
 
+  boldStatus('tile-align-image', align);
+
   switch(align) {
   case -1:
     image.src = 'chaotic.png';
@@ -834,6 +836,7 @@ function setHunger(hunger, hungerText) {
 
   if (hunger == 1) {
     image.parentElement.classList.add('tile-hidden');
+    boldStatus('tile-hungry-image', '');
     return;
   }
 
@@ -846,10 +849,12 @@ function setHunger(hunger, hungerText) {
   }
 
   text.textContent = hungerText;
+  boldStatus('tile-hungry-image', hungerText);
 }
 
 function statusHideShow(elementName, state) {
   var element = document.getElementById(elementName);
+  boldStatus(elementName, state);
   switch(state) {
   case 0:
     element.classList.add('tile-hidden');
@@ -885,6 +890,7 @@ function setSick(sick, sick_type) {
 
   if (sick == 0) {
     image.parentElement.classList.add('tile-hidden');
+    boldStatus('tile-sick-image', '');
     return;
   }
 
@@ -898,6 +904,7 @@ function setSick(sick, sick_type) {
 
   image.src = 'sick_fp.png';
   text.textContent = 'FoodPois';
+  boldStatus('tile-sick-image', text.textContent);
 }
 
 function setEncumbered(capacity, capacityText) {
