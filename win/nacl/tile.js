@@ -695,11 +695,21 @@ var handleMessage = function(event) {
   case NaclMsg.ADD_MENU:
     // 1: Window Number, 2: tile, 3: identifier, 4: accelerator
     // 5: group accel, 6: attribute, 7: string, 8: presel
-    var tr = document.createElement('tr');
-    var td = document.createElement('td');
-    td.textContent = msg[7];
-    tr.appendChild(td);
-    win_array[msg[1]].content.appendChild(tr);
+    var cellType = 'td';
+    if (msg[2] == 0 && msg[3] == 0 && msg[4] == 0 && msg[5] == 0) {
+      cellType = 'th';
+    }
+
+    var row = document.createElement('tr');
+    
+    var letter = document.createElement(cellType);
+    letter.textContent = String.fromCharCode(msg[3]);
+    row.appendChild(letter);
+
+    var item = document.createElement(cellType);
+    item.textContent = msg[7];
+    row.appendChild(item);
+    win_array[msg[1]].content.appendChild(row);
         
     break;
   case NaclMsg.END_MENU:
