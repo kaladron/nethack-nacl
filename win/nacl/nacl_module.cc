@@ -199,6 +199,15 @@ class NethackInstance : public pp::Instance {
         fprintf(stderr, "Dupe resize!");
         return;
       }
+
+      // Set minimum screen size to 20x20 to avoid cases where there's
+      // a negative x value for the cursor.
+      if (new_CO < 20) {
+        new_CO = 20;
+      }
+      if (new_LI < 20) {
+        new_LI = 20;
+      }
       nacl_CO = new_CO;
       nacl_LI = new_LI;
       fprintf(stderr, "Width: %d height: %d\n", nacl_CO, nacl_LI);
