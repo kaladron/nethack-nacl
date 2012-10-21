@@ -38,7 +38,7 @@ x-overlay {
   background-color: rgba(207, 212, 208, 1);
   color: black;
   -webkit-transition-property: height, color, background-color;
-  -webkit-transition-duration: 250ms;
+  -webkit-transition-duration: 150ms;
   -webkit-transition-timing-function: linear;
 }
 
