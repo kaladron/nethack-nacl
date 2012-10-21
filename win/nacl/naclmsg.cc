@@ -48,7 +48,7 @@ NaClMessage& NaClMessage::operator<<(const std::string& value) {
 
 NaClMessage& NaClMessage::operator<<(const EndOfMessage& value) {
   data_ += "]";
-  fprintf(stderr, "PostMessage: %s\n", data_.c_str());
+  // fprintf(stderr, "PostMessage: %s\n", data_.c_str());
   write(3, data_.c_str(), data_.size());
   data_ = "[";
   return *this;

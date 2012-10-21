@@ -40,7 +40,7 @@ void
 stdio_write(const char *out) {
   ssize_t size = strlen(out);
   ssize_t i = write(1, out, size);
-  fprintf(stderr, "%Zd chars written\n", i);
+  // fprintf(stderr, "%Zd chars written\n", i);
 }
 
 class NethackInstance : public pp::Instance {
@@ -143,7 +143,7 @@ class NethackInstance : public pp::Instance {
         // filter these without relying on magic ordering.
         break;
       }
-      fprintf(stderr, "argn: %s, argv: %s\n", *argnwalk, *argvwalk);
+      // fprintf(stderr, "argn: %s, argv: %s\n", *argnwalk, *argvwalk);
       if (argcount > 0) {
         options << ',';
       }
@@ -155,7 +155,7 @@ class NethackInstance : public pp::Instance {
     }
     const std::string& optstr = options.str();
     setenv("NETHACKOPTIONS", optstr.c_str(), 1);
-    fprintf(stderr, "%s\n", optstr.c_str());
+    // fprintf(stderr, "%s\n", optstr.c_str());
 
     jsbridge_ = new JSPostMessageBridge(runner_);
     jspipe_ = new JSPipeMount();
@@ -196,7 +196,7 @@ class NethackInstance : public pp::Instance {
       int new_LI;
       convertor >> new_CO >> colon >> new_LI;
       if (nacl_CO == new_CO && nacl_LI == new_LI) {
-        fprintf(stderr, "Dupe resize!");
+        // fprintf(stderr, "Dupe resize!");
         return;
       }
 
@@ -210,7 +210,7 @@ class NethackInstance : public pp::Instance {
       }
       nacl_CO = new_CO;
       nacl_LI = new_LI;
-      fprintf(stderr, "Width: %d height: %d\n", nacl_CO, nacl_LI);
+      // fprintf(stderr, "Width: %d height: %d\n", nacl_CO, nacl_LI);
 #ifdef USE_PSEUDO_THREADS
       jspipe_->set_outbound_bridge(jsbridge_sigwinch_);
       MainThreadRunner::PseudoThreadHeadroomFork(
