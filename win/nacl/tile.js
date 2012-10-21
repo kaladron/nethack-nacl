@@ -614,24 +614,25 @@ var handleMessage = function(event) {
   // Check to make sure it starts with PREFIX
   console.log(event.data.substr(PREFIX.length));
   var msg = JSON.parse(event.data.substr(PREFIX.length));
-  // console.log(msg);
 
   switch(msg[0]) {
-  case NaclMsg.INIT_NHWINDOWS:
+  case NaclMsg.INIT_NHWINDOWS: // 0
     break;
-  case NaclMsg.ASKNAME:
+  case NaclMsg.PLAYER_SELECTION: // 1
+    throw "Not Implemented!";
+  case NaclMsg.ASKNAME: // 2
     var getlineWin = new InputWindow("What is your name?", pm);
     getlineWin.display();
     break;
-  case NaclMsg.GET_NH_EVENT:
+  case NaclMsg.GET_NH_EVENT: //3
     throw "Not Implemented!";
-  case NaclMsg.EXIT_NHWINDOWS:
+  case NaclMsg.EXIT_NHWINDOWS: // 4
     throw "Not Implemented!";
-  case NaclMsg.SUSPEND_NHWINDOWS:
+  case NaclMsg.SUSPEND_NHWINDOWS: // 5
     throw "Not Implemented!";
-  case NaclMsg.RESUME_NHWINDOWS:
+  case NaclMsg.RESUME_NHWINDOWS: // 6
     throw "Not Implemented!";
-  case NaclMsg.CREATE_NHWINDOW:
+  case NaclMsg.CREATE_NHWINDOW: // 7
     // msg[1]: type
   //  switch(msg[1]) {
   //  case NHWin.MENU:
@@ -642,7 +643,15 @@ var handleMessage = function(event) {
     pm('' + win_num);
     win_num++;
     break;
-  case NaclMsg.DISPLAY_NHWINDOW:
+  case NaclMsg.CREATE_NHWINDOW_BY_ID: // 8
+    throw "Not Implemented!";
+  case NaclMsg.CLEAR_NHWINDOW: // 9
+    // 1: Window Number
+    if (msg[1] == NHWin.MAP) {
+      clearGlyphs();
+    }
+    break;
+  case NaclMsg.DISPLAY_NHWINDOW: // 10
     // msg[1]: winid
     // We'll handle root windows ourselves.
     if (msg[1] < 4) {
@@ -657,49 +666,29 @@ var handleMessage = function(event) {
     }
     win_array[msg[1]].display(msg[2]);
     break;
-  case NaclMsg.DESTROY_NHWINDOW:
+  case NaclMsg.DESTROY_NHWINDOW: // 11
     // This shouldn't close it for non-modal windows.  Instead
     // we'll let all the windows close themselves and leave the windows
     // to decide if they lock down the interface for other interaction
     // or not.
     win_array[msg[1]] = null;
     break;
-  case NaclMsg.PRINT_GLYPH:
-    saveGlyph(msg[2], msg[3], msg[4], msg[5]);
+  case NaclMsg.CURS: // 12
+    // Window, X, Y
+    saveCurs(msg[2], msg[3]);
     break;
-  case NaclMsg.PUTSTR:
+  case NaclMsg.PUTSTR: // 13
     win_array[msg[1]].putStr(msg[3]);
     break;
-  case NaclMsg.DISPLAY_FILE:
+  case NaclMsg.DISPLAY_FILE: // 14
     var fileWin = new FileWindow(msg[1]);
     fileWin.display();
     break;
-  case NaclMsg.RAW_PRINT:
-    plineput(msg[1]);
-    pm('ack');
-    break;
-  case NaclMsg.NH_POSKEY:
-  case NaclMsg.NHGETCH:
-    awaitingInput = true;
-    processInput();
-    gameScreen.focus();
-    break;
-  case NaclMsg.YN_FUNCTION:
-    plineput(msg[1]);
-    awaitingInput = true;
-    processInput();
-    gameScreen.focus();
-  case NaclMsg.CLEAR_NHWINDOW:
-    // 1: Window Number
-    if (msg[1] == NHWin.MAP) {
-      clearGlyphs();
-    }
-    break;
-  case NaclMsg.START_MENU:
+  case NaclMsg.START_MENU: // 15
     // 1: Window Number
     win_array[msg[1]] = new MenuWindow(document.createElement('table'));
     break;
-  case NaclMsg.ADD_MENU:
+  case NaclMsg.ADD_MENU: // 16
     // 1: Window Number, 2: tile, 3: identifier, 4: accelerator
     // 5: group accel, 6: attribute, 7: string, 8: presel
     var cellType = 'td';
@@ -719,23 +708,71 @@ var handleMessage = function(event) {
     win_array[msg[1]].content.appendChild(row);
         
     break;
-  case NaclMsg.END_MENU:
+  case NaclMsg.END_MENU: // 17
     // 1: Window ID, 2: Prompt
     win_array[msg[1]].display(0);
     break;
-  case NaclMsg.SELECT_MENU:
+  case NaclMsg.SELECT_MENU: // 18
     // 1: Window, 2: How
-    win_array[msg[1]].selectMenu(msg[2]]);
+    win_array[msg[1]].selectMenu(msg[2]);
     break;
-  case NaclMsg.GETLIN:
+  case NaclMsg.UPDATE_INVENTORY: // 19
+    throw "Not Implemented!";
+  case NaclMsg.MARK_SYNCH: // 20
+    throw "Not Implemented!";
+  case NaclMsg.WAIT_SYNCH: // 21
+    throw "Not Implemented!";
+  case NaclMsg.CLIPAROUND: // 22
+    throw "Not Implemented!";
+  case NaclMsg.CLIPAROUND_PROPER: // 23
+    throw "Not Implemented!";
+  case NaclMsg.PRINT_GLYPH: // 24
+    saveGlyph(msg[2], msg[3], msg[4], msg[5]);
+    break;
+  case NaclMsg.RAW_PRINT: // 25
+    plineput(msg[1]);
+    pm('ack');
+    break;
+  case NaclMsg.PRINT_GLYPH: // 24
+    saveGlyph(msg[2], msg[3], msg[4], msg[5]);
+    break;
+  case NaclMsg.RAW_PRINT: // 25
+    plineput(msg[1]);
+    pm('ack');
+    break;
+  case NaclMsg.NHGETCH: // 27
+  case NaclMsg.NH_POSKEY: // 28
+    awaitingInput = true;
+    processInput();
+    gameScreen.focus();
+    break;
+  case NaclMsg.YN_FUNCTION: // 31
+    plineput(msg[1]);
+    awaitingInput = true;
+    processInput();
+    gameScreen.focus();
+    break;
+  case NaclMsg.GETLIN: // 32
     var getlineWin = new InputWindow(msg[1], pm);
     getlineWin.display();
     break;
-  case NaclMsg.GET_EXT_CMD:
+  case NaclMsg.GET_EXT_CMD: // 33
     var extCmdWin = new ExtCmdWindow(msg);
     extCmdWin.display();
     break;
-  case NaclMsg.UPDATE_STATS:
+  case NaclMsg.NUMBER_PAD: // 34
+    throw "Not Implemented!";
+  case NaclMsg.DELAY_OUTPUT: // 35
+    throw "Not Implemented!";
+  case NaclMsg.START_SCREEN: // 36
+    throw "Not Implemented!";
+  case NaclMsg.END_SCREEN: // 37
+    throw "Not Implemented!";
+  case NaclMsg.OUTRIP: // 38
+    throw "Not Implemented!";
+  case NaclMsg.DELETE_NHWINDOW_BY_REFERENCE: // 39
+    throw "Not Implemented!";
+  case NaclMsg.UPDATE_STATS: // 40
     setStatus('plname', msg[1]);
     setStatus('rank', msg[2]);
     setStatus('dnamelvl', msg[3]);
@@ -767,12 +804,6 @@ var handleMessage = function(event) {
     setEncumbered(msg[29], msg[30]);
     firstTime = false;
     break;
-  case NaclMsg.CURS:
-    // Window, X, Y
-    saveCurs(msg[2], msg[3]);
-    break;
-  //default:
-  //  console.log(event.data.substr(PREFIX.length));
   }
 }
 
