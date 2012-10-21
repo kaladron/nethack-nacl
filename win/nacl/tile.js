@@ -198,6 +198,13 @@ MenuWindow.prototype.close = function() {
   document.body.removeChild(this.overlay);
 };
 
+MenuWindow.prototype.selectMenu = function(how) {
+  var PICK_NONE = 0;     /* user picks nothing (display only) */
+  var PICK_ONE = 1;      /* only pick one */
+  var PICK_ANY = 2;      /* can pick any amount */
+
+};
+
 
 var InputWindow = function(content, callback) {
   this.callback = callback;
@@ -715,6 +722,10 @@ var handleMessage = function(event) {
   case NaclMsg.END_MENU:
     // 1: Window ID, 2: Prompt
     win_array[msg[1]].display(0);
+    break;
+  case NaclMsg.SELECT_MENU:
+    // 1: Window, 2: How
+    win_array[msg[1]].selectMenu(msg[2]]);
     break;
   case NaclMsg.GETLIN:
     var getlineWin = new InputWindow(msg[1], pm);
