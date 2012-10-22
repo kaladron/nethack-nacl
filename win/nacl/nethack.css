@@ -115,6 +115,13 @@ x-overlay {
   background-color: #aba698;
 }
 
+.tile-menuwin-img {
+   min-height: 16px;  /* TILE_SQUARE */
+   height: 16px;
+   width: 16px;
+   background-image: url('x11tiles.png');
+}
+
 #tile-plinewin {
   display: table-cell;
   vertical-align: top;

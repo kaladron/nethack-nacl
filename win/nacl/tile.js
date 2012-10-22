@@ -702,6 +702,20 @@ var handleMessage = function(event) {
     letter.textContent = String.fromCharCode(msg[3]);
     row.appendChild(letter);
 
+    var picture = document.createElement(cellType);
+    // TODO(jeffbailey): This should be NO_GLYPH, except that the code
+    // is sending us 0, and we don't know NO_GLYPH from here yet.
+    if (msg[2] != 0) {
+      var tile = msg[2];
+      var div = document.createElement('div');
+      div.className = 'tile-menuwin-img';
+      var tile_x = -(tile % TILES_PER_ROW) * TILE_SQUARE;
+      var tile_y = -(Math.floor(tile / TILES_PER_ROW)) * TILE_SQUARE;
+      div.style.backgroundPosition = tile_x + "px " + tile_y + "px";
+      picture.appendChild(div);
+    }
+    row.appendChild(picture);
+
     var item = document.createElement(cellType);
     item.textContent = msg[7];
     row.appendChild(item);
