@@ -5,6 +5,7 @@
   "offline_enabled": true,
   "name": "Nethack",
   "description": "Nethack",
+  "options_page": "options.html",
   "version": "3.4.3.16",
   "app": {
     "launch": {
