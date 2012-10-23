@@ -686,7 +686,9 @@ var handleMessage = function(event) {
     break;
   case NaclMsg.START_MENU: // 15
     // 1: Window Number
-    win_array[msg[1]] = new MenuWindow(document.createElement('table'));
+    var table = document.createElement('table');
+    table.className = 'tile-menutable';
+    win_array[msg[1]] = new MenuWindow(table);
     break;
   case NaclMsg.ADD_MENU: // 16
     // 1: Window Number, 2: tile, 3: identifier, 4: accelerator
