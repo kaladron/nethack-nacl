@@ -67,7 +67,7 @@ $(OBJEXTENSION)/nethack.nmf: $(NETHACK32) $(NETHACK64)
 	cd $(OBJEXTENSION) && create_nmf.py $(notdir $^) -L ${NACL_SDK_ROOT}/toolchain/$(NACL_OS_TYPE)_x86_glibc/x86_64-nacl/lib32 -L ${NACL_SDK_ROOT}/toolchain/$(NACL_OS_TYPE)_x86_glibc/x86_64-nacl/lib64 -D x86_64-nacl-objdump -o $(notdir $@) -s .
 
 $(OBJEXTENSION)/nethack.tar: dlb
-	tar -cf $@ -C dat nhdat
+	tar -cf $@ -C dat nhdat license
 
 $(OBJEXTENSION)/mapbg.png: win/gnome/mapbg.xpm
 	convert $< $@
