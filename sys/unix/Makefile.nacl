@@ -59,6 +59,7 @@ extension: $(EXTENSION_ITEMS)
 	  win/nacl/*.json \
 	  win/nacl/*.png \
 	  win/nacl/hterm \
+	  win/nacl/fonts \
 	  win/nacl/x-tag \
 	  $(OBJEXTENSION)
 	cp -a $(DATFILES) $(OBJEXTENSION)
