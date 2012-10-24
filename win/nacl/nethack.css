@@ -64,6 +64,11 @@ x-overlay {
 #header ul li::after { content: ' | ' }
 #header ul li:last-child::after { content: '' }
 
+.tile-fixedwidth {
+  font-family: monospace;
+  white-space: pre;
+}
+
 .tile-hidden {
   visibility: hidden;
 }
@@ -131,6 +136,10 @@ x-overlay {
 
 .tile-menutable {
   border-spacing: 0;
+}
+
+.tile-menuitem-accel {
+  font-weight: bold;
 }
 
 .tile-menuitem:hover {

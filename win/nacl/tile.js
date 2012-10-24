@@ -707,6 +707,7 @@ var handleMessage = function(event) {
     
     var letter = document.createElement(cellType);
     letter.textContent = String.fromCharCode(msg[4]);
+    letter.className = 'tile-menuitem-accel';
     row.appendChild(letter);
 
     var picture = document.createElement(cellType);
@@ -725,6 +726,7 @@ var handleMessage = function(event) {
 
     var item = document.createElement(cellType);
     item.textContent = msg[7];
+    item.className = 'tile-fixedwidth';
     row.appendChild(item);
     win_array[msg[1]].content.appendChild(row);
         
