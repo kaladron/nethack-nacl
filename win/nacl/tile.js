@@ -701,7 +701,7 @@ var handleMessage = function(event) {
     var row = document.createElement('tr');
     
     var letter = document.createElement(cellType);
-    letter.textContent = String.fromCharCode(msg[3]);
+    letter.textContent = String.fromCharCode(msg[4]);
     row.appendChild(letter);
 
     var picture = document.createElement(cellType);
