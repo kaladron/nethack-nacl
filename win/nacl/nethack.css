@@ -111,12 +111,26 @@ x-overlay {
   padding-right: 1em;
 }
 
+.tile-win-buttonbox {
+  margin: 3px;
+}
+
 .tile-menutable > tr:nth-child(odd) {
   background-color:#eee;
 }
 
 .tile-menutable th {
   text-align: left;
+  font-family: sans-serif;
+}
+
+.tile-menutable td {
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+.tile-menutable {
+  border-spacing: 0;
 }
 
 .tile-menuitem:hover {

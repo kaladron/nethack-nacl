@@ -161,17 +161,22 @@ var MenuWindow = function(content) {
   this.content = content;
   this.menu_win.appendChild(content);
 
+  var buttonBox = document.createElement('div');
+  buttonBox.className = 'tile-win-buttonbox';
+
   var okButton = document.createElement('button');
   okButton.type = 'button';
   okButton.textContent = 'OK';
   okButton.addEventListener('click', this.okButtonAction.bind(this));
-  this.menu_win.appendChild(okButton);
+  buttonBox.appendChild(okButton);
 
   var cancelButton = document.createElement('button');
   cancelButton.type = 'button';
   cancelButton.textContent = 'Cancel';
   cancelButton.addEventListener('click', this.cancelButtonAction.bind(this));
-  this.menu_win.appendChild(cancelButton);
+  buttonBox.appendChild(cancelButton);
+
+  this.menu_win.appendChild(buttonBox);
   this.overlay = document.createElement('x-overlay');
 };
 
