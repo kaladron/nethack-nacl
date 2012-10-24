@@ -699,7 +699,7 @@ var handleMessage = function(event) {
     // 1: Window Number, 2: tile, 3: identifier, 4: accelerator
     // 5: group accel, 6: attribute, 7: string, 8: presel
     var cellType = 'td';
-    if (msg[2] == 0 && msg[3] == 0 && msg[4] == 0 && msg[5] == 0) {
+    if (msg[2] == 0 && msg[3] == 0 && msg[6] == 7) {
       cellType = 'th';
     }
 
