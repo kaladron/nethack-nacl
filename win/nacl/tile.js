@@ -203,11 +203,15 @@ MenuWindow.prototype.close = function() {
   document.body.removeChild(this.overlay);
 };
 
+MenuWindow.prototype.setPrompt = function(text) {
+
+};
+
 MenuWindow.prototype.selectMenu = function(how) {
   var PICK_NONE = 0;     /* user picks nothing (display only) */
   var PICK_ONE = 1;      /* only pick one */
   var PICK_ANY = 2;      /* can pick any amount */
-
+  this.display(0);
 };
 
 
@@ -733,7 +737,7 @@ var handleMessage = function(event) {
     break;
   case NaclMsg.END_MENU: // 17
     // 1: Window ID, 2: Prompt
-    win_array[msg[1]].display(0);
+    win_array[msg[1]].setPrompt(msg[2]);
     break;
   case NaclMsg.SELECT_MENU: // 18
     // 1: Window, 2: How
