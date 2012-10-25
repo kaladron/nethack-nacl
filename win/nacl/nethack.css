@@ -251,11 +251,14 @@ x-overlay {
   display: table-cell;
 }
 
-.dialog {
+.tile-dialog {
   background-color: white;
   border: 1px solid rgba(0,0,0,.6);
-  max-height: 80%;
-  overflow-y: auto;
   padding: 1em;
   box-shadow: 0 0 1em rgba(0,0,0,.3);
+}
+
+.tile-scrollarea {
+  max-height: 80%;
+  overflow-y: auto;
 }

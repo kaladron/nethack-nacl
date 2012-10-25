@@ -74,7 +74,7 @@ var attributeCache = {};
 
 var FileWindow = function(file) {
   this.menu_win = document.createElement('x-modal');
-  this.menu_win.className = 'dialog';
+  this.menu_win.className = 'tile-dialog';
 
   var pre = document.createElement('pre');
 
@@ -115,15 +115,50 @@ FileWindow.prototype.close = function() {
   gameScreen.focus();
 };
 
-var DisplayWindow = function(content) {
+/**
+ * DisplayWindow is made up of an outer modal dialog,
+ * On the inside has:
+ *  a variable-width header (h1 tag)
+ *  a div that will take up no more than 80% of the height of the screen
+ *    a monospace pre to append to
+ *    a table for menu
+ *  a collection of buttons.
+ *
+ * This is done so that the content has scroll bars as needed, but the heading
+ * and the buttons stay on the screen.  This also means that it's safe to
+ * call all the *_MENU set of commands on any window, or to call putstr.
+ * since empty elements collapse flat.
+ */
+var DisplayWindow = function() {
   this.menu_win = document.createElement('x-modal');
-  this.menu_win.className = 'dialog';
-  this.content = content;
-  this.menu_win.appendChild(content);
+  this.menu_win.className = 'tile-dialog';
+
+  this.titleDiv = document.createElement('div');
+  this.menu_win.appendChild(this.titleDiv);
+
+  var scrollArea = document.createElement('div');
+  scrollArea.className = 'tile-scrollarea';
+
+  // TODO(jeffbailey): Combine pre and table so that there
+  // aren't extra nodes hanging out.
+  this.pre = document.createElement('pre');
+  scrollArea.appendChild(this.pre);
+
+  this.table = document.createElement('table');
+  this.table.className = 'tile-menutable';
+  scrollArea.appendChild(this.table);
+
+  this.menu_win.appendChild(scrollArea);
+
+  this.buttonBox = document.createElement('div');
+  this.buttonBox.className = 'tile-win-buttonbox';
+  this.menu_win.appendChild(this.buttonBox);
+
   this.button = document.createElement('button');
   this.button.textContent = 'OK';
   this.button.addEventListener('click', this.okButton.bind(this));
-  this.menu_win.appendChild(this.button);
+  this.buttonBox.appendChild(this.button);
+
   this.block = false;
   this.overlay = document.createElement('x-overlay');
 };
@@ -139,7 +174,7 @@ DisplayWindow.prototype.display = function(block) {
 
 DisplayWindow.prototype.okButton = function() {
   if (this.block) {
-    pm('OK');
+    pm('0');
     this.block = false;
   }
   this.close();
@@ -147,7 +182,7 @@ DisplayWindow.prototype.okButton = function() {
 
 DisplayWindow.prototype.putStr = function(text) {
   var text = document.createTextNode(text + '\n');
-  this.content.appendChild(text);
+  this.pre.appendChild(text);
 };
 
 DisplayWindow.prototype.close = function() {
@@ -155,62 +190,49 @@ DisplayWindow.prototype.close = function() {
   document.body.removeChild(this.overlay);
 };
 
-var MenuWindow = function(content) {
-  this.menu_win = document.createElement('x-modal');
-  this.menu_win.className = 'dialog';
-  this.content = content;
-  this.menu_win.appendChild(content);
+DisplayWindow.prototype.addMenu = function(msg) {
+   var cellType = 'td';
+   if (msg[2] == 0 && msg[3] == 0 && msg[6] == 7) {
+     cellType = 'th';
+   }
 
-  var buttonBox = document.createElement('div');
-  buttonBox.className = 'tile-win-buttonbox';
+   var row = document.createElement('tr');
+   
+   var letter = document.createElement(cellType);
+   letter.textContent = String.fromCharCode(msg[4]);
+   letter.className = 'tile-menuitem-accel';
+   row.appendChild(letter);
 
-  var okButton = document.createElement('button');
-  okButton.type = 'button';
-  okButton.textContent = 'OK';
-  okButton.addEventListener('click', this.okButtonAction.bind(this));
-  buttonBox.appendChild(okButton);
+   var picture = document.createElement(cellType);
+   // TODO(jeffbailey): This should be NO_GLYPH, except that the code
+   // is sending us 0, and we don't know NO_GLYPH from here yet.
+   if (msg[2] != 0) {
+     var tile = msg[2];
+     var div = document.createElement('div');
+     div.className = 'tile-menuwin-img';
+     var tile_x = -(tile % TILES_PER_ROW) * TILE_SQUARE;
+     var tile_y = -(Math.floor(tile / TILES_PER_ROW)) * TILE_SQUARE;
+     div.style.backgroundPosition = tile_x + "px " + tile_y + "px";
+     picture.appendChild(div);
+   }
+   row.appendChild(picture);
 
-  var cancelButton = document.createElement('button');
-  cancelButton.type = 'button';
-  cancelButton.textContent = 'Cancel';
-  cancelButton.addEventListener('click', this.cancelButtonAction.bind(this));
-  buttonBox.appendChild(cancelButton);
-
-  this.menu_win.appendChild(buttonBox);
-  this.overlay = document.createElement('x-overlay');
+   var item = document.createElement(cellType);
+   item.textContent = msg[7];
+   item.className = 'tile-fixedwidth';
+  row.appendChild(item);
+  this.table.appendChild(row);
 };
 
-MenuWindow.prototype.display = function(block) {
-  document.body.appendChild(this.overlay);
-  document.body.appendChild(this.menu_win);
-  if (block == 1) {
-    this.block = true;
-  }
-};
-
-MenuWindow.prototype.okButtonAction = function() {
-  pm('0');
-  this.close();
-};
-
-MenuWindow.prototype.cancelButtonAction = function() {
-  pm('-1');
-  this.close();
-};
-
-MenuWindow.prototype.close = function() {
-  document.body.removeChild(this.menu_win);
-  document.body.removeChild(this.overlay);
-};
-
-MenuWindow.prototype.setPrompt = function(text) {
+DisplayWindow.prototype.setPrompt = function(text) {
 
 };
 
-MenuWindow.prototype.selectMenu = function(how) {
+DisplayWindow.prototype.selectMenu = function(how) {
   var PICK_NONE = 0;     /* user picks nothing (display only) */
   var PICK_ONE = 1;      /* only pick one */
   var PICK_ANY = 2;      /* can pick any amount */
+  this.block = 1; // Ensure that response is sent.
   this.display(0);
 };
 
@@ -218,7 +240,7 @@ MenuWindow.prototype.selectMenu = function(how) {
 var InputWindow = function(content, callback) {
   this.callback = callback;
   this.win = document.createElement('x-modal');
-  this.win.className = 'dialog';
+  this.win.className = 'tile-dialog';
   
   var caption = document.createElement('div');
   caption.textContent = content;
@@ -263,7 +285,7 @@ InputWindow.prototype.close = function() {
 
 var ExtCmdWindow = function(msg) {
   this.win = document.createElement('x-modal');
-  this.win.className = 'dialog';
+  this.win.className = 'tile-dialog';
   
   var caption = document.createElement('div');
   caption.textContent = "Extended Commands";
@@ -645,7 +667,7 @@ var handleMessage = function(event) {
     // msg[1]: type
   //  switch(msg[1]) {
   //  case NHWin.MENU:
-      win_array[win_num] = new DisplayWindow(document.createElement('pre'));
+      win_array[win_num] = new DisplayWindow();
   //    break;
   //  }
 
@@ -695,45 +717,12 @@ var handleMessage = function(event) {
     break;
   case NaclMsg.START_MENU: // 15
     // 1: Window Number
-    var table = document.createElement('table');
-    table.className = 'tile-menutable';
-    win_array[msg[1]] = new MenuWindow(table);
+    win_array[msg[1]] = new DisplayWindow();
     break;
   case NaclMsg.ADD_MENU: // 16
     // 1: Window Number, 2: tile, 3: identifier, 4: accelerator
     // 5: group accel, 6: attribute, 7: string, 8: presel
-    var cellType = 'td';
-    if (msg[2] == 0 && msg[3] == 0 && msg[6] == 7) {
-      cellType = 'th';
-    }
-
-    var row = document.createElement('tr');
-    
-    var letter = document.createElement(cellType);
-    letter.textContent = String.fromCharCode(msg[4]);
-    letter.className = 'tile-menuitem-accel';
-    row.appendChild(letter);
-
-    var picture = document.createElement(cellType);
-    // TODO(jeffbailey): This should be NO_GLYPH, except that the code
-    // is sending us 0, and we don't know NO_GLYPH from here yet.
-    if (msg[2] != 0) {
-      var tile = msg[2];
-      var div = document.createElement('div');
-      div.className = 'tile-menuwin-img';
-      var tile_x = -(tile % TILES_PER_ROW) * TILE_SQUARE;
-      var tile_y = -(Math.floor(tile / TILES_PER_ROW)) * TILE_SQUARE;
-      div.style.backgroundPosition = tile_x + "px " + tile_y + "px";
-      picture.appendChild(div);
-    }
-    row.appendChild(picture);
-
-    var item = document.createElement(cellType);
-    item.textContent = msg[7];
-    item.className = 'tile-fixedwidth';
-    row.appendChild(item);
-    win_array[msg[1]].content.appendChild(row);
-        
+    win_array[msg[1]].addMenu(msg);
     break;
   case NaclMsg.END_MENU: // 17
     // 1: Window ID, 2: Prompt
