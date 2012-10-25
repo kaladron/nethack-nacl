@@ -191,35 +191,38 @@ DisplayWindow.prototype.close = function() {
 };
 
 DisplayWindow.prototype.addMenu = function(msg) {
-   var cellType = 'td';
-   if (msg[2] == 0 && msg[3] == 0 && msg[6] == 7) {
-     cellType = 'th';
-   }
+  var cellType = 'td';
+  if (msg[2] == 0 && msg[3] == 0 && msg[6] == 7) {
+    cellType = 'th';
+  }
 
-   var row = document.createElement('tr');
+  var row = document.createElement('tr');
    
-   var letter = document.createElement(cellType);
-   letter.textContent = String.fromCharCode(msg[4]);
-   letter.className = 'tile-menuitem-accel';
-   row.appendChild(letter);
+  var picture = document.createElement(cellType);
+  // TODO(jeffbailey): This should be NO_GLYPH, except that the code
+  // is sending us 0, and we don't know NO_GLYPH from here yet.
+  if (msg[2] != 0) {
+    var tile = msg[2];
+    var div = document.createElement('div');
+    div.className = 'tile-menuwin-img';
+    var tile_x = -(tile % TILES_PER_ROW) * TILE_SQUARE;
+    var tile_y = -(Math.floor(tile / TILES_PER_ROW)) * TILE_SQUARE;
+    div.style.backgroundPosition = tile_x + "px " + tile_y + "px";
+    picture.appendChild(div);
+  }
+  row.appendChild(picture);
 
-   var picture = document.createElement(cellType);
-   // TODO(jeffbailey): This should be NO_GLYPH, except that the code
-   // is sending us 0, and we don't know NO_GLYPH from here yet.
-   if (msg[2] != 0) {
-     var tile = msg[2];
-     var div = document.createElement('div');
-     div.className = 'tile-menuwin-img';
-     var tile_x = -(tile % TILES_PER_ROW) * TILE_SQUARE;
-     var tile_y = -(Math.floor(tile / TILES_PER_ROW)) * TILE_SQUARE;
-     div.style.backgroundPosition = tile_x + "px " + tile_y + "px";
-     picture.appendChild(div);
-   }
-   row.appendChild(picture);
+  var menuText = "";
+  if (msg[4] != 0) {
+    menuText += String.fromCharCode(msg[4]);
+    menuText += " - "
+  }
+ 
+  menuText += msg[7];
 
-   var item = document.createElement(cellType);
-   item.textContent = msg[7];
-   item.className = 'tile-fixedwidth';
+  var item = document.createElement(cellType);
+  item.textContent = menuText;
+  item.className = 'tile-fixedwidth';
   row.appendChild(item);
   this.table.appendChild(row);
 };
@@ -763,6 +766,7 @@ var handleMessage = function(event) {
     gameScreen.focus();
     break;
   case NaclMsg.YN_FUNCTION: // 31
+    //TODO(jeffbailey): Validate the input here
     plineput(msg[1]);
     awaitingInput = true;
     processInput();
