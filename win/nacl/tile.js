@@ -420,7 +420,7 @@ var startGame = function() {
 
   clearGlyphs();
 
-  var canvas = document.getElementById('gameCanvas');
+  var canvas = document.getElementById('tile-gamecanvas');
   ctx = canvas.getContext('2d');
   canvas.width = pixwidth;
   canvas.height = pixheight;

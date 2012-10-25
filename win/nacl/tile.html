@@ -12,28 +12,6 @@
 <script src="x-tag/elements/panel/panel.js"></script>
 
 
-<style>
-#tile-gamescreen {
-  position: fixed;
-  padding: 0;
-  margin: 0;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-  display: table;
-  background-color: #cfd4d0;
-}
-
-.equipment {
-	display: table-cell;
-	vertical-align: top;
-	width: 100px;
-}
-
-#gameCanvas {
-	background-image: url('mapbg.png');	
-}
-</style>
 <link rel="stylesheet" href="nethack.css">
 <title>Nethack</title>
 <script>
@@ -144,7 +122,7 @@
 /div -->
 </div><!-- tile-toppart -->
 <div id='bottompart'>
-  <canvas id='gameCanvas' width="100%"></canvas>
+  <canvas id='tile-gamecanvas' width="100%"></canvas>
 </div>
 </div><!-- tile-gamescreen -->
 
