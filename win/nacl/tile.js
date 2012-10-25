@@ -161,6 +161,8 @@ var DisplayWindow = function() {
 
   this.block = false;
   this.overlay = document.createElement('x-overlay');
+
+  this.selectedRows = [];
 };
 
 DisplayWindow.prototype.display = function(block) {
@@ -240,6 +242,39 @@ DisplayWindow.prototype.selectMenu = function(how) {
   var PICK_ANY = 2;      /* can pick any amount */
   this.block = 1; // Ensure that response is sent.
   this.display(0);
+
+  this.how = how;
+
+  if (how == PICK_NONE) return;
+
+  var row = this.table.children;
+
+  for (var i = 0; i < row.length; i++) {
+    row[i].addEventListener('click', this.rowSelect.bind(this));
+  }
+};
+
+DisplayWindow.prototype.rowSelect = function(evt) {
+  // Allow enter key to work after selecting.
+  this.button.focus();
+
+  // TODO(jeffbailey): Disallow seleting or unselecting of headers
+
+  // TODO(jeffbailey): Remove magic constants in this function!
+  if (this.how == 2) {
+    evt.target.classList.toggle('tile-menutable-selected');
+    return;
+  }
+
+  // Only one at a time allowed to be selected.
+
+  // CSS Query Selector for all tile-menutable-selected
+  var old = document.querySelector('.tile-menutable-selected');
+  if (old != null) {
+    old.classList.remove('tile-menutable-selected');
+  }
+
+  evt.target.classList.add('tile-menutable-selected');
 };
 
 
