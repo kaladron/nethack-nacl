@@ -228,7 +228,10 @@ DisplayWindow.prototype.addMenu = function(msg) {
 };
 
 DisplayWindow.prototype.setPrompt = function(text) {
-
+  if (text == "") return;
+  var h1 = document.createElement('h1');
+  h1.textContent = text;
+  this.titleDiv.appendChild(h1);
 };
 
 DisplayWindow.prototype.selectMenu = function(how) {
