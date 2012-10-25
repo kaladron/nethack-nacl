@@ -154,6 +154,7 @@ x-overlay {
 
 .tile-menutable {
   border-spacing: 0;
+  cursor: default;
 }
 
 .tile-menuitem-accel {

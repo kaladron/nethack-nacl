@@ -664,7 +664,11 @@ var handleMessage = function(event) {
   case NaclMsg.GET_NH_EVENT: //3
     throw "Not Implemented!";
   case NaclMsg.EXIT_NHWINDOWS: // 4
-    throw "Not Implemented!";
+    // 1: Text
+    plineput(msg[1]);
+    // TODO(jeffbailey): This should clear the screen, disable menus,
+    // and offer a close/new game set of buttons.
+    break;
   case NaclMsg.SUSPEND_NHWINDOWS: // 5
     throw "Not Implemented!";
   case NaclMsg.RESUME_NHWINDOWS: // 6
