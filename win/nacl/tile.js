@@ -176,7 +176,18 @@ DisplayWindow.prototype.display = function(block) {
 
 DisplayWindow.prototype.okButton = function() {
   if (this.block) {
-    pm('0');
+
+    var selected = document.querySelectorAll('.tile-menutable-selected');
+ 
+    if (selected.length == 0) { 
+      pm('0');
+    } else {
+      var pmList = [selected.length + ''];
+      for (var i = 0; i < selected.length; i++) {
+        pmList.push(selected[i].dataset.identifier);
+      }
+      pm(pmList.join(' '));
+    }
     this.block = false;
   }
   this.close();
