@@ -199,6 +199,7 @@ DisplayWindow.prototype.addMenu = function(msg) {
   }
 
   var row = document.createElement('tr');
+  row.dataset.identifier = msg[3];
    
   var picture = document.createElement(cellType);
   // TODO(jeffbailey): This should be NO_GLYPH, except that the code
@@ -258,11 +259,13 @@ DisplayWindow.prototype.rowSelect = function(evt) {
   // Allow enter key to work after selecting.
   this.button.focus();
 
+  if (evt.currentTarget.dataset.identifier == "0") return;
+
   // TODO(jeffbailey): Disallow seleting or unselecting of headers
 
   // TODO(jeffbailey): Remove magic constants in this function!
   if (this.how == 2) {
-    evt.target.classList.toggle('tile-menutable-selected');
+    evt.currentTarget.classList.toggle('tile-menutable-selected');
     return;
   }
 
@@ -274,7 +277,7 @@ DisplayWindow.prototype.rowSelect = function(evt) {
     old.classList.remove('tile-menutable-selected');
   }
 
-  evt.target.classList.add('tile-menutable-selected');
+  evt.currentTarget.classList.add('tile-menutable-selected');
 };
 
 
