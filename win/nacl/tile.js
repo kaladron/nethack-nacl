@@ -267,8 +267,9 @@ DisplayWindow.prototype.selectMenu = function(how) {
 };
 
 DisplayWindow.prototype.rowSelect = function(evt) {
-  // Allow enter key to work after selecting.
-  this.button.focus();
+  // TODO(jeffbailey): Allow enter key to work after selecting.
+  // Disabled because it causes a scroll on long windows.
+  //this.button.focus();
 
   if (evt.currentTarget.dataset.identifier == "0") return;
 

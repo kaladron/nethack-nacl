@@ -288,6 +288,8 @@ x-overlay {
   border: 1px solid rgba(0,0,0,.6);
   padding: 1em;
   box-shadow: 0 0 1em rgba(0,0,0,.3);
+  max-height: 80%;
+  overflow-y: auto;
 }
 
 .tile-scrollarea {
