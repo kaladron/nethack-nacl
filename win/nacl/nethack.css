@@ -30,7 +30,8 @@ x-modal {
 x-modal h1 {
   margin: 0;
   font-family: sans-serif;
-  font-size: 1.5em;
+  font-size: 1.25em;
+  text-align: center;
 }
 
 x-overlay {

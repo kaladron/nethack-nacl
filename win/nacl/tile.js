@@ -136,19 +136,12 @@ var DisplayWindow = function() {
   this.titleDiv = document.createElement('div');
   this.menu_win.appendChild(this.titleDiv);
 
-  var scrollArea = document.createElement('div');
-  scrollArea.className = 'tile-scrollarea';
+  this.scrollArea = document.createElement('div');
+  this.scrollArea.className = 'tile-scrollarea';
 
-  // TODO(jeffbailey): Combine pre and table so that there
-  // aren't extra nodes hanging out.
-  this.pre = document.createElement('pre');
-  scrollArea.appendChild(this.pre);
+  this.content = null;
 
-  this.table = document.createElement('table');
-  this.table.className = 'tile-menutable';
-  scrollArea.appendChild(this.table);
-
-  this.menu_win.appendChild(scrollArea);
+  this.menu_win.appendChild(this.scrollArea);
 
   this.buttonBox = document.createElement('div');
   this.buttonBox.className = 'tile-win-buttonbox';
@@ -199,8 +192,13 @@ DisplayWindow.prototype.okButton = function() {
 };
 
 DisplayWindow.prototype.putStr = function(text) {
+  if (this.content == null) {
+    this.content = document.createElement('pre');
+    this.scrollArea.appendChild(this.content);
+  }
+
   var text = document.createTextNode(text + '\n');
-  this.pre.appendChild(text);
+  this.content.appendChild(text);
 };
 
 DisplayWindow.prototype.close = function() {
@@ -209,6 +207,12 @@ DisplayWindow.prototype.close = function() {
 };
 
 DisplayWindow.prototype.addMenu = function(msg) {
+  if (this.content == null) {
+    this.content = document.createElement('table');
+    this.content.className = 'tile-menutable';
+    this.scrollArea.appendChild(this.content);
+  }
+
   var cellType = 'td';
   if (msg[2] == 0 && msg[3] == 0 && msg[6] == 7) {
     cellType = 'th';
@@ -244,7 +248,7 @@ DisplayWindow.prototype.addMenu = function(msg) {
   item.textContent = menuText;
   item.className = 'tile-fixedwidth';
   row.appendChild(item);
-  this.table.appendChild(row);
+  this.content.appendChild(row);
 };
 
 DisplayWindow.prototype.setPrompt = function(text) {
@@ -270,7 +274,7 @@ DisplayWindow.prototype.selectMenu = function(how) {
   button.addEventListener('click', this.handleCancelButton.bind(this));
   this.buttonBox.appendChild(button);
 
-  var row = this.table.children;
+  var row = this.content.children;
 
   for (var i = 0; i < row.length; i++) {
     row[i].addEventListener('click', this.handleSelect.bind(this));
