@@ -174,6 +174,11 @@ DisplayWindow.prototype.display = function(block) {
   this.button.focus();
 };
 
+DisplayWindow.prototype.handleCancelButton = function() {
+  pm('-1');
+  this.close();
+};
+
 DisplayWindow.prototype.okButton = function() {
   if (this.block) {
 
@@ -259,6 +264,11 @@ DisplayWindow.prototype.selectMenu = function(how) {
   this.how = how;
 
   if (how == PICK_NONE) return;
+
+  var button = document.createElement('button');
+  button.textContent = 'Cancel';
+  button.addEventListener('click', this.handleCancelButton.bind(this));
+  this.buttonBox.appendChild(button);
 
   var row = this.table.children;
 
