@@ -230,6 +230,7 @@ DisplayWindow.prototype.addMenu = function(msg) {
   if (msg[4] != 0) {
     menuText += String.fromCharCode(msg[4]);
     menuText += " - "
+    row.dataset.accelerator = msg[4];
   }
  
   menuText += msg[7];
@@ -262,34 +263,45 @@ DisplayWindow.prototype.selectMenu = function(how) {
   var row = this.table.children;
 
   for (var i = 0; i < row.length; i++) {
-    row[i].addEventListener('click', this.rowSelect.bind(this));
+    row[i].addEventListener('click', this.handleSelect.bind(this));
   }
+
+  this.menu_win.addEventListener('keypress', this.keyPress.bind(this));
 };
 
-DisplayWindow.prototype.rowSelect = function(evt) {
+DisplayWindow.prototype.keyPress = function(evt) {
+  // Ignore enter key
+  if (evt.which == 13) return;
+  var selector = 'tr[data-accelerator="' + evt.which + '"]';
+  var row = document.querySelector(selector);
+  if (row == null) return;
+  this.rowSelect(row);
+};
+
+DisplayWindow.prototype.handleSelect = function(evt) {
   // TODO(jeffbailey): Allow enter key to work after selecting.
   // Disabled because it causes a scroll on long windows.
   //this.button.focus();
 
   if (evt.currentTarget.dataset.identifier == "0") return;
 
-  // TODO(jeffbailey): Disallow seleting or unselecting of headers
+  this.rowSelect(evt.currentTarget);
+}
 
+DisplayWindow.prototype.rowSelect = function(element) {
   // TODO(jeffbailey): Remove magic constants in this function!
   if (this.how == 2) {
-    evt.currentTarget.classList.toggle('tile-menutable-selected');
+    element.classList.toggle('tile-menutable-selected');
     return;
   }
 
   // Only one at a time allowed to be selected.
-
-  // CSS Query Selector for all tile-menutable-selected
   var old = document.querySelector('.tile-menutable-selected');
   if (old != null) {
     old.classList.remove('tile-menutable-selected');
   }
 
-  evt.currentTarget.classList.add('tile-menutable-selected');
+  element.classList.add('tile-menutable-selected');
 };
 
 
