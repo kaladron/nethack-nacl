@@ -329,6 +329,7 @@ InputWindow.prototype.display = function(block) {
 };
 
 InputWindow.prototype.okButtonAction = function() {
+  if (this.inputBox.value == '') return;
   this.callback(this.inputBox.value);
   this.close();
 };
