@@ -50,6 +50,9 @@ NHWin.MAP = 3;
 NHWin.MENU = 4;
 NHWin.TEXT = 5;
 
+// Nethack code has this as \033, but ES5 strict disallows octal literals.
+var CANCEL_STR = "\x1B";
+
 var HEIGHT = 24;
 var WIDTH = 80;
 var DISPLAY_SQUARE = 16;
@@ -318,8 +321,12 @@ DisplayWindow.prototype.rowSelect = function(element) {
   element.classList.add('tile-menutable-selected');
 };
 
+/**
+ * displayCancel is optional.
+ */
+var InputWindow = function(content, callback, displayCancel) {
+  if (displayCancel === undefined) displayCancel = true;
 
-var InputWindow = function(content, callback) {
   this.callback = callback;
   this.win = document.createElement('x-modal');
   this.win.className = 'tile-dialog';
@@ -339,6 +346,14 @@ var InputWindow = function(content, callback) {
   okButton.addEventListener('click', this.okButtonAction.bind(this));
   this.win.appendChild(okButton);
 
+  if (displayCancel) {
+    var cancelButton = document.createElement('button');
+    cancelButton.type = 'button';
+    cancelButton.textContent = 'Cancel';
+    cancelButton.addEventListener('click', this.cancelButtonAction.bind(this));
+    this.win.appendChild(cancelButton);
+  }
+
   this.overlay = document.createElement('x-overlay');
 };
 
@@ -357,6 +372,11 @@ InputWindow.prototype.display = function(block) {
 InputWindow.prototype.okButtonAction = function() {
   if (this.inputBox.value == '') return;
   this.callback(this.inputBox.value);
+  this.close();
+};
+
+InputWindow.prototype.cancelButtonAction = function() {
+  this.callback(CANCEL_STR);
   this.close();
 };
 
@@ -735,7 +755,7 @@ var handleMessage = function(event) {
   case NaclMsg.PLAYER_SELECTION: // 1
     throw "Not Implemented!";
   case NaclMsg.ASKNAME: // 2
-    var getlineWin = new InputWindow("What is your name?", pm);
+    var getlineWin = new InputWindow("What is your name?", pm, false);
     getlineWin.display();
     break;
   case NaclMsg.GET_NH_EVENT: //3
