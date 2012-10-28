@@ -64,6 +64,16 @@ extension: $(EXTENSION_ITEMS)
 	  $(OBJEXTENSION)
 	cp -a $(DATFILES) $(OBJEXTENSION)
 
+release: all
+	rm -f $(OBJEXTENSION)/*.zip
+	cd $(OBJEXTENSION) && zip -r nethack.zip *
+
+release-dev: all
+	rm -f $(OBJEXTENSION)/*.zip
+	sed -i -e 's/Nethack/Nethack (Development Version)/' \
+	  $(OBJEXTENSION)/manifest.json
+	cd $(OBJEXTENSION) && zip -r nethack-dev.zip *
+
 $(OBJEXTENSION)/nethack.nmf: $(NETHACK32) $(NETHACK64)
 	cd $(OBJEXTENSION) && create_nmf.py $(notdir $^) -L ${NACL_SDK_ROOT}/toolchain/$(NACL_OS_TYPE)_x86_glibc/x86_64-nacl/lib32 -L ${NACL_SDK_ROOT}/toolchain/$(NACL_OS_TYPE)_x86_glibc/x86_64-nacl/lib64 -D x86_64-nacl-objdump -o $(notdir $@) -s .
 
