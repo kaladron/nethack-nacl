@@ -840,11 +840,14 @@ var handleMessage = function(event) {
     win_array[msg[1]].selectMenu(msg[2]);
     break;
   case NaclMsg.UPDATE_INVENTORY: // 19
-    throw "Not Implemented!";
+    // Intentionally not implemented.
+    break;
   case NaclMsg.MARK_SYNCH: // 20
-    throw "Not Implemented!";
+    // All items in the UI are synchronous.
+    break;
   case NaclMsg.WAIT_SYNCH: // 21
-    throw "Not Implemented!";
+    // All items in the UI are synchronous.
+    break;
   case NaclMsg.CLIPAROUND: // 22
     throw "Not Implemented!";
   case NaclMsg.CLIPAROUND_PROPER: // 23
