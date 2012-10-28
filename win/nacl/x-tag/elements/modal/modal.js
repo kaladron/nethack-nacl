@@ -13,11 +13,12 @@
 		document.head.appendChild(meta);
 	}
 
-	window.addEventListener('keyup', function(event){
-		if(event.keyCode == 27) xtag.query(document, 'x-modal').forEach(function(modal){
-			if (!modal.getAttribute('data-modal-hidden')) xtag.fireEvent(modal, 'modalhide');
-		});
-	});
+	//TODO(jeffbailey): Fix this correctly upstream.
+	//window.addEventListener('keyup', function(event){
+	//	if(event.keyCode == 27) xtag.query(document, 'x-modal').forEach(function(modal){
+	//		if (!modal.getAttribute('data-modal-hidden')) xtag.fireEvent(modal, 'modalhide');
+	//	});
+	//});
 
 	if (oldiOS || oldDroid) {
 		window.addEventListener('scroll', function(event){
