@@ -446,6 +446,8 @@ var awaitingInput = false;
 var handleKeyDown = function(evt) {
   var cmdKey = 0;
 
+  if (evt.which < 32) return;
+
   switch (evt.which) {
   case 37: // left Arrow
     cmdKey = 104; // h
@@ -459,12 +461,24 @@ var handleKeyDown = function(evt) {
   case 40: // Down
     cmdKey = 106; // j
     break;
-  case 17: // ctrl
-    return;
   }
 
   if (evt.ctrlKey == true) {
     cmdKey = evt.which & 0x1F;
+  }
+
+  if (evt.altKey == true || evt.metaKey == true) {
+    // Oy, crap.  So the game takes lower case and upper case
+    // characters to an alt modifier.  Keydown gives me an upper case
+    // letter in evt.which.  So, let's reconstruct it.
+    var character = evt.which;
+
+    if (evt.shiftKey == false) {
+      character |= 0x20;
+    }
+
+    // Set the meta modifier.
+    cmdKey = character | 0x80;
   }
 
   if (cmdKey != 0) {
