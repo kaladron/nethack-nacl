@@ -1,0 +1,36 @@
+ * RIP screen
+ * Wire up menus
+ * Cliparound
+ * Player selection dialog.
+ * Options dialog for new tiles
+ * Options dialog for .nethackrc contents
+ * TTY Game Over, give a game over screen with reload button
+ * Navigation away from page shouldn't give a warning unless there's
+   important game state.
+ * Keyboard accellerators on EXT_CMD window
+ * menu boxes shouldn't scroll the heading and the buttons.
+ * Tab should go through selectable items in a menubox, enter should always
+   be OK. When it goes through them, add some sort of highlight.
+ * Focus on any element on the page that isn't otherwise wanting focus should
+   put it back on the map.
+ * Resize tile version for whatever the display window actually is - 
+   headings and map.
+ * Options page should allow a default player name to be set.
+ * Add a check box on the user name to set it as default.
+ * When there isn't a default player name, include a drop-down list
+   of current games.
+ * Tools to recover insurance files
+ * Trap ^M and ignore it on movement key so there's no error.
+ * Check to make sure that timed effects are working correctly.
+ * Make sure that explosions paint correctly.
+ * Non-blocking windows should still have the OK button focussed.
+ * Support options specifying fonts to use, colours, etc. per doc/window.doc
+ * Implement exit_nhwindows to clear the screen and/or close the tab.
+ * Fix Analytics bug
+
+-- Hacks to clean up later
+
+ * Hitting ESC key shouldn't close the window, or should default to cancel or
+   something.  It currently wedges the game.
+   https://github.com/mozilla/x-tag-elements/issues/22
+   Commented out from win/nacl/x-tag/elements/modal/modal.js
