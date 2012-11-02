@@ -767,7 +767,10 @@ var handleMessage = function(event) {
   case NaclMsg.INIT_NHWINDOWS: // 0
     break;
   case NaclMsg.PLAYER_SELECTION: // 1
-    throw "Not Implemented!";
+    // 1: Title 2: Text ...: choices
+    // TODO(jeffbailey): Remove magic constants
+    pm(-2);
+    break;
   case NaclMsg.ASKNAME: // 2
     var getlineWin = new InputWindow("What is your name?", pm, false);
     getlineWin.display();

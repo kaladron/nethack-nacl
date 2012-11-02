@@ -29,8 +29,23 @@ void nacl_init_nhwindows(int* argc, char** argv) {
   msg << eom;
 }
 
+int nacl_player_sel_dialog(const char** choices, const char* title,
+  const char*caption) {
+  NaClMessage msg;
+  msg << NACL_MSG_PLAYER_SELECTION 
+    << title
+    << caption;
+  while (*choices != 0) {
+    msg << *choices;
+    choices++;
+  }
+  msg << eom;
+
+  std::string id = NaClMessage::GetReply();
+  return atoi(id.c_str());
+}
+
 void nacl_player_selection(void) {
-  NaClMessage() << NACL_MSG_PLAYER_SELECTION << eom;
   
   // TODO actually allow player selection.
   // Lifted the gnome code for now, but made all selections random.
@@ -68,10 +83,8 @@ void nacl_player_selection(void) {
     }
     choices[n] = (const char *) 0;
     if (n > 1)
-      // TODO: actually allow selection.
-      sel = ROLE_RANDOM;
-      //sel = ghack_player_sel_dialog(choices,
-      //                              _("Player selection"), _("Choose one of the following roles:"));
+      sel = nacl_player_sel_dialog(choices,
+                                   "Player selection", "Choose one of the following roles:");
     else sel = 0;
     if (sel >= 0) sel = pickmap[sel];
     else if (sel == ROLE_NONE) {		/* Quit */
@@ -124,9 +137,8 @@ void nacl_player_selection(void) {
       choices[n] = (const char *) 0;
       /* Permit the user to pick, if there is more than one */
       if (n > 1)
-        sel = ROLE_RANDOM;
-        //sel = ghack_player_sel_dialog(choices, _("Race selection"),
-        //                              _("Choose one of the following races:"));
+        sel = nacl_player_sel_dialog(choices, "Race selection",
+                                     "Choose one of the following races:");
       else sel = 0;
       if (sel >= 0) sel = pickmap[sel];
       else if (sel == ROLE_NONE) { /* Quit */
@@ -180,9 +192,8 @@ void nacl_player_selection(void) {
       choices[n] = (const char *) 0;
       /* Permit the user to pick, if there is more than one */
       if (n > 1)
-        sel = ROLE_RANDOM;
-        //sel = ghack_player_sel_dialog(choices, _("Gender selection"),
-        //                              _("Choose one of the following genders:"));
+        sel = nacl_player_sel_dialog(choices, "Gender selection",
+                                     "Choose one of the following genders:");
       else sel = 0;
       if (sel >= 0) sel = pickmap[sel];
       else if (sel == ROLE_NONE) { /* Quit */
@@ -234,9 +245,8 @@ void nacl_player_selection(void) {
       choices[n] = (const char *) 0;
       /* Permit the user to pick, if there is more than one */
       if (n > 1)
-        sel = ROLE_RANDOM;
-        //sel = ghack_player_sel_dialog(choices, _("Alignment selection"),
-        //                              _("Choose one of the following alignments:"));
+        sel = nacl_player_sel_dialog(choices, "Alignment selection",
+                                     "Choose one of the following alignments:");
       else sel = 0;
       if (sel >= 0) sel = pickmap[sel];
       else if (sel == ROLE_NONE) { /* Quit */
