@@ -9,8 +9,8 @@
    important game state.
  * Keyboard accellerators on EXT_CMD window
  * menu boxes shouldn't scroll the heading and the buttons.
- * Tab should go through selectable items in a menubox, enter should always
-   be OK. When it goes through them, add some sort of highlight.
+ * Arrows should go between items in a menu box, tab should go between
+   buttons.
  * Focus on any element on the page that isn't otherwise wanting focus should
    put it back on the map.
  * Resize tile version for whatever the display window actually is - 
