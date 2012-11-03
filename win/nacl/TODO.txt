@@ -28,6 +28,7 @@
  * Fix Analytics bug
  * Grey out OK button until a selection is made.
  * Update upstream modal window, trap escape key.
+ * Move keyboard handling to new-style http://www.w3.org/TR/2012/WD-DOM-Level-3-Events-20120614/#legacy-key-attributes
 
 -- Hacks to clean up later
 
