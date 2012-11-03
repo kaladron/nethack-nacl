@@ -181,6 +181,7 @@ x-overlay {
 .tile-menutable {
   border-spacing: 0;
   cursor: default;
+  width: 100%;
 }
 
 .tile-menutable-selected {
