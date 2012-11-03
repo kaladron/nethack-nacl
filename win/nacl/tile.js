@@ -606,17 +606,16 @@ var startGame = function() {
 function addMenus() {
   addMenu('game', 'Change Settings...', 'Change Game Settings', unimplemented);
   addSeparator('game');
-  addMenu('game', 'Version', null, unimplemented);
-  addMenu('game', 'History...', null, unimplemented);
-  addMenu('game', 'Compilation...', null, unimplemented);
-  addMenu('game', 'Options...', null, unimplemented);
-  addMenu('game', 'Explore Mode...', null, unimplemented);
+  addMenu('game', 'Version', null, nhAction, L("v"));
+  addMenu('game', 'History...', null, nhAction, L("V"));
+  addMenu('game', 'Compilation...', null, nhAction, M(L("v")));
+  addMenu('game', 'Options...', null, nhAction, L("O"));
+  addMenu('game', 'Explore Mode...', null, nhAction, L("X"));
   addSeparator('game');
   addMenu('game', 'New Game', null, unimplemented);
-  addMenu('game', 'Save Game', null, unimplemented);
+  addMenu('game', 'Save Game', null, nhAction, L("S"));
   addMenu('game', 'Switch to TTY mode', null, unimplemented);
-  addMenu('game', 'Edit Options File...', null, unimplemented);
-  addMenu('game', 'Exit', null, unimplemented);
+  addMenu('game', 'Edit NethackRC File...', null, unimplemented);
 
   addMenu('edit', 'Inventory', 'Edit/View your inventory', unimplemented);
   addMenu('edit', 'Discoveries', 'Edit/View your Discoveries', unimplemented);
@@ -640,7 +639,8 @@ function addMenus() {
   addMenu('action', 'Loot', 'Loot a box on the floor', unimplemented);
   addMenu('action', 'Sit', 'Sit Down', unimplemented);
   addMenu('action', 'Force', 'Force a lock', unimplemented);
-  addMenu('action', 'Kick', 'Kick something (usually a door)', nhAction, C(L("d")));
+  addMenu('action', 'Kick', 'Kick something (usually a door)',
+      nhAction, C(L("d")));
   addMenu('action', 'Jump', 'Jump to another location', unimplemented);
   addMenu('action', 'Ride', 'Ride (or stop riding) a monster', unimplemented);
   addMenu('action', 'Wipe face', 'Wipe off your face', unimplemented);
