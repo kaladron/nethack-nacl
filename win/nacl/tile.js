@@ -617,15 +617,22 @@ function addMenus() {
   addMenu('game', 'Switch to TTY mode', null, unimplemented);
   addMenu('game', 'Edit NethackRC File...', null, unimplemented);
 
-  addMenu('edit', 'Inventory', 'Edit/View your inventory', unimplemented);
-  addMenu('edit', 'Discoveries', 'Edit/View your Discoveries', unimplemented);
-  addMenu('edit', 'List/reorder your spells', 'List/reorder your spells', unimplemented);
-  addMenu('edit', 'Adjust letters', 'Adjust letter for items in your Inventory', unimplemented);
+  addMenu('edit', 'Inventory', 'Edit/View your inventory',
+    nhAction, L("i"));
+  addMenu('edit', 'Discoveries', 'Edit/View your Discoveries',
+    nhAction, L("\\"));
+  addMenu('edit', 'List/reorder your spells', 'List/reorder your spells',
+    nhAction, L("x"));
+  addMenu('edit', 'Adjust letters', 'Adjust letter for items in your Inventory',
+    nhAction, M(L("a")));
   addSeparator('edit');
-  addMenu('edit', 'Name object', 'Assign a name to an object', unimplemented);
-  addMenu('edit', 'Name creature', 'Assign a name to a creature', unimplemented);
+  addMenu('edit', 'Name object', 'Assign a name to an object',
+    nhAction, M(L("n")));
+  addMenu('edit', 'Name creature', 'Assign a name to a creature',
+    nhAction, L("C"));
   addSeparator('edit');
-  addMenu('edit', 'Qualifications', 'Edit your Qualifications', unimplemented);
+  addMenu('edit', 'Qualifications', 'Edit your Qualifications',
+    nhAction, M(L("e")));
 
   addMenu('apparel', 'Wield Weapon', 'Select a weapon to fight with', unimplemented);
   addMenu('apparel', 'Remove Apparel...', 'Remove apparel dialog box', unimplemented);
