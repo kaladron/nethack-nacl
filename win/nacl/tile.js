@@ -678,41 +678,72 @@ function addMenus() {
   addMenu('edit', 'Qualifications', 'Edit your Qualifications',
     nhAction, M(L("e")));
 
-  addMenu('apparel', 'Wield Weapon', 'Select a weapon to fight with', unimplemented);
-  addMenu('apparel', 'Remove Apparel...', 'Remove apparel dialog box', unimplemented);
+  addMenu('apparel', 'Wield Weapon', 'Select a weapon to fight with',
+    nhAction, L("w"));
+  addMenu('apparel', 'Remove Apparel...', 'Remove apparel dialog box',
+    nhAction, L("A"));
   addSeparator('apparel');
-  addMenu('apparel', 'Wear Armor', 'Put on armor', unimplemented);
-  addMenu('apparel', 'Take off Armor', 'Take off armor you are wearing', unimplemented);
-  addMenu('apparel', 'Put on non-armor', 'Put on non-armor apparel', unimplemented);
-  addMenu('apparel', 'Remove non-armor', 'Remove non-armor apparel you are wearing', unimplemented);
+  addMenu('apparel', 'Wear Armor', 'Put on armor',
+    nhAction, L("W"));
+  addMenu('apparel', 'Take off Armor', 'Take off armor you are wearing',
+    nhAction, L("T"));
+  addMenu('apparel', 'Put on non-armor', 'Put on non-armor apparel',
+    nhAction, L("P"));
+  addMenu('apparel', 'Remove non-armor',
+    'Remove non-armor apparel you are wearing',
+    nhAction, L("R"));
 
-  addMenu('action', 'Get', 'Pick up things at the current location', unimplemented);
-  addMenu('action', 'Loot', 'Loot a box on the floor', unimplemented);
-  addMenu('action', 'Sit', 'Sit Down', unimplemented);
-  addMenu('action', 'Force', 'Force a lock', unimplemented);
+  addMenu('action', 'Get', 'Pick up things at the current location',
+    nhAction, L(","));
+  addMenu('action', 'Loot', 'Loot a box on the floor',
+    nhAction, M(L("l")));
+  addMenu('action', 'Sit', 'Sit Down',
+    nhAction, M(L("s")));
+  addMenu('action', 'Force', 'Force a lock',
+    nhAction, M(L("f")));
   addMenu('action', 'Kick', 'Kick something (usually a door)',
-      nhAction, C(L("d")));
-  addMenu('action', 'Jump', 'Jump to another location', unimplemented);
-  addMenu('action', 'Ride', 'Ride (or stop riding) a monster', unimplemented);
-  addMenu('action', 'Wipe face', 'Wipe off your face', unimplemented);
-  addMenu('action', 'Throw/Shoot', 'Throw or shoot a weapon', unimplemented);
-  addMenu('action', 'Quiver/Ready', 'Ready or quiver some ammunition', unimplemented);
-  addMenu('action', 'Open Door', 'Open a door', unimplemented);
-  addMenu('action', 'Close Door', 'Close a door', unimplemented);
+    nhAction, C(L("d")));
+  addMenu('action', 'Jump', 'Jump to another location',
+    nhAction, M(L("j")));
+  addMenu('action', 'Ride', 'Ride (or stop riding) a monster',
+    unimplemented);
+  addMenu('action', 'Wipe face', 'Wipe off your face',
+    nhAction, M(L("w")));
+  addMenu('action', 'Throw/Shoot', 'Throw or shoot a weapon',
+    nhAction, L("t"));
+  addMenu('action', 'Quiver/Ready', 'Ready or quiver some ammunition',
+    nhAction, L("Q"));
+  addMenu('action', 'Open Door', 'Open a door',
+    nhAction, L("o"));
+  addMenu('action', 'Close Door', 'Close a door',
+    nhAction, L("c"));
   addSeparator('action');
-  addMenu('action', 'Drop', 'Drop an object', unimplemented);
-  addMenu('action', 'Drop Many', 'Drop selected types of objects', unimplemented);
-  addMenu('action', 'Eat', 'Eat something', unimplemented);
-  addMenu('action', 'Engrave', 'Write a message in the dust on the floor', unimplemented);
-  addMenu('action', 'Apply', 'Apply or use a tool (pick-axe, key, camera, etc.)', unimplemented);
+  addMenu('action', 'Drop', 'Drop an object',
+    nhAction, L("d"));
+  addMenu('action', 'Drop Many', 'Drop selected types of objects',
+    nhAction, L("D"));
+  addMenu('action', 'Eat', 'Eat something',
+    nhAction, L("e"));
+  addMenu('action', 'Engrave', 'Write a message in the dust on the floor',
+    nhAction, L("E"));
+  addMenu('action', 'Apply',
+    'Apply or use a tool (pick-axe, key, camera, etc.)',
+    nhAction, L("a"));
   addSeparator('action');
-  addMenu('action', 'Up', 'Go up the stairs', unimplemented);
-  addMenu('action', 'Down', 'Go down the stairs', unimplemented);
-  addMenu('action', 'Rest', 'Wait for a moment', unimplemented);
-  addMenu('action', 'Search', 'Search for secret doors, hidden traps and monsters', unimplemented);
+  addMenu('action', 'Up', 'Go up the stairs',
+    nhAction, L("<"));
+  addMenu('action', 'Down', 'Go down the stairs',
+    nhAction, L(">"));
+  addMenu('action', 'Rest', 'Wait for a moment',
+    nhAction, L("."));
+  addMenu('action', 'Search',
+    'Search for secret doors, hidden traps and monsters',
+    nhAction, L("s"));
   addSeparator('action');
-  addMenu('action', 'Chat', 'Talk to someone', unimplemented);
-  addMenu('action', 'Pay', 'Pay your bill to the shopkeeper', unimplemented);
+  addMenu('action', 'Chat', 'Talk to someone',
+    nhAction, M(L("c")));
+  addMenu('action', 'Pay', 'Pay your bill to the shopkeeper',
+    nhAction, L("p"));
 
   addMenu('magic', 'Quaff potion', 'Drink a potion', unimplemented);
   addMenu('magic', 'Read Book/Scroll', 'Read a spell book or a scroll', unimplemented);
