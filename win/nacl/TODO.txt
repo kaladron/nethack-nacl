@@ -1,7 +1,6 @@
  * RIP screen
  * Wire up menus
  * Cliparound
- * Player selection dialog.
  * Options dialog for new tiles
  * Options dialog for .nethackrc contents
  * TTY Game Over, give a game over screen with reload button
@@ -27,6 +26,8 @@
  * Support options specifying fonts to use, colours, etc. per doc/window.doc
  * Implement exit_nhwindows to clear the screen and/or close the tab.
  * Fix Analytics bug
+ * Grey out OK button until a selection is made.
+ * Update upstream modal window, trap escape key.
 
 -- Hacks to clean up later
 

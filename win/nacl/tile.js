@@ -159,6 +159,24 @@ var DisplayWindow = function() {
   this.overlay = document.createElement('x-overlay');
 
   this.selectedRows = [];
+
+  this.playerSelection = false;
+};
+
+DisplayWindow.prototype.setPlayerSelection = function() {
+  this.playerSelection = true;
+};
+
+DisplayWindow.prototype.displayRandomButton = function() {
+  var button = document.createElement('button');
+  button.textContent = 'Random';
+  button.addEventListener('click', this.handleRandomButton.bind(this));
+  this.buttonBox.appendChild(button);
+};
+
+DisplayWindow.prototype.handleRandomButton = function() {
+  pm('-2');
+  this.close();
 };
 
 DisplayWindow.prototype.display = function(block) {
@@ -183,7 +201,10 @@ DisplayWindow.prototype.okButton = function() {
     if (selected.length == 0) { 
       pm('0');
     } else {
-      var pmList = [selected.length + ''];
+      var pmList = [];
+      if (this.playerSelection == false) {
+        pmList.push(selected.length + '');
+      }
       for (var i = 0; i < selected.length; i++) {
         pmList.push(selected[i].dataset.identifier);
       }
@@ -272,10 +293,12 @@ DisplayWindow.prototype.selectMenu = function(how) {
 
   if (how == PICK_NONE) return;
 
-  var button = document.createElement('button');
-  button.textContent = 'Cancel';
-  button.addEventListener('click', this.handleCancelButton.bind(this));
-  this.buttonBox.appendChild(button);
+  if (this.playerSelection == false) {
+    var button = document.createElement('button');
+    button.textContent = 'Cancel';
+    button.addEventListener('click', this.handleCancelButton.bind(this));
+    this.buttonBox.appendChild(button);
+  }
 
   var row = this.content.children;
 
@@ -725,7 +748,9 @@ function mouseNav(evt) {
 var PREFIX = 'JSPipeMount:3:';
 
 function pm(out) {
-  nethackEmbed.postMessage(PREFIX + out);
+  var output = PREFIX + out;
+  console.log(output);
+  nethackEmbed.postMessage(output);
 }
 
 var saveCurs = function(x, y) {
@@ -813,7 +838,19 @@ var handleMessage = function(event) {
   case NaclMsg.PLAYER_SELECTION: // 1
     // 1: Title 2: Text ...: choices
     // TODO(jeffbailey): Remove magic constants
-    pm(-2);
+    win_array[win_num] = new DisplayWindow();
+    win_array[win_num].setPrompt(msg[2]);
+    win_array[win_num].setPlayerSelection();
+    win_array[win_num].displayRandomButton();
+    // Populate list
+    // 1: Window Number, 2: tile, 3: identifier, 4: accelerator
+    // 5: group accel, 6: attribute, 7: string, 8: presel
+    for (var i=0; i<msg.length - 3; i++) {
+      win_array[win_num].addMenu([0, win_array[win_num], 0, i, (97)+i, 0, 0, msg[i+3], 0]);
+    }
+    win_array[win_num].selectMenu(1);
+    // pm(-2); // Random
+    win_num++;
     break;
   case NaclMsg.ASKNAME: // 2
     var getlineWin = new InputWindow("What is your name?", pm, false);
