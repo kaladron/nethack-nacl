@@ -531,7 +531,7 @@ var handleKeyDown = function(evt) {
   }
 
   if (evt.ctrlKey == true) {
-    cmdKey = evt.which & 0x1F;
+    cmdKey = setCtrl(evt.which);
   }
 
   if (evt.altKey == true || evt.metaKey == true) {
@@ -545,7 +545,7 @@ var handleKeyDown = function(evt) {
     }
 
     // Set the meta modifier.
-    cmdKey = character | 0x80;
+    cmdKey = setMeta(character);
   }
 
   if (cmdKey != 0) {
@@ -555,6 +555,14 @@ var handleKeyDown = function(evt) {
     processInput();
   }
 };
+
+function setCtrl(cmdKey) {
+  return cmdKey & 0x1F;
+}
+
+function setMeta(cmdKey) {
+  return cmdKey | 0x80;
+}
 
 var handleKeyPress = function(evt) {
   eventBuffer.push([evt.which, 0, 0, 0]);
@@ -672,7 +680,7 @@ function addMenus() {
   addMenu('action', 'Loot', 'Loot a box on the floor', unimplemented);
   addMenu('action', 'Sit', 'Sit Down', unimplemented);
   addMenu('action', 'Force', 'Force a lock', unimplemented);
-  addMenu('action', 'Kick', 'Kick something (usually a door)', unimplemented);
+  addMenu('action', 'Kick', 'Kick something (usually a door)', nhAction, setCtrl(100));
   addMenu('action', 'Jump', 'Jump to another location', unimplemented);
   addMenu('action', 'Ride', 'Ride (or stop riding) a monster', unimplemented);
   addMenu('action', 'Wipe face', 'Wipe off your face', unimplemented);
@@ -717,10 +725,17 @@ function addMenus() {
 
 }
 
-function addMenu(menu, text, title, func) {
+function nhAction(evt) {
+  pm(evt.currentTarget.dataset.keycode);
+}
+
+function addMenu(menu, text, title, func, keycode) {
   var li = document.createElement('li');
   li.innerHTML = text;
   li.addEventListener('click', func);
+  if (func === nhAction) {
+    li.dataset.keycode = keycode;
+  }
   li.className = 'tile-menuitem';
   if (title != null) {
     li.title = title;
