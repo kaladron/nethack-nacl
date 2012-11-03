@@ -531,7 +531,7 @@ var handleKeyDown = function(evt) {
   }
 
   if (evt.ctrlKey == true) {
-    cmdKey = setCtrl(evt.which);
+    cmdKey = C(evt.which);
   }
 
   if (evt.altKey == true || evt.metaKey == true) {
@@ -545,7 +545,7 @@ var handleKeyDown = function(evt) {
     }
 
     // Set the meta modifier.
-    cmdKey = setMeta(character);
+    cmdKey = M(character);
   }
 
   if (cmdKey != 0) {
@@ -556,11 +556,15 @@ var handleKeyDown = function(evt) {
   }
 };
 
-function setCtrl(cmdKey) {
+function L(character) {
+  return character.charCodeAt(0);
+}
+
+function C(cmdKey) {
   return cmdKey & 0x1F;
 }
 
-function setMeta(cmdKey) {
+function M(cmdKey) {
   return cmdKey | 0x80;
 }
 
@@ -680,7 +684,7 @@ function addMenus() {
   addMenu('action', 'Loot', 'Loot a box on the floor', unimplemented);
   addMenu('action', 'Sit', 'Sit Down', unimplemented);
   addMenu('action', 'Force', 'Force a lock', unimplemented);
-  addMenu('action', 'Kick', 'Kick something (usually a door)', nhAction, setCtrl(100));
+  addMenu('action', 'Kick', 'Kick something (usually a door)', nhAction, C(L("d")));
   addMenu('action', 'Jump', 'Jump to another location', unimplemented);
   addMenu('action', 'Ride', 'Ride (or stop riding) a monster', unimplemented);
   addMenu('action', 'Wipe face', 'Wipe off your face', unimplemented);
