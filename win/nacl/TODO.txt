@@ -32,6 +32,7 @@
  * Update upstream modal window, trap escape key.
  * Move keyboard handling to new-style http://www.w3.org/TR/2012/WD-DOM-Level-3-Events-20120614/#legacy-key-attributes
  * Support group accellerators in menu boxes.
+ * Add buttons for PICK_ANY: All, None.  Maybe Toggle.
 
 -- Hacks to clean up later
 
