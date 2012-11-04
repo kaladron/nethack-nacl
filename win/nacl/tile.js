@@ -325,13 +325,31 @@ DisplayWindow.prototype.selectMenu = function(how) {
   this.menu_win.addEventListener('keypress', this.keyPress.bind(this));
 };
 
+var ROWSELECT = {
+  'select': 1,
+  'deselect': 2,
+  'toggle': 3
+};
+
 DisplayWindow.prototype.keyPress = function(evt) {
   // Ignore enter key
   if (evt.which == 13) return;
-  var selector = 'tr[data-accelerator="' + evt.which + '"]';
-  var row = document.querySelector(selector);
-  if (row == null) return;
-  this.rowSelect(row);
+
+  var selector;
+  var method;
+  if (evt.which == 44 && this.how == 2) {
+    selector = 'tr[data-identifier]';
+    method = ROWSELECT.select;
+  } else {
+    selector = 'tr[data-accelerator="' + evt.which + '"]';
+    method = ROWSELECT.toggle;
+  }
+
+  var rows = document.querySelectorAll(selector);
+
+  for (var i = 0; i < rows.length; i++) {
+    this.rowSelect(rows[i], method);
+  }
 };
 
 DisplayWindow.prototype.handleSelect = function(evt) {
@@ -341,13 +359,23 @@ DisplayWindow.prototype.handleSelect = function(evt) {
 
   if (evt.currentTarget.dataset.identifier == undefined) return;
 
-  this.rowSelect(evt.currentTarget);
+  this.rowSelect(evt.currentTarget, ROWSELECT.toggle);
 }
 
-DisplayWindow.prototype.rowSelect = function(element) {
+DisplayWindow.prototype.rowSelect = function(element, method) {
   // TODO(jeffbailey): Remove magic constants in this function!
   if (this.how == 2) {
-    element.classList.toggle('tile-menutable-selected');
+    switch(method) {
+    case ROWSELECT.toggle:
+      element.classList.toggle('tile-menutable-selected');
+      break;
+    case ROWSELECT.select:
+      element.classList.add('tile-menutable-selected');
+      break;
+    case ROWSELECT.deselect:
+      element.classList.remove('tile-menutable-selected');
+      break;
+    }
     return;
   }
 
