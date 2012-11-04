@@ -340,6 +340,9 @@ DisplayWindow.prototype.keyPress = function(evt) {
   if (evt.which == 44 && this.how == 2) {
     selector = 'tr[data-identifier]';
     method = ROWSELECT.select;
+  } else if (evt.which == 45 && this.how == 2) {
+    selector = 'tr[data-identifier]';
+    method = ROWSELECT.deselect;
   } else {
     selector = 'tr[data-accelerator="' + evt.which + '"]';
     method = ROWSELECT.toggle;
