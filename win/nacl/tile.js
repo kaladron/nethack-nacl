@@ -159,6 +159,7 @@ var DisplayWindow = function() {
   this.overlay = document.createElement('x-overlay');
 
   this.selectedRows = [];
+  this.seenAccel = false;
 
   this.playerSelection = false;
 };
@@ -243,7 +244,9 @@ DisplayWindow.prototype.addMenu = function(msg) {
   }
 
   var row = document.createElement('tr');
-  row.dataset.identifier = msg[3];
+  if (msg[3] != 0) {
+    row.dataset.identifier = msg[3];
+  }
    
   var picture = document.createElement(cellType);
   // TODO(jeffbailey): This should be NO_GLYPH, except that the code
@@ -259,20 +262,26 @@ DisplayWindow.prototype.addMenu = function(msg) {
   }
   row.appendChild(picture);
 
-  var menuText = "";
-  if (msg[4] != 0) {
-    menuText += String.fromCharCode(msg[4]);
-    menuText += " - "
-    row.dataset.accelerator = msg[4];
-  }
- 
-  menuText += msg[7];
-
   var item = document.createElement(cellType);
-  item.textContent = menuText;
+  item.textContent = msg[7];
   item.className = 'tile-fixedwidth';
   row.appendChild(item);
+
+  if (msg[4] != 0) {
+    this.addAccel(row, msg[4]);
+  }
+
   this.content.appendChild(row);
+};
+
+DisplayWindow.prototype.addAccel = function(row, accel) {
+  this.seenAccel = true;
+  row.dataset.accelerator = accel;
+  var oldText = row.lastChild.textContent;
+  var newText = String.fromCharCode(accel);
+  newText += " - "
+  newText += oldText;
+  row.lastChild.textContent = newText;
 };
 
 DisplayWindow.prototype.setPrompt = function(text) {
@@ -292,6 +301,13 @@ DisplayWindow.prototype.selectMenu = function(how) {
   this.how = how;
 
   if (how == PICK_NONE) return;
+
+  if (this.seenAccel == false) {
+    var rows = document.querySelectorAll('tr[data-identifier]');
+    for (var i=0, accel = 97; i < rows.length; i++, accel++) {
+      this.addAccel(rows[i], accel);
+    }
+  }
 
   if (this.playerSelection == false) {
     var button = document.createElement('button');
@@ -323,7 +339,7 @@ DisplayWindow.prototype.handleSelect = function(evt) {
   // Disabled because it causes a scroll on long windows.
   //this.button.focus();
 
-  if (evt.currentTarget.dataset.identifier == "0") return;
+  if (evt.currentTarget.dataset.identifier == undefined) return;
 
   this.rowSelect(evt.currentTarget);
 }
@@ -903,7 +919,8 @@ var handleMessage = function(event) {
     // 1: Window Number, 2: tile, 3: identifier, 4: accelerator
     // 5: group accel, 6: attribute, 7: string, 8: presel
     for (var i=0; i<msg.length - 3; i++) {
-      win_array[win_num].addMenu([0, win_array[win_num], 0, i, (97)+i, 0, 0, msg[i+3], 0]);
+      // We add one the to identifier because '0' means 'none'
+      win_array[win_num].addMenu([0, win_array[win_num], 0, i+1, 0, 0, 0, msg[i+3], 0]);
     }
     win_array[win_num].selectMenu(1);
     // pm(-2); // Random
