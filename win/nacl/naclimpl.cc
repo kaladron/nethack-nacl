@@ -42,7 +42,8 @@ int nacl_player_sel_dialog(const char** choices, const char* title,
   msg << eom;
 
   std::string id = NaClMessage::GetReply();
-  return atoi(id.c_str());
+  // The game 1-indexes this because a zero-identifier means 'none'
+  return atoi(id.c_str()) - 1;
 }
 
 void nacl_player_selection(void) {

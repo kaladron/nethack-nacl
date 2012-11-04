@@ -12,6 +12,8 @@
    buttons.
  * Focus on any element on the page that isn't otherwise wanting focus should
    put it back on the map.
+ * Make it more obvious when a window is non-blocking.
+ * Inventory display
  * Resize tile version for whatever the display window actually is - 
    headings and map.
  * Options page should allow a default player name to be set.
@@ -29,6 +31,7 @@
  * Grey out OK button until a selection is made.
  * Update upstream modal window, trap escape key.
  * Move keyboard handling to new-style http://www.w3.org/TR/2012/WD-DOM-Level-3-Events-20120614/#legacy-key-attributes
+ * Support group accellerators in menu boxes.
 
 -- Hacks to clean up later
 
