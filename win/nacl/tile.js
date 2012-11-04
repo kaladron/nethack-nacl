@@ -675,7 +675,6 @@ function addMenus() {
   addMenu('game', 'New Game', null, unimplemented);
   addMenu('game', 'Save Game', null, nhAction, L("S"));
   addMenu('game', 'Switch to TTY mode', null, unimplemented);
-  addMenu('game', 'Edit NethackRC File...', null, unimplemented);
 
   addMenu('edit', 'Inventory', 'Edit/View your inventory',
     nhAction, L("i"));
@@ -721,8 +720,10 @@ function addMenus() {
     nhAction, C(L("d")));
   addMenu('action', 'Jump', 'Jump to another location',
     nhAction, M(L("j")));
-  addMenu('action', 'Ride', 'Ride (or stop riding) a monster',
-    unimplemented);
+  //TODO(jeffbailey): There is no accelerator exposed for this,
+  //so we can't do it.
+  //addMenu('action', 'Ride', 'Ride (or stop riding) a monster',
+  //  unimplemented);
   addMenu('action', 'Wipe face', 'Wipe off your face',
     nhAction, M(L("w")));
   addMenu('action', 'Throw/Shoot', 'Throw or shoot a weapon',
@@ -761,25 +762,43 @@ function addMenus() {
   addMenu('action', 'Pay', 'Pay your bill to the shopkeeper',
     nhAction, L("p"));
 
-  addMenu('magic', 'Quaff potion', 'Drink a potion', unimplemented);
-  addMenu('magic', 'Read Book/Scroll', 'Read a spell book or a scroll', unimplemented);
-  addMenu('magic', 'Zap Wand', 'Zap a wand', unimplemented);
-  addMenu('magic', 'Zap Spell', 'Cast a spell', unimplemented);
-  addMenu('magic', 'Dip', 'Dip an object into something', unimplemented);
-  addMenu('magic', 'Rub', 'Rub something (i.e. a lamp)', unimplemented);
-  addMenu('magic', 'Invoke', "Invoke an object's special powers", unimplemented);
-  addMenu('magic', 'Offer', 'Offer a sacrifice to the gods', unimplemented);
-  addMenu('magic', 'Pray', 'Pray to the gods for help', unimplemented);
-  addMenu('magic', 'Teleport', 'Teleport (if you can)', unimplemented);
-  addMenu('magic', 'Monster Action', "Use a monster's special ability", unimplemented);
-  addMenu('magic', 'Turn Undead', 'Turn undead', unimplemented);
+  addMenu('magic', 'Quaff potion', 'Drink a potion',
+    nhAction, L("q"));
+  addMenu('magic', 'Read Book/Scroll', 'Read a spell book or a scroll',
+    nhAction, L("r"));
+  addMenu('magic', 'Zap Wand', 'Zap a wand',
+    nhAction, L("z"));
+  addMenu('magic', 'Zap Spell', 'Cast a spell',
+    nhAction, L("Z"));
+  addMenu('magic', 'Dip', 'Dip an object into something',
+    nhAction, M(L("d")));
+  addMenu('magic', 'Rub', 'Rub something (i.e. a lamp)',
+    nhAction, M(L("r")));
+  addMenu('magic', 'Invoke', "Invoke an object's special powers",
+    nhAction, M(L("i")));
+  addMenu('magic', 'Offer', 'Offer a sacrifice to the gods',
+    nhAction, M(L("o")));
+  addMenu('magic', 'Pray', 'Pray to the gods for help',
+    nhAction, M(L("p")));
+  addMenu('magic', 'Teleport', 'Teleport (if you can)',
+    nhAction, C(L("t")));
+  addMenu('magic', 'Monster Action', "Use a monster's special ability",
+    nhAction, M(L("m")));
+  addMenu('magic', 'Turn Undead', 'Turn undead',
+    nhAction, M(L("t")));
 
-  addMenu('help', 'About...', 'About Nethack', unimplemented);
-  addMenu('help', 'Help', null, unimplemented);
+  addMenu('help', 'About...', 'About Nethack',
+    unimplemented);
+  addMenu('help', 'Help', null,
+    nhAction, L("?"));
   addSeparator('help');
-  addMenu('help', 'What is here', 'Check what itemts occupy the current location', unimplemented);
-  addMenu('help', 'What is that', 'Identify an object', unimplemented);
-  addMenu('help', 'Identify a map symbol', 'Identify a map symbol', unimplemented);
+  addMenu('help', 'What is here',
+    'Check what items occupy the current location',
+    nhAction, L(":"));
+  addMenu('help', 'What is that', 'Identify an object',
+    nhAction, L(";"));
+  addMenu('help', 'Identify a map symbol', 'Identify a map symbol',
+    nhAction, L("/"));
 
 }
 
