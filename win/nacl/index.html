@@ -3,18 +3,28 @@
 <head>
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
+<!-- ls hterm/* -1 | sort | sed -e "s#\(.*\)#<script src='\1'></script>#" -->
+<!-- Then put libs first -->
+
 <script src='hterm/lib.js'></script>
 <script src='hterm/lib_colors.js'></script>
 <script src='hterm/lib_f.js'></script>
 <script src='hterm/lib_fs.js'></script>
+<script src='hterm/lib_message_manager.js'></script>
 <script src='hterm/lib_preference_manager.js'></script>
+<script src='hterm/lib_storage.js'></script>
+<script src='hterm/lib_storage_chrome.js'></script>
+<script src='hterm/lib_storage_local.js'></script>
+<script src='hterm/lib_test_manager.js'></script>
 <script src='hterm/lib_utf8.js'></script>
-
 <script src='hterm/hterm.js'></script>
 <script src='hterm/hterm_frame.js'></script>
 <script src='hterm/hterm_keyboard.js'></script>
 <script src='hterm/hterm_keyboard_keymap.js'></script>
+<script src='hterm/hterm_mock_row_provider.js'></script>
 <script src='hterm/hterm_options.js'></script>
+<script src='hterm/hterm_preference_manager.js'></script>
+<script src='hterm/hterm_preferences_editor.js'></script>
 <script src='hterm/hterm_pubsub.js'></script>
 <script src='hterm/hterm_screen.js'></script>
 <script src='hterm/hterm_scrollport.js'></script>

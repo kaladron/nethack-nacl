@@ -6,8 +6,8 @@
 
 lib.rtdep('lib.colors', 'lib.PreferenceManager',
           'hterm.msg',
-          'hterm.Keyboard', 'hterm.Options', 'hterm.Screen',
-          'hterm.ScrollPort', 'hterm.Size', 'hterm.VT');
+          'hterm.Keyboard', 'hterm.Options', 'hterm.PreferenceManager',
+          'hterm.Screen', 'hterm.ScrollPort', 'hterm.Size', 'hterm.VT');
 
 /**
  * Constructor for the Terminal class.
@@ -26,12 +26,11 @@ lib.rtdep('lib.colors', 'lib.PreferenceManager',
  * displayed twice as wide as standard latin characters.  This is to support
  * CJK (and possibly other character sets).
  *
- * @param {string} opt_profileName Optional preference profile name.  If not
+ * @param {string} opt_profileId Optional preference profile name.  If not
  *     provided, defaults to 'default'.
  */
-hterm.Terminal = function(opt_profileName) {
-  this.profileName_ = null;
-  this.setProfile(opt_profileName || 'default');
+hterm.Terminal = function(opt_profileId) {
+  this.profileId_ = null;
 
   // Two screen instances.
   this.primaryScreen_ = new hterm.Screen();
@@ -80,15 +79,14 @@ hterm.Terminal = function(opt_profileName) {
   this.cursorNode_ = null;
 
   // These prefs are cached so we don't have to read from local storage with
-  // each output and keystroke.
-  this.scrollOnOutput_ = this.prefs_.get('scroll-on-output');
-  this.scrollOnKeystroke_ = this.prefs_.get('scroll-on-keystroke');
-  this.foregroundColor_ = this.prefs_.get('foreground-color');
-  this.backgroundColor_ = this.prefs_.get('background-color');
+  // each output and keystroke.  They are initialized by the preference manager.
+  this.scrollOnOutput_ = null;
+  this.scrollOnKeystroke_ = null;
+  this.foregroundColor_ = null;
+  this.backgroundColor_ = null;
 
   // Terminal bell sound.
   this.bellAudio_ = this.document_.createElement('audio');
-  this.bellAudio_.setAttribute('src', this.prefs_.get('audible-bell-sound'));
   this.bellAudio_.setAttribute('preload', 'auto');
 
   // Cursor position and attributes saved with DECSC.
@@ -102,9 +100,6 @@ hterm.Terminal = function(opt_profileName) {
 
   // The VT escape sequence interpreter.
   this.vt = new hterm.VT(this);
-  this.vt.enable8BitControl = this.prefs_.get('enable-8-bit-control');
-  this.vt.maxStringSequence = this.prefs_.get('max-string-sequence');
-  this.vt.enableClipboardWrite = this.prefs_.get('enable-clipboard-write');
 
   // The keyboard hander.
   this.keyboard = new hterm.Keyboard(this);
@@ -116,13 +111,24 @@ hterm.Terminal = function(opt_profileName) {
   // True if mouse-click-drag should scroll the terminal.
   this.enableMouseDragScroll = true;
 
-  this.copyOnSelect = this.prefs_.get('copy-on-select');
+  this.copyOnSelect = null;
   this.mousePasteButton = null;
-  this.syncMousePasteButton();
 
   this.realizeSize_(80, 24);
   this.setDefaultTabStops();
+
+  this.setProfile(opt_profileId || 'default',
+                  function() { this.onTerminalReady() }.bind(this));
 };
+
+/**
+ * Clients should override this to be notified when the terminal is ready
+ * for use.
+ *
+ * The terminal initialization is asynchronous, and shouldn't be used before
+ * this method is called.
+ */
+hterm.Terminal.prototype.onTerminalReady = function() { };
 
 /**
  * Default tab with of 8 to match xterm.
@@ -142,297 +148,170 @@ hterm.Terminal.prototype.scrollbarWidthPx = 16;
  *
  * @param {string} newName The name of the preference profile.  Forward slash
  *     characters will be removed from the name.
+ * @param {function} opt_callback Optional callback to invoke when the profile
+ *     transition is complete.
  */
-hterm.Terminal.prototype.setProfile = function(profileName) {
-  // If we already have a profile selected, we're going to need to re-sync
-  // with the new profile.
-  var needSync = !!this.profileName_;
+hterm.Terminal.prototype.setProfile = function(profileId, opt_callback) {
+  this.profileId_ = profileId.replace(/\//g, '');
 
-  this.profileName_ = profileName.replace(/\//g, '');
+  var terminal = this;
 
-  this.prefs_ = new lib.PreferenceManager(
-      '/hterm/prefs/profiles/' + this.profileName_);
+  if (this.prefs_)
+    this.prefs_.deactivate();
 
-  var self = this;
-  this.prefs_.definePreferences
-  ([
-    /**
-     * Set whether the alt key acts as a meta key or as a distinct alt key.
-     */
-    ['alt-is-meta', false, function(v) {
-        self.keyboard.altIsMeta = v;
+  this.prefs_ = new hterm.PreferenceManager(this.profileId_);
+  this.prefs_.addObservers(null, {
+    'alt-is-meta': function(v) {
+      terminal.keyboard.altIsMeta = v;
+    },
+
+    'alt-sends-what': function(v) {
+      if (!/^(escape|8-bit|browser-key)$/.test(v))
+        v = 'escape';
+
+      terminal.keyboard.altSendsWhat = v;
+    },
+
+    'audible-bell-sound': function(v) {
+      terminal.bellAudio_.setAttribute('src', v);
+    },
+
+    'background-color': function(v) {
+      terminal.setBackgroundColor(v);
+    },
+
+    'background-image': function(v) {
+      terminal.scrollPort_.setBackgroundImage(v);
+    },
+
+    'background-size': function(v) {
+      terminal.scrollPort_.setBackgroundSize(v);
+    },
+
+    'background-position': function(v) {
+      terminal.scrollPort_.setBackgroundPosition(v);
+    },
+
+    'backspace-sends-backspace': function(v) {
+      terminal.keyboard.backspaceSendsBackspace = v;
+    },
+
+    'cursor-blink': function(v) {
+      terminal.setCursorBlink(!!v);
+    },
+
+    'cursor-color': function(v) {
+      terminal.setCursorColor(v);
+    },
+
+    'color-palette-overrides': function(v) {
+      if (!(v == null || v instanceof Object || v instanceof Array)) {
+        console.warn('Preference color-palette-overrides is not an array or ' +
+                     'object: ' + v);
+        return;
       }
-    ],
 
-    /**
-     * Controls how the alt key is handled.
-     *
-     *  escape....... Send an ESC prefix.
-     *  8-bit........ Add 128 to the unshifted character as in xterm.
-     *  browser-key.. Wait for the keypress event and see what the browser says.
-     *                (This won't work well on platforms where the browser
-     *                 performs a default action for some alt sequences.)
-     */
-    ['alt-sends-what', 'escape', function(v) {
-        if (!/^(escape|8-bit|browser-key)$/.test(v))
-          v = 'escape';
+      lib.colors.colorPalette = lib.colors.stockColorPalette.concat();
 
-        self.keyboard.altSendsWhat = v;
+      if (v) {
+        for (var key in v) {
+          var i = parseInt(key);
+          if (isNaN(i) || i < 0 || i > 255) {
+            console.log('Invalid value in palette: ' + key + ': ' + v[key]);
+            continue;
+          }
+
+          if (v[i]) {
+            var rgb = lib.colors.normalizeCSS(v[i]);
+            if (rgb)
+              lib.colors.colorPalette[i] = rgb;
+          }
+        }
       }
-    ],
 
-    /**
-     * Terminal bell sound.  Empty string for no audible bell.
-     */
-    ['audible-bell-sound', '../audio/bell.ogg', function(v) {
-        self.bellAudio_.setAttribute('src', v);
-      }
-    ],
+      terminal.primaryScreen_.textAttributes.resetColorPalette()
+      terminal.alternateScreen_.textAttributes.resetColorPalette();
+    },
 
-    /**
-     * The background color for text with no other color attributes.
-     */
-    ['background-color', 'rgb(16, 16, 16)', function(v) {
-        self.setBackgroundColor(v);
-      }
-    ],
+    'copy-on-select': function(v) {
+      terminal.copyOnSelect = !!v;
+    },
 
-    /**
-     * The background image.
-     */
-    ['background-image', '',
-     function(v) {
-        self.scrollPort_.setBackgroundImage(v);
-      }
-    ],
+    'enable-8-bit-control': function(v) {
+      terminal.vt.enable8BitControl = !!v;
+    },
 
-    /**
-     * The background image size,
-     *
-     * Defaults to none.
-     */
-    ['background-size', '', function(v) {
-        self.scrollPort_.setBackgroundSize(v);
-      }
-    ],
+    'enable-bold': function(v) {
+      terminal.syncBoldSafeState();
+    },
 
-    /**
-     * The background image position,
-     *
-     * Defaults to none.
-     */
-    ['background-position', '', function(v) {
-        self.scrollPort_.setBackgroundPosition(v);
-      }
-    ],
+    'enable-clipboard-write': function(v) {
+      terminal.vt.enableClipboardWrite = !!v;
+    },
 
-    /**
-     * If true, the backspace should send BS ('\x08', aka ^H).  Otherwise
-     * the backspace key should send '\x7f'.
-     */
-    ['backspace-sends-backspace', false, function(v) {
-        self.keyboard.backspaceSendsBackspace = v;
-      }
-    ],
+    'font-family': function(v) {
+      terminal.syncFontFamily();
+    },
 
-    /**
-     * Whether or not to close the window when the command exits.
-     */
-    ['close-on-exit', true, null],
+    'font-size': function(v) {
+      terminal.setFontSize(v);
+    },
 
-    /**
-     * Whether or not to blink the cursor by default.
-     */
-    ['cursor-blink', false, function(v) {
-        self.setCursorBlink(!!v);
-      }
-    ],
+    'font-smoothing': function(v) {
+      terminal.syncFontFamily();
+    },
 
-    /**
-     * The color of the visible cursor.
-     */
-    ['cursor-color', 'rgba(255,0,0,0.5)', function(v) {
-        self.setCursorColor(v);
-      }
-    ],
+    'foreground-color': function(v) {
+      terminal.setForegroundColor(v);
+    },
 
-    /**
-     * Automatically copy mouse selection to the clipboard.
-     */
-    ['copy-on-select', true, function(v) {
-        self.copyOnSelect = !!v;
-      }
-    ],
+    'home-keys-scroll': function(v) {
+      terminal.keyboard.homeKeysScroll = v;
+    },
 
-    /**
-     * True to enable 8-bit control characters, false to ignore them.
-     *
-     * We'll respect the two-byte versions of these control characters
-     * regardless of this setting.
-     */
-    ['enable-8-bit-control', false, function(v) {
-        self.vt.enable8BitControl = !!v;
-      }
-    ],
+    'max-string-sequence': function(v) {
+      terminal.vt.maxStringSequence = v;
+    },
 
-    /**
-     * True if we should use bold weight font for text with the bold/bright
-     * attribute.  False to use bright colors only.  Null to autodetect.
-     */
-    ['enable-bold', null, function(v) {
-        self.syncBoldSafeState();
-      }
-    ],
+    'meta-sends-escape': function(v) {
+      terminal.keyboard.metaSendsEscape = v;
+    },
 
-    /**
-     * Allow the host to write directly to the system clipboard.
-     */
-    ['enable-clipboard-notice', true, null],
+    'mouse-cell-motion-trick': function(v) {
+      terminal.vt.setMouseCellMotionTrick(v);
+    },
 
-    /**
-     * Allow the host to write directly to the system clipboard.
-     */
-    ['enable-clipboard-write', true, function(v) {
-        self.vt.enableClipboardWrite = !!v;
-      }
-    ],
+    'mouse-paste-button': function(v) {
+      terminal.syncMousePasteButton();
+    },
 
-    /**
-     * Default font family for the terminal text.
-     */
-    ['font-family', ('"DejaVu Sans Mono", "Everson Mono", ' +
-                     'FreeMono, "Menlo", "Terminal", ' +
-                     'monospace'),
-     function(v) { self.syncFontFamily() }
-    ],
+    'scroll-on-keystroke': function(v) {
+      terminal.scrollOnKeystroke_ = v;
+    },
 
-    /**
-     * The default font size in pixels.
-     */
-    ['font-size', 15, function(v) {
-        self.setFontSize(v);
-      }
-    ],
+    'scroll-on-output': function(v) {
+      terminal.scrollOnOutput_ = v;
+    },
 
-    /**
-     * Anti-aliasing.
-     */
-    ['font-smoothing', 'antialiased',
-     function(v) { self.syncFontFamily() }
-    ],
+    'scrollbar-visible': function(v) {
+      terminal.setScrollbarVisible(v);
+    },
 
-    /**
-     * The foreground color for text with no other color attributes.
-     */
-    ['foreground-color', 'rgb(240, 240, 240)', function(v) {
-        self.setForegroundColor(v);
-      }
-    ],
+    'shift-insert-paste': function(v) {
+      terminal.keyboard.shiftInsertPaste = v;
+    },
 
-    /**
-     * If true, home/end will control the terminal scrollbar and shift home/end
-     * will send the VT keycodes.  If false then home/end sends VT codes and
-     * shift home/end scrolls.
-     */
-    ['home-keys-scroll', false, function(v) {
-        self.keyboard.homeKeysScroll = v;
-      }
-    ],
+    'page-keys-scroll': function(v) {
+      terminal.keyboard.pageKeysScroll = v;
+    }
+  });
 
-    /**
-     * Max length of a DCS, OSC, PM, or APS sequence before we give up and
-     * ignore the code.
-     */
-    ['max-string-sequence', 100000, function(v) {
-        self.vt.maxStringSequence = v;
-      }
-    ],
-
-    /**
-     * Set whether the meta key sends a leading escape or not.
-     */
-    ['meta-sends-escape', true, function(v) {
-        self.keyboard.metaSendsEscape = v;
-      }
-    ],
-
-    /**
-     * Set whether we should treat DEC mode 1002 (mouse cell motion tracking)
-     * as if it were 1000 (mouse click tracking).
-     *
-     * This makes it possible to use vi's ":set mouse=a" mode without losing
-     * access to the system text selection mechanism.
-     */
-    ['mouse-cell-motion-trick', false, function(v) {
-        self.vt.setMouseCellMotionTrick(v);
-      }
-    ],
-
-    /**
-     * Mouse paste button, or null to autodetect.
-     *
-     * For autodetect, we'll try to enable middle button paste for non-X11
-     * platforms.
-     *
-     * On X11 we move it to button 3, but that'll probably be a context menu
-     * in the future.
-     */
-    ['mouse-paste-button', null, function(v) {
-        self.syncMousePasteButton();
-      }
-    ],
-
-    /**
-     * If true, scroll to the bottom on any keystroke.
-     */
-    ['scroll-on-keystroke', true, function(v) {
-        self.scrollOnKeystroke_ = v;
-      }
-    ],
-
-    /**
-     * If true, scroll to the bottom on terminal output.
-     */
-    ['scroll-on-output', false, function(v) {
-        self.scrollOnOutput_ = v;
-      }
-    ],
-
-    /**
-     * The vertical scrollbar mode.
-     */
-    ['scrollbar-visible', true, function(v) {
-        self.setScrollbarVisible(v);
-      }
-    ],
-
-    /**
-     * Shift + Insert pastes if true, sent to host if false.
-     */
-    ['shift-insert-paste', true, function(v) {
-        self.keyboard.shiftInsertPaste = v;
-      }
-    ],
-
-    /**
-     * The default environment variables.
-     */
-    ['environment', {TERM: 'xterm-256color'}, null],
-
-    /**
-     * If true, page up/down will control the terminal scrollbar and shift
-     * page up/down will send the VT keycodes.  If false then page up/down
-     * sends VT codes and shift page up/down scrolls.
-     */
-    ['page-keys-scroll', false, function(v) {
-        self.keyboard.pageKeysScroll = v;
-      }
-    ],
-
-   ]);
-
-  if (needSync)
+  this.prefs_.readStorage(function() {
     this.prefs_.notifyAll();
+
+    if (opt_callback)
+      opt_callback();
+  }.bind(this));
 };
 
 
@@ -470,6 +349,10 @@ hterm.Terminal.prototype.setSelectionEnabled = function(state) {
  */
 hterm.Terminal.prototype.setBackgroundColor = function(color) {
   this.backgroundColor_ = lib.colors.normalizeCSS(color);
+  this.primaryScreen_.textAttributes.setDefaults(
+      this.foregroundColor_, this.backgroundColor_);
+  this.alternateScreen_.textAttributes.setDefaults(
+      this.foregroundColor_, this.backgroundColor_);
   this.scrollPort_.setBackgroundColor(color);
 };
 
@@ -491,6 +374,10 @@ hterm.Terminal.prototype.getBackgroundColor = function() {
  */
 hterm.Terminal.prototype.setForegroundColor = function(color) {
   this.foregroundColor_ = lib.colors.normalizeCSS(color);
+  this.primaryScreen_.textAttributes.setDefaults(
+      this.foregroundColor_, this.backgroundColor_);
+  this.alternateScreen_.textAttributes.setDefaults(
+      this.foregroundColor_, this.backgroundColor_);
   this.scrollPort_.setForegroundColor(color);
 };
 
@@ -1244,7 +1131,8 @@ hterm.Terminal.prototype.appendRows_ = function(count) {
   if (extraRows > 0) {
     var ary = this.screen_.shiftRows(extraRows);
     Array.prototype.push.apply(this.scrollbackRows_, ary);
-    this.scheduleScrollDown_();
+    if (this.scrollPort_.isScrolledEnd)
+      this.scheduleScrollDown_();
   }
 
   if (cursorRow >= this.screen_.rowsArray.length)
@@ -1465,8 +1353,7 @@ hterm.Terminal.prototype.reverseLineFeed = function() {
  *
  * TODO(rginda): This should probably *remove* the characters (not just replace
  * with a space) if there are no characters at or beyond the current cursor
- * position.  Once it does that, it'll have the same text-attribute related
- * issues as hterm.Screen.prototype.clearCursorRow :/
+ * position.
  */
 hterm.Terminal.prototype.eraseToLeft = function() {
   var cursor = this.saveCursor();
@@ -1480,25 +1367,29 @@ hterm.Terminal.prototype.eraseToLeft = function() {
  *
  * The cursor position is unchanged.
  *
- * TODO(rginda): Test that this works even when the cursor is positioned beyond
- * the end of the text.
- *
- * TODO(rginda): This likely has text-attribute related troubles similar to the
- * todo on hterm.Screen.prototype.clearCursorRow.
- *
- * TODO(davidben): Probably better to not add the whitespace to the clipboard
- * if erasing to the end of the drawn portion of the line. That said, xterm
- * behaves the same here.
+ * If the current background color is not the default background color this
+ * will insert spaces rather than delete.  This is unfortunate because the
+ * trailing space will affect text selection, but it's difficult to come up
+ * with a way to style empty space that wouldn't trip up the hterm.Screen
+ * code.
  */
 hterm.Terminal.prototype.eraseToRight = function(opt_count) {
-  var cursor = this.saveCursor();
+  var maxCount = this.screenSize.width - this.screen_.cursorPosition.column;
+  var count = opt_count ? Math.min(opt_count, maxCount) : maxCount;
 
-  var maxCount = this.screenSize.width - cursor.column;
-  if (opt_count === undefined || opt_count >= maxCount) {
-    this.screen_.deleteChars(maxCount);
-  } else {
-    this.screen_.overwriteString(lib.f.getWhitespace(opt_count));
+  if (this.screen_.textAttributes.background ===
+      this.screen_.textAttributes.DEFAULT_COLOR) {
+    var cursorRow = this.screen_.rowsArray[this.screen_.cursorPosition.row];
+    if (cursorRow.textContent.length <=
+        this.screen_.cursorPosition.column + count) {
+      this.screen_.deleteChars(count);
+      this.clearCursorOverflow();
+      return;
+    }
   }
+
+  var cursor = this.saveCursor();
+  this.screen_.overwriteString(lib.f.getWhitespace(count));
   this.restoreCursor(cursor);
   this.clearCursorOverflow();
 };
@@ -1507,9 +1398,6 @@ hterm.Terminal.prototype.eraseToRight = function(opt_count) {
  * Erase the current line.
  *
  * The cursor position is unchanged.
- *
- * TODO(rginda): This relies on hterm.Screen.prototype.clearCursorRow, which
- * has a text-attribute related TODO.
  */
 hterm.Terminal.prototype.eraseLine = function() {
   var cursor = this.saveCursor();
@@ -1523,9 +1411,6 @@ hterm.Terminal.prototype.eraseLine = function() {
  * position, regardless of scroll region.
  *
  * The cursor position is unchanged.
- *
- * TODO(rginda): This relies on hterm.Screen.prototype.clearCursorRow, which
- * has a text-attribute related TODO.
  */
 hterm.Terminal.prototype.eraseAbove = function() {
   var cursor = this.saveCursor();
@@ -1546,9 +1431,6 @@ hterm.Terminal.prototype.eraseAbove = function() {
  * screen, regardless of scroll region.
  *
  * The cursor position is unchanged.
- *
- * TODO(rginda): This relies on hterm.Screen.prototype.clearCursorRow, which
- * has a text-attribute related TODO.
  */
 hterm.Terminal.prototype.eraseBelow = function() {
   var cursor = this.saveCursor();
@@ -1593,9 +1475,6 @@ hterm.Terminal.prototype.fill = function(ch) {
  *
  * @param {hterm.Screen} opt_screen Optional screen to operate on.  Defaults
  *     to the current screen.
- *
- * TODO(rginda): This relies on hterm.Screen.prototype.clearCursorRow, which
- * has a text-attribute related TODO.
  */
 hterm.Terminal.prototype.clearHome = function(opt_screen) {
   var screen = opt_screen || this.screen_;
@@ -1622,9 +1501,6 @@ hterm.Terminal.prototype.clearHome = function(opt_screen) {
  *
  * @param {hterm.Screen} opt_screen Optional screen to operate on.  Defaults
  *     to the current screen.
- *
- * TODO(rginda): This relies on hterm.Screen.prototype.clearCursorRow, which
- * has a text-attribute related TODO.
  */
 hterm.Terminal.prototype.clear = function(opt_screen) {
   var screen = opt_screen || this.screen_;
@@ -1639,28 +1515,24 @@ hterm.Terminal.prototype.clear = function(opt_screen) {
  * This respects the current scroll region.  Rows pushed off the bottom are
  * lost (they won't show up in the scrollback buffer).
  *
- * TODO(rginda): This relies on hterm.Screen.prototype.clearCursorRow, which
- * has a text-attribute related TODO.
- *
  * @param {integer} count The number of lines to insert.
  */
 hterm.Terminal.prototype.insertLines = function(count) {
-  var cursor = this.saveCursor();
+  var cursorRow = this.screen_.cursorPosition.row;
 
   var bottom = this.getVTScrollBottom();
-  count = Math.min(count, bottom - cursor.row);
+  count = Math.min(count, bottom - cursorRow);
 
-  var start = bottom - count + 1;
-  if (start != cursor.row)
-    this.moveRows_(start, count, cursor.row);
+  // The moveCount is the number of rows we need to relocate to make room for
+  // the new row(s).  The count is the distance to move them.
+  var moveCount = bottom - cursorRow - count + 1;
+  if (moveCount)
+    this.moveRows_(cursorRow, moveCount, cursorRow + count);
 
-  for (var i = 0; i < count; i++) {
-    this.setAbsoluteCursorPosition(cursor.row + i, 0);
+  for (var i = count - 1; i >= 0; i--) {
+    this.setAbsoluteCursorPosition(cursorRow + i, 0);
     this.screen_.clearCursorRow();
   }
-
-  cursor.column = 0;
-  this.restoreCursor(cursor);
 };
 
 /**
@@ -1714,7 +1586,14 @@ hterm.Terminal.prototype.insertSpace = function(count) {
  * @param {integer} count The number of characters to delete.
  */
 hterm.Terminal.prototype.deleteChars = function(count) {
-  this.screen_.deleteChars(count);
+  var deleted = this.screen_.deleteChars(count);
+  if (deleted && !this.screen_.textAttributes.isDefault()) {
+    var cursor = this.saveCursor();
+    this.setCursorColumn(this.screenSize.width - deleted);
+    this.screen_.insertString(lib.f.getWhitespace(deleted));
+    this.restoreCursor(cursor);
+  }
+
   this.clearCursorOverflow();
 };
 
@@ -2331,10 +2210,17 @@ hterm.Terminal.prototype.getSelectionText = function() {
   // Start offset measures from the beginning of the line.
   var startOffset = selection.startOffset;
   var node = selection.startNode;
+
   if (node.nodeName != 'X-ROW') {
     // If the selection doesn't start on an x-row node, then it must be
     // somewhere inside the x-row.  Add any characters from previous siblings
     // into the start offset.
+
+    if (node.nodeName == '#text' && node.parentNode.nodeName == 'SPAN') {
+      // If node is the text node in a styled span, move up to the span node.
+      node = node.parentNode;
+    }
+
     while (node.previousSibling) {
       node = node.previousSibling;
       startOffset += node.textContent.length;
@@ -2344,10 +2230,17 @@ hterm.Terminal.prototype.getSelectionText = function() {
   // End offset measures from the end of the line.
   var endOffset = selection.endNode.textContent.length - selection.endOffset;
   var node = selection.endNode;
+
   if (node.nodeName != 'X-ROW') {
     // If the selection doesn't end on an x-row node, then it must be
     // somewhere inside the x-row.  Add any characters from following siblings
     // into the end offset.
+
+    if (node.nodeName == '#text' && node.parentNode.nodeName == 'SPAN') {
+      // If node is the text node in a styled span, move up to the span node.
+      node = node.parentNode;
+    }
+
     while (node.nextSibling) {
       node = node.nextSibling;
       endOffset += node.textContent.length;
@@ -2471,7 +2364,9 @@ hterm.Terminal.prototype.onScroll_ = function() {
  * React when text is pasted into the scrollPort.
  */
 hterm.Terminal.prototype.onPaste_ = function(e) {
-  this.io.onVTKeystroke(this.vt.encodeUTF8(e.text));
+  var text = this.vt.encodeUTF8(e.text);
+  text = text.replace(/\n/mg, '\r');
+  this.io.onVTKeystroke(text);
 };
 
 /**
