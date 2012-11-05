@@ -30,6 +30,9 @@ hterm.TextAttributes = function(document) {
   this.foreground = this.DEFAULT_COLOR;
   this.background = this.DEFAULT_COLOR;
 
+  this.defaultForeground = 'rgb(255, 255, 255)';
+  this.defaultBackground = 'rgb(0, 0, 0)';
+
   this.bold = false;
   this.blink = false;
   this.underline = false;
@@ -99,7 +102,8 @@ hterm.TextAttributes.prototype.reset = function() {
  * Reset the color palette to the default state.
  */
 hterm.TextAttributes.prototype.resetColorPalette = function() {
-  this.colorPalette = lib.colors.defaultColorPalette.concat();
+  this.colorPalette = lib.colors.colorPalette.concat();
+  this.syncColors();
 };
 
 /**
@@ -187,6 +191,13 @@ hterm.TextAttributes.prototype.matchesContainer = function(obj) {
           this.underline == !!style.textDecoration);
 };
 
+hterm.TextAttributes.prototype.setDefaults = function(foreground, background) {
+  this.defaultForeground = foreground;
+  this.defaultBackground = background;
+
+  this.syncColors();
+};
+
 /**
  * Updates foreground and background properties based on current indices and
  * other state.
@@ -197,19 +208,15 @@ hterm.TextAttributes.prototype.matchesContainer = function(obj) {
  *     inverse text foreground.
  *
  */
-hterm.TextAttributes.prototype.updateColors = function(terminalForeground,
-                                                       terminalBackground) {
+hterm.TextAttributes.prototype.syncColors = function() {
   function getBrightIndex(i) {
     if (i < 8) {
       // If the color is from the lower half of the ANSI 16, add 8.
       return i + 8;
     }
 
-    if (i >= 16 && i <= 250) {
-      // If it's from the extended palette, add 6.
-      return i + 6;
-    }
-
+    // If it's not from the 16 color palette, ignore bold requests.  This
+    // matches the behavior of gnome-terminal.
     return i;
   }
 
@@ -222,8 +229,8 @@ hterm.TextAttributes.prototype.updateColors = function(terminalForeground,
     foregroundIndex = this.backgroundIndex;
     backgroundIndex = this.foregroundIndex;
     // We can't inherit the container's color anymore.
-    defaultForeground = terminalBackground;
-    defaultBackground = terminalForeground;
+    defaultForeground = this.defaultBackground;
+    defaultBackground = this.defaultForeground;
   }
 
   if (this.bold) {

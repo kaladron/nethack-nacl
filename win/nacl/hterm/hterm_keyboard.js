@@ -40,19 +40,19 @@ hterm.Keyboard = function(terminal) {
    * If true, Shift-Insert will fall through to the browser as a paste.
    * If false, the keystroke will be sent to the host.
    */
-  this.shiftInsertPaste = terminal.prefs_.get('shift-insert-paste');
+  this.shiftInsertPaste = true;
 
   /**
    * If true, home/end will control the terminal scrollbar and shift home/end
    * will send the VT keycodes.  If false then home/end sends VT codes and
    * shift home/end scrolls.
    */
-  this.homeKeysScroll = terminal.prefs_.get('home-keys-scroll');
+  this.homeKeysScroll = false;
 
   /**
    * Same as above, except for page up/page down.
    */
-  this.pageKeysScroll = terminal.prefs_.get('page-keys-scroll');
+  this.pageKeysScroll = false;
 
   /**
    * Enable/disable application keypad.
@@ -72,13 +72,12 @@ hterm.Keyboard = function(terminal) {
    * If true, the backspace should send BS ('\x08', aka ^H).  Otherwise
    * the backspace key should send '\x7f'.
    */
-  this.backspaceSendsBackspace = terminal.prefs_.get(
-      'backspace-sends-backspace');
+  this.backspaceSendsBackspace = false;
 
   /**
    * Set whether the meta key sends a leading escape or not.
    */
-  this.metaSendsEscape = terminal.prefs_.get('meta-sends-escape');
+  this.metaSendsEscape = true;
 
   /**
    * Controls how the alt key is handled.
@@ -92,7 +91,7 @@ hterm.Keyboard = function(terminal) {
    * This setting only matters when alt is distinct from meta (altIsMeta is
    * false.)
    */
-  this.altSendsWhat = terminal.prefs_.get('alt-sends-what');
+  this.altSendsWhat = 'escape';
 
   /**
    * Set whether the alt key acts as a meta key, instead of producing 8-bit
@@ -100,7 +99,7 @@ hterm.Keyboard = function(terminal) {
    *
    * True to enable, false to disable, null to autodetect based on platform.
    */
-  this.altIsMeta = terminal.prefs_.get('alt-is-meta');
+  this.altIsMeta = false;
 };
 
 /**
@@ -338,11 +337,20 @@ hterm.Keyboard.prototype.onKeyDown_ = function(e) {
     return;
   }
 
-  if (resolvedActionType == 'normal' && action.substr(0, 2) == '\x1b[' &&
-      (alt || control || shift)) {
-    // The action is an escape sequence that came from the "normal" definition,
-    // and it was triggered in the presence of a keyboard modifier, we may
-    // need to alter the action to include the modifier before sending it.
+  // Strip the modifier that is associated with the action, since we assume that
+  // modifier has already been accounted for in the action.
+  if (resolvedActionType == 'control') {
+    control = false;
+  } else if (resolvedActionType == 'alt') {
+    alt = false;
+  } else if (resolvedActionType == 'meta') {
+    meta = false;
+  }
+
+  if (action.substr(0, 2) == '\x1b[' && (alt || control || shift)) {
+    // The action is an escape sequence that and it was triggered in the
+    // presence of a keyboard modifier, we may need to alter the action to
+    // include the modifier before sending it.
 
     var mod;
 
@@ -393,9 +401,8 @@ hterm.Keyboard.prototype.onKeyDown_ = function(e) {
     // We respect alt/metaSendsEscape even if the keymap action was a literal
     // string.  Otherwise, every overridden alt/meta action would have to
     // check alt/metaSendsEscape.
-    if (resolvedActionType == 'normal' &&
-        ((alt && this.altSendsWhat == 'escape') ||
-         (meta && this.metaSendsEscape))) {
+    if ((alt && this.altSendsWhat == 'escape') ||
+        (meta && this.metaSendsEscape)) {
       action = '\x1b' + action;
     }
   }
