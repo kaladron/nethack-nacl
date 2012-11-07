@@ -27,7 +27,6 @@
  * Non-blocking windows should still have the OK button focussed.
  * Support options specifying fonts to use, colours, etc. per doc/window.doc
  * Implement exit_nhwindows to clear the screen and/or close the tab.
- * Fix Analytics bug
  * Grey out OK button until a selection is made.
  * Update upstream modal window, trap escape key.
  * Move keyboard handling to new-style http://www.w3.org/TR/2012/WD-DOM-Level-3-Events-20120614/#legacy-key-attributes
