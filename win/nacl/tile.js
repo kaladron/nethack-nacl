@@ -63,7 +63,8 @@ var MAX_SCROLL_LINES = 2000;
 
 var glyphTable;
 
-var ctx;
+var gameCtx;
+var inventoryCtx;
 var tiles;
 var petmark;
 
@@ -614,12 +615,15 @@ var startGame = function() {
   clearGlyphs();
 
   var canvas = document.getElementById('tile-gamecanvas');
-  ctx = canvas.getContext('2d');
+  gameCtx = canvas.getContext('2d');
   canvas.width = pixwidth;
   canvas.height = pixheight;
   canvas.style.width = pixwidth;
   canvas.style.height = pixheight;
   canvas.addEventListener('mousedown', mouseNav);
+
+  var inventory = document.getElementById('tile-inventory');
+  inventoryCtx = inventory.getContext('2d');
 
   tiles = document.createElement('img');
   tiles.src = 'x11tiles.png';
@@ -852,15 +856,15 @@ var putCurs = function() {
   var g = (hr >= 0.75) ? 255             : (hr >= 0.25 ? 255*2*(hr-0.25) : 0);
   var b = (hr >= 0.75) ? 255*4*(hr-0.75) : (hr >= 0.25 ? 0 : 255*4*(0.25-hr));
 
-  ctx.beginPath();
-  ctx.moveTo(x1, y1);
+  gameCtx.beginPath();
+  gameCtx.moveTo(x1, y1);
   var color = 'rgb('+Math.floor(r)+','+Math.floor(g)+','+Math.floor(b)+')';
-  ctx.strokeStyle = color;
-  ctx.lineTo(x2, y1);
-  ctx.lineTo(x2, y2);
-  ctx.lineTo(x1, y2);
-  ctx.lineTo(x1, y1);
-  ctx.stroke();
+  gameCtx.strokeStyle = color;
+  gameCtx.lineTo(x2, y1);
+  gameCtx.lineTo(x2, y2);
+  gameCtx.lineTo(x1, y2);
+  gameCtx.lineTo(x1, y1);
+  gameCtx.stroke();
 };
 
 var saveGlyph = function(x, y, tile, pet) {
@@ -870,7 +874,7 @@ var saveGlyph = function(x, y, tile, pet) {
 };
 
 function displayMap() {
-  ctx.clearRect(0, 0, pixwidth, pixheight);
+  gameCtx.clearRect(0, 0, pixwidth, pixheight);
   for (var x = 0; x < WIDTH; x++) {
     for (var y = 0; y < HEIGHT; y++) {
       if (glyphTable[x][y].glyph !== null) {
@@ -881,23 +885,37 @@ function displayMap() {
   putCurs();
 }
 
+var putInventoryTile = function(x, y, tile) {
+  var tile_x = tile % TILES_PER_ROW;
+  var tile_y = Math.floor(tile / TILES_PER_ROW);
+
+  inventoryCtx.drawImage(tiles, tile_x * TILE_SQUARE,
+                         tile_y * TILE_SQUARE,
+                         TILE_SQUARE,
+                         TILE_SQUARE,
+                         x,
+                         y,
+                         DISPLAY_SQUARE,
+                         DISPLAY_SQUARE);
+};
+
 var putTile = function(x, y, tile, pet) {
   var tile_x = tile % TILES_PER_ROW;
   var tile_y = Math.floor(tile / TILES_PER_ROW);
 
-  ctx.drawImage(tiles, tile_x * TILE_SQUARE,
-                tile_y * TILE_SQUARE,
-                TILE_SQUARE,
-                TILE_SQUARE,
-                x * DISPLAY_SQUARE,
-                y * DISPLAY_SQUARE,
-                DISPLAY_SQUARE,
-                DISPLAY_SQUARE);
+  gameCtx.drawImage(tiles, tile_x * TILE_SQUARE,
+                    tile_y * TILE_SQUARE,
+                    TILE_SQUARE,
+                    TILE_SQUARE,
+                    x * DISPLAY_SQUARE,
+                    y * DISPLAY_SQUARE,
+                    DISPLAY_SQUARE,
+                    DISPLAY_SQUARE);
 
   if (pet == 1) {
-    ctx.drawImage(petmark,
-                  x * DISPLAY_SQUARE,
-                  y * DISPLAY_SQUARE);  
+    gameCtx.drawImage(petmark,
+                      x * DISPLAY_SQUARE,
+                      y * DISPLAY_SQUARE);  
   }
 }
 
@@ -1018,7 +1036,22 @@ var handleMessage = function(event) {
     win_array[msg[1]].selectMenu(msg[2]);
     break;
   case NaclMsg.UPDATE_INVENTORY: // 19
-    // Intentionally not implemented.
+    // Helm: 62, 11
+    // Quiver: 8, 11
+    // Blindfold: 25, 38
+    // Alternate: 117, 11 
+    // Amulet: 89, 38 
+    // Armor: 25, 63
+    // Cloak: 100, 63
+    // Shield: 120, 91 
+    // Lt. Ring: 120, 111
+    // Weapon: 6, 91
+    // Rt. Ring: 6, 111
+    // T-Shirt, 120, 142
+    // Gloves, 6, 142
+    // Boots, 110, 188
+    //putInventoryTile(x, y, tile);
+
     break;
   case NaclMsg.MARK_SYNCH: // 20
     // All items in the UI are synchronous.

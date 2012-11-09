@@ -256,11 +256,40 @@ x-overlay {
 
 
 #tile-status {
-  display: table-cell;
-  vertical-align: top;
-  width: 400px;
+  width: 541px;
   background-color: #cfd4d0;
   text-align: center;
+}
+
+.tile-table {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.tile-cell {
+  vertical-align: top;
+  display: table-cell;
+  margin: 0;
+  padding: 0;
+}
+
+#tile-cell-inventbox {
+  max-height: 212px;
+  max-width: 141px;
+  width: 141px;
+  height: 212px;
+}
+
+#tile-inventbox {
+  background-image: url('equip.png');
+  min-height: 212px;
+  min-width: 141px;
+  padding: 0;
+  margin: 0;
+  box-shadow: 2px 2px 1px rgba(0,0,0,.3), -2px 0px 1px rgba(0,0,0,.3);
 }
 
 #tile-status h1 {
