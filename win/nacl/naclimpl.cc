@@ -447,7 +447,10 @@ int nacl_select_menu(winid wid, int how, MENU_ITEM_P **selected) {
 
 /* No need for message_menu -- we'll use genl_message_menu instead */   
 void nacl_update_inventory(void) {
-  NaClMessage() << NACL_MSG_UPDATE_INVENTORY << eom;
+  NaClMessage msgBuilder = NaClMessage();
+  msgBuilder << NACL_MSG_UPDATE_INVENTORY 
+
+  msgBuilder << eom;
 }
 
 void nacl_mark_synch(void) {

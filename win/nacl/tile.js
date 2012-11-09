@@ -1036,20 +1036,21 @@ var handleMessage = function(event) {
     win_array[msg[1]].selectMenu(msg[2]);
     break;
   case NaclMsg.UPDATE_INVENTORY: // 19
-    // Helm: 62, 11
-    // Quiver: 8, 11
-    // Blindfold: 25, 38
-    // Alternate: 117, 11 
-    // Amulet: 89, 38 
-    // Armor: 25, 63
+    // Body Armor: 25, 63
     // Cloak: 100, 63
+    // Helmet: 62, 11
     // Shield: 120, 91 
-    // Lt. Ring: 120, 111
-    // Weapon: 6, 91
-    // Rt. Ring: 6, 111
-    // T-Shirt, 120, 142
     // Gloves, 6, 142
-    // Boots, 110, 188
+    // Footwear, 110, 188
+    // Undershirt, 120, 142
+    // Weapon: 6, 91
+    // Quiver: 8, 11
+    // Swap Weapon: 117, 11 
+    // Amulet: 89, 38 
+    // Lt. Ring: 120, 111
+    // Rt. Ring: 6, 111
+    // Not in the worn struct:
+    // Blindfold: 25, 38
     //putInventoryTile(x, y, tile);
 
     break;
