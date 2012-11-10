@@ -93,6 +93,7 @@ var FileWindow = function(file) {
   this.button = document.createElement('button');
   this.button.textContent = 'OK';
   this.button.addEventListener('click', this.okButtonAction.bind(this));
+  this.menu_win.addEventListener('keydown', this.cancelKeyWatch.bind(this));
   this.menu_win.appendChild(this.button);
 
   this.overlay = document.createElement('x-overlay');
@@ -111,6 +112,11 @@ FileWindow.prototype.display = function(block) {
 FileWindow.prototype.okButtonAction = function() {
   this.close();
 };
+
+FileWindow.prototype.cancelKeyWatch = function(evt) {
+  if (evt.which == 13 || evt.which == 27)
+    this.okButtonAction();
+}
 
 FileWindow.prototype.close = function() {
   document.body.removeChild(this.menu_win);
@@ -153,6 +159,7 @@ var DisplayWindow = function() {
   this.button = document.createElement('button');
   this.button.textContent = 'OK';
   this.button.addEventListener('click', this.okButton.bind(this));
+  this.button.addEventListener('keydown', this.cancelKeyWatch.bind(this));
   this.buttonBox.appendChild(this.button);
 
   this.block = false;
@@ -295,6 +302,12 @@ DisplayWindow.prototype.keyPress = function(evt) {
   this.rowSelect(row);
 };
 
+DisplayWindow.prototype.cancelKeyWatch = function(evt) {
+  if (evt.which == 27) {
+    this.handleCancelButton();
+  }
+};
+
 DisplayWindow.prototype.handleSelect = function(evt) {
   // TODO(jeffbailey): Allow enter key to work after selecting.
   // Disabled because it causes a scroll on long windows.
@@ -337,6 +350,7 @@ var InputWindow = function(content, callback, displayCancel) {
 
   this.inputBox = document.createElement('input');
   this.inputBox.addEventListener('keypress', this.enterKeyWatch.bind(this));
+  this.inputBox.addEventListener('keydown', this.cancelKeyWatch.bind(this));
 
   this.win.appendChild(this.inputBox); 
 
@@ -346,6 +360,7 @@ var InputWindow = function(content, callback, displayCancel) {
   okButton.addEventListener('click', this.okButtonAction.bind(this));
   this.win.appendChild(okButton);
 
+  this.displayCancel = displayCancel;
   if (displayCancel) {
     var cancelButton = document.createElement('button');
     cancelButton.type = 'button';
@@ -360,6 +375,15 @@ var InputWindow = function(content, callback, displayCancel) {
 InputWindow.prototype.enterKeyWatch = function(evt) {
   if (evt.which == 13) {
     this.okButtonAction();
+  }
+};
+
+InputWindow.prototype.cancelKeyWatch = function(evt) {
+  if (evt.which == 27) {
+    if (this.displayCancel)
+      this.cancelButtonAction();
+    else
+      this.okButtonAction();
   }
 };
 
