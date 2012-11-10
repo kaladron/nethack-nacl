@@ -13,7 +13,6 @@
  * Focus on any element on the page that isn't otherwise wanting focus should
    put it back on the map.
  * Make it more obvious when a window is non-blocking.
- * Inventory display
  * Resize tile version for whatever the display window actually is - 
    headings and map.
  * Options page should allow a default player name to be set.
