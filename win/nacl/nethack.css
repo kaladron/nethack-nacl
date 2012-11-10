@@ -281,6 +281,8 @@ x-overlay {
   max-width: 141px;
   width: 141px;
   height: 212px;
+  vertical-align: middle;
+  padding: 3px;
 }
 
 #tile-inventbox {
