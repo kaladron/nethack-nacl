@@ -6,7 +6,7 @@
   "name": "Nethack",
   "description": "Nethack",
   "options_page": "options.html",
-  "version": "3.4.3.25",
+  "version": "3.4.3.26",
   "app": {
     "launch": {
       "local_path": "index.html"
