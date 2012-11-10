@@ -886,6 +886,9 @@ function displayMap() {
 }
 
 var putInventoryTile = function(x, y, tile) {
+
+  if (tile == -1) return;
+
   var tile_x = tile % TILES_PER_ROW;
   var tile_y = Math.floor(tile / TILES_PER_ROW);
 
@@ -1043,16 +1046,31 @@ var handleMessage = function(event) {
     // Gloves, 6, 142
     // Footwear, 110, 188
     // Undershirt, 120, 142
-    // Weapon: 6, 91
-    // Quiver: 8, 11
-    // Swap Weapon: 117, 11 
     // Amulet: 89, 38 
     // Lt. Ring: 120, 111
     // Rt. Ring: 6, 111
-    // Not in the worn struct:
     // Blindfold: 25, 38
-    //putInventoryTile(x, y, tile);
-
+    // Weapon: 6, 91
+    // Swap Weapon: 117, 11 
+    // Quiver: 8, 11
+    // Skin: 10, 110
+    // Not in the worn struct:
+    inventoryCtx.clearRect(0, 0, 141, 212);
+    putInventoryTile(25, 63, msg[1]);
+    putInventoryTile(100, 63, msg[2]);
+    putInventoryTile(62, 11, msg[3]);
+    putInventoryTile(120, 91, msg[4]);
+    putInventoryTile(6, 142, msg[5]);
+    putInventoryTile(110, 188, msg[6]);
+    putInventoryTile(120, 142, msg[7]);
+    putInventoryTile(10, 110, msg[8]); // Maybe wrong
+    putInventoryTile(89, 38, msg[9]);
+    putInventoryTile(120, 111, msg[10]);
+    putInventoryTile(6, 111, msg[11]);
+    putInventoryTile(25, 38, msg[12]);
+    putInventoryTile(6, 91, msg[13]);
+    putInventoryTile(117, 11, msg[14]);
+    putInventoryTile(8, 11, msg[15]);
     break;
   case NaclMsg.MARK_SYNCH: // 20
     // All items in the UI are synchronous.

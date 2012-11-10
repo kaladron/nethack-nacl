@@ -445,11 +445,42 @@ int nacl_select_menu(winid wid, int how, MENU_ITEM_P **selected) {
   return ret;
 }
 
-/* No need for message_menu -- we'll use genl_message_menu instead */   
-void nacl_update_inventory(void) {
-  NaClMessage msgBuilder = NaClMessage();
-  msgBuilder << NACL_MSG_UPDATE_INVENTORY 
+int get_armor_tile(struct obj* armor) {
+  return ((armor != NULL) ? glyph2tile[obj_to_glyph(armor)] : -1);
+}
 
+void nacl_update_inventory(void) {
+  // TODO(jeffbailey): Cache this so that we don't send
+  // if the inventory screen is already going to be right.
+  NaClMessage msgBuilder = NaClMessage();
+  msgBuilder << NACL_MSG_UPDATE_INVENTORY;
+  msgBuilder << get_armor_tile(uarm);
+  msgBuilder << get_armor_tile(uarmc);
+  msgBuilder << get_armor_tile(uarmh);
+  if (u.twoweap != 0) {
+    msgBuilder << get_armor_tile(uswapwep);
+  } else {
+    msgBuilder << get_armor_tile(uarms);
+  }
+  msgBuilder << get_armor_tile(uarmg);
+  msgBuilder << get_armor_tile(uarmf);
+#ifdef TOURIST
+  msgBuilder << get_armor_tile(uarmu);
+#else
+  msgBuilder << -1;
+#endif
+  msgBuilder << get_armor_tile(uskin);
+  msgBuilder << get_armor_tile(uamul);
+  msgBuilder << get_armor_tile(uleft);
+  msgBuilder << get_armor_tile(uright);
+  msgBuilder << get_armor_tile(ublindf);
+  msgBuilder << get_armor_tile(uwep);
+  if (u.twoweap != 0) {
+    msgBuilder << -1;
+  } else {
+    msgBuilder << get_armor_tile(uswapwep);
+  }
+  msgBuilder << get_armor_tile(uquiver);
   msgBuilder << eom;
 }
 
