@@ -27,7 +27,6 @@ window.onload = function() {
 function Nethack(argv) {
   this.argv_ = argv;
   this.io = null;
-  this.pid_ = -1;
 };
 
 var nethackEmbed;
@@ -63,34 +62,6 @@ Nethack.init = function() {
     }, 500);
   return true;
 };
-
-/**
- * The name of this command used in messages to the user.
- *
- * Perhaps this will also be used by the user to invoke this command, if we
- * build a shell command.
- */
-Nethack.prototype.commandName = 'crosh';
-
-/**
- * Called when an event from the crosh process is detected.
- *
- * @param pid Process id of the process the event came from.
- * @param type Type of the event.
- *             'stdout': Process output detected.
- *             'exit': Process has exited.
- * @param text Text that was detected on process output.
-**/
-Nethack.prototype.onProcessOutput_ = function(pid, type, text) {
-  if (this.pid_ == -1 || pid != this.pid_)
-    return;
-
-  if (type == 'exit') {
-    this.exit(0);
-    return;
-  }
-  this.io.print(text);
-}
 
 /**
  * Handle messages sent to us from NaCl.
@@ -145,101 +116,12 @@ Nethack.prototype.startGame = function(event) {
   this.io.onTerminalResize = this.resize_.bind(this);
 
   return;
-  // TODO(jeffbailey): 
-  // Everything past this point is old code and should
-  // be removed once things work.
-
-  this.io.onVTKeystroke = this.sendString_.bind(this);
-  this.io.sendString = this.sendString_.bind(this);
-
-  var self = this;
-  this.io.onTerminalResize = this.onTerminalResize_.bind(this);
-  chrome.terminalPrivate.onProcessOutput.addListener(
-      this.onProcessOutput_.bind(this));
-  document.body.onunload = this.close_.bind(this);
-  chrome.terminalPrivate.openTerminalProcess(this.commandName,
-      function(pid) {
-        if (pid == undefined || pid == -1) {
-          self.io.println("Opening crosh process failed.");
-          self.exit(1);
-          return;
-        }
-
-        window.onbeforeunload = self.onBeforeUnload_.bind(self);
-        self.pid_ = pid;
-
-        if (!chrome.terminalPrivate.onTerminalResize) {
-          console.warn("Terminal resizing not supported.");
-          return;
-        }
-
-        // Setup initial window size.
-        self.onTerminalResize_(self.io.terminal_.screenSize.width,
-                               self.io.terminal_.screenSize.height);
-      }
-  );
 };
 
 Nethack.prototype.onBeforeUnload_ = function(e) {
   var msg = 'Closing this tab will exit crosh.';
   e.returnValue = msg;
   return msg;
-};
-
-/**
- * Send a string to the crosh process.
- *
- * @param {string} string The string to send.
- */
-Nethack.prototype.sendString_ = function(string) {
-  if (this.pid_ == -1)
-    return;
-  chrome.terminalPrivate.sendInput(this.pid_, string);
-};
-
-/**
- * Closes crosh terminal and exits the crosh command.
-**/
-Nethack.prototype.close_ = function() {
-    if (this.pid_ == -1)
-      return;
-    chrome.terminalPrivate.closeTerminalProcess(this.pid_);
-    this.pid_ = -1;
-}
-
-/**
- * Notify process about new terminal size.
- *
- * @param {string|integer} terminal width.
- * @param {string|integer} terminal height.
- */
-Nethack.prototype.onTerminalResize_ = function(width, height) {
-  if (this.pid_ == -1)
-    return;
-
-  // We don't want to break older versions of chrome.
-  if (!chrome.terminalPrivate.onTerminalResize)
-    return;
-
-  chrome.terminalPrivate.onTerminalResize(this.pid_,
-      Number(width), Number(height),
-      function(success) {
-        if (!success)
-          console.warn("terminalPrivate.onTerminalResize failed");
-      }
-  );
-};
-
-/**
- * Exit the crosh command.
- */
-Nethack.prototype.exit = function(code) {
-  this.close_();
-  this.io.pop();
-  window.onbeforeunload = null;
-
-  if (this.argv_.onExit)
-    this.argv_.onExit(code);
 };
 
 window.onbeforeunload = function() {
