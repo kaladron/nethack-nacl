@@ -1047,11 +1047,25 @@ var win_num = 1;
 
 var win_array = new Array();
 
+var tile_func_array = new Array();
+
+function tile_askname(msg) {
+    var getlineWin = new InputWindow("What is your name?", pm, false);
+    getlineWin.display();
+}
+
+tile_func_array[NaclMsg.ASKNAME] = tile_askname;
+
 var handleMessage = function(event) {
   // Make sure it's the right kind of event we got
   // Check to make sure it starts with PREFIX
   console.log(event.data.substr(PREFIX.length));
   var msg = JSON.parse(event.data.substr(PREFIX.length));
+
+  // Temporary hack while we still have things in the switch statement
+  if (typeof(tile_func_array[msg[0]])=="function") {
+    tile_func_array[msg[0]](msg);
+  }
 
   switch(msg[0]) {
   case NaclMsg.INIT_NHWINDOWS: // 0
@@ -1073,10 +1087,6 @@ var handleMessage = function(event) {
     win_array[win_num].selectMenu(1);
     // pm(-2); // Random
     win_num++;
-    break;
-  case NaclMsg.ASKNAME: // 2
-    var getlineWin = new InputWindow("What is your name?", pm, false);
-    getlineWin.display();
     break;
   case NaclMsg.GET_NH_EVENT: //3
     throw "Not Implemented!";
