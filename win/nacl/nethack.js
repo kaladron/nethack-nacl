@@ -1054,23 +1054,7 @@ function tile_askname(msg) {
     getlineWin.display();
 }
 
-tile_func_array[NaclMsg.ASKNAME] = tile_askname;
-
-var handleMessage = function(event) {
-  // Make sure it's the right kind of event we got
-  // Check to make sure it starts with PREFIX
-  console.log(event.data.substr(PREFIX.length));
-  var msg = JSON.parse(event.data.substr(PREFIX.length));
-
-  // Temporary hack while we still have things in the switch statement
-  if (typeof(tile_func_array[msg[0]])=="function") {
-    tile_func_array[msg[0]](msg);
-  }
-
-  switch(msg[0]) {
-  case NaclMsg.INIT_NHWINDOWS: // 0
-    break;
-  case NaclMsg.PLAYER_SELECTION: // 1
+function tile_player_selection(msg) {
     // 1: Title 2: Text ...: choices
     // TODO(jeffbailey): Remove magic constants
     win_array[win_num] = new DisplayWindow();
@@ -1087,7 +1071,25 @@ var handleMessage = function(event) {
     win_array[win_num].selectMenu(1);
     // pm(-2); // Random
     win_num++;
-    break;
+}
+
+// NaclMsg.INIT_NHWINDOWS
+tile_func_array[NaclMsg.ASKNAME] = tile_askname;
+tile_func_array[NaclMsg.PLAYER_SELECTION] = tile_player_selection;
+
+var handleMessage = function(event) {
+  // Make sure it's the right kind of event we got
+  // Check to make sure it starts with PREFIX
+  console.log(event.data.substr(PREFIX.length));
+  var msg = JSON.parse(event.data.substr(PREFIX.length));
+
+  // A port is welcome to just leave anything they don't want to handle
+  // as undefined.
+  if (tile_func_array[msg[0]]) {
+    tile_func_array[msg[0]](msg);
+  }
+
+  switch(msg[0]) {
   case NaclMsg.GET_NH_EVENT: //3
     throw "Not Implemented!";
   case NaclMsg.EXIT_NHWINDOWS: // 4
@@ -1486,8 +1488,6 @@ function setEncumbered(capacity, capacityText) {
 
   image.parentElement.classList.remove('tile-hidden');
 }
-
-
 
 function plineput(text) {
   var plinecontent = document.getElementById('tile-plinecontent');
