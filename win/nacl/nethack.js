@@ -1073,9 +1073,20 @@ function tile_player_selection(msg) {
     win_num++;
 }
 
+function tile_exit_nhwindows(msg) {
+    // 1: Text
+    plineput(msg[1]);
+    // TODO(jeffbailey): This should clear the screen, disable menus,
+    // and offer a close/new game set of buttons.
+}
+
 // NaclMsg.INIT_NHWINDOWS
 tile_func_array[NaclMsg.ASKNAME] = tile_askname;
 tile_func_array[NaclMsg.PLAYER_SELECTION] = tile_player_selection;
+// NaclMsg.GET_NH_EVENT
+tile_func_array[NaclMsg.EXIT_NHWINDOWS] = tile_exit_nhwindows;
+// NaclMsg.SUSPEND_NHWINDOWS
+// NaclMsg.RESUME_NHWINDOWS
 
 var handleMessage = function(event) {
   // Make sure it's the right kind of event we got
@@ -1090,18 +1101,6 @@ var handleMessage = function(event) {
   }
 
   switch(msg[0]) {
-  case NaclMsg.GET_NH_EVENT: //3
-    throw "Not Implemented!";
-  case NaclMsg.EXIT_NHWINDOWS: // 4
-    // 1: Text
-    plineput(msg[1]);
-    // TODO(jeffbailey): This should clear the screen, disable menus,
-    // and offer a close/new game set of buttons.
-    break;
-  case NaclMsg.SUSPEND_NHWINDOWS: // 5
-    throw "Not Implemented!";
-  case NaclMsg.RESUME_NHWINDOWS: // 6
-    throw "Not Implemented!";
   case NaclMsg.CREATE_NHWINDOW: // 7
     // msg[1]: type
   //  switch(msg[1]) {
