@@ -44,7 +44,7 @@ x-overlay {
   height: 0;
 }
 
-#header {
+.header {
   z-index: 1;
   position: fixed;
   background-color: rgba(207, 212, 208, .5);
@@ -59,9 +59,18 @@ x-overlay {
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
   -webkit-user-select: none;
+  -webkit-transition-property: height, color, background-color;
+  -webkit-transition-duration: 150ms;
+  -webkit-transition-timing-function: linear;
 }
 
-#header:hover {
+.header-initial {
+  height: 1.5em;
+  background-color: rgba(207, 212, 208, 1);
+  color: black;
+}
+
+.header:hover {
   height: 1.5em;
   background-color: rgba(207, 212, 208, 1);
   color: black;
@@ -70,27 +79,27 @@ x-overlay {
   -webkit-transition-timing-function: linear;
 }
 
-#header a {
+.header a {
   color: inherit;
 }
 
-#header a:visited {
+.header a:visited {
   color: inherit;
 }
 
-#header ul {
+.header ul {
   text-align: center;
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
 
-#header ul li {
+.header ul li {
   display: inline-block;
 }
 
-#header ul li::after { content: ' | ' }
-#header ul li:last-child::after { content: '' }
+.header ul li::after { content: ' | ' }
+.header ul li:last-child::after { content: '' }
 
 .tile-fixedwidth {
   font-family: Inconsolata;
