@@ -35,6 +35,7 @@
  * Do a popup for Y/N function
  * Make scrollback lines configurable through options like Gnome: msghistory:200
  * Push all initial variables as parameters to init_nhwindows
+ * Properly escape HTML entities and reserved characters when emitting a file to the screen
 
 -- Hacks to clean up later
 
