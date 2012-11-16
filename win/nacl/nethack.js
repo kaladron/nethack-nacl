@@ -1080,6 +1080,21 @@ function tile_exit_nhwindows(msg) {
     // and offer a close/new game set of buttons.
 }
 
+function tile_create_nhwindow(msg) {
+    // msg[1]: type
+    // The type never seems to get used
+    win_array[win_num] = new DisplayWindow();
+    pm('' + win_num);
+    win_num++;
+}
+
+function tile_clear_nhwindow(msg) {
+    // 1: Window Number
+    if (msg[1] == NHWin.MAP) {
+      clearGlyphs();
+    }
+}
+
 // NaclMsg.INIT_NHWINDOWS
 tile_func_array[NaclMsg.ASKNAME] = tile_askname;
 tile_func_array[NaclMsg.PLAYER_SELECTION] = tile_player_selection;
@@ -1087,6 +1102,9 @@ tile_func_array[NaclMsg.PLAYER_SELECTION] = tile_player_selection;
 tile_func_array[NaclMsg.EXIT_NHWINDOWS] = tile_exit_nhwindows;
 // NaclMsg.SUSPEND_NHWINDOWS
 // NaclMsg.RESUME_NHWINDOWS
+tile_func_array[NaclMsg.CREATE_NHWINDOW] = tile_create_nhwindow;
+// NaclMsg.CREATE_NHWINDOW_BY_ID
+tile_func_array[NaclMsg.CLEAR_NHWINDOW] = tile_clear_nhwindow;
 
 var handleMessage = function(event) {
   // Make sure it's the right kind of event we got
@@ -1101,25 +1119,6 @@ var handleMessage = function(event) {
   }
 
   switch(msg[0]) {
-  case NaclMsg.CREATE_NHWINDOW: // 7
-    // msg[1]: type
-  //  switch(msg[1]) {
-  //  case NHWin.MENU:
-      win_array[win_num] = new DisplayWindow();
-  //    break;
-  //  }
-
-    pm('' + win_num);
-    win_num++;
-    break;
-  case NaclMsg.CREATE_NHWINDOW_BY_ID: // 8
-    throw "Not Implemented!";
-  case NaclMsg.CLEAR_NHWINDOW: // 9
-    // 1: Window Number
-    if (msg[1] == NHWin.MAP) {
-      clearGlyphs();
-    }
-    break;
   case NaclMsg.DISPLAY_NHWINDOW: // 10
     // msg[1]: winid
     // We'll handle root windows ourselves.
