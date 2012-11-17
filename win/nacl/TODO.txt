@@ -38,7 +38,6 @@
  * Properly escape HTML entities and reserved characters when emitting a file to the screen
  * Make modal windows draggable.
  * Add shortcuts to menu items
- * Bug report: no icon on confused and blind.
  * Do not let PICK_ONE screens proceed it one item hasn't been picked.
 
 -- Hacks to clean up later
