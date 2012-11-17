@@ -1400,7 +1400,7 @@ function statusHideShow(elementName, state) {
     element.classList.add('tile-hidden');
     break;
   case 1:
-    element.classLlist.remove('tile-hidden');
+    element.classList.remove('tile-hidden');
     break;
   }
 }
