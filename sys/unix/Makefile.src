@@ -506,7 +506,7 @@ objects.o:
 	@rm -f $(MAKEDEFS)
 
 nacl_module.o: ../win/nacl/nacl_module.cc
-	$(CXX) $(CFLAGS) -c $<
+	$(CXX) $(CFLAGS) $(DEBUG) -c $<
 
 naclimpl.o: ../win/nacl/naclimpl.cc
 	$(CXX) $(CFLAGS) -c $<
