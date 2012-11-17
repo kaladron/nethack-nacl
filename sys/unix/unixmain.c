@@ -325,6 +325,11 @@ char *argv[];
 		case 'D':
 #ifdef WIZARD
 			{
+#ifdef __native_client__
+                          // We don't have password files, etc.
+                          wizard = TRUE;
+                          break;
+#endif
 			  char *user;
 			  int uid;
 			  struct passwd *pw = (struct passwd *)0;
