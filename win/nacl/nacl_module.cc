@@ -121,8 +121,14 @@ class NethackInstance : public pp::Instance {
 
     simple_tar_extract_to("/" TARFILE, "/nethack");
 
-    const char *argv[] = {"nethack"};
-    nethack_main(1, const_cast<char **>(argv));
+    const char *argv[] = {"nethack"
+#ifdef DEBUG
+      ,"-D"
+#endif
+    };
+    size_t argc = (sizeof(argv)/sizeof(char *));
+    
+    nethack_main(argc, const_cast<char **>(argv));
   }
 
   virtual bool Init(uint32_t argc, const char* argn[], const char* argv[]) {
