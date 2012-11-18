@@ -516,37 +516,81 @@ DisplayWindow.prototype.rowSelect = function(element, method) {
 };
 
 var ChoiceWindow = function(content, options, def) {
+  this.options = options;
+  this.def = def;
+
   this.win = document.createElement('x-modal');
   this.win.className = 'tile-dialog';
+  this.win.addEventListener('keypress', this.keyPress.bind(this));
+  this.win.addEventListener('keydown', this.keyDown.bind(this));
 
   var caption = document.createElement('div');
   caption.textContent = content;
   this.win.appendChild(caption);
 
-  var cancelButton = document.createElement('button');
-  cancelButton.textContent = 'Cancel';
-  cancelButton.style.float = 'right';
+  this.cancelButton = document.createElement('button');
+  this.cancelButton.textContent = 'Cancel';
+  this.cancelButton.style.float = 'right';
 
-  this.focus = cancelButton;
+  if (options.indexOf('q') != -1) {
+    this.cancelButton.dataset.action = L('q');
+  } else if (options.indexOf('n') != -1) {
+    this.cancelButton.dataset.action = L('n');
+  } else {
+    this.cancelButton.dataset.action == def;
+  }
+
+  if (this.cancelButton.dataset.action != undefined) {
+    this.cancelButton.addEventListener('click', this.buttonAction.bind(this));
+    this.focus = this.cancelButton;
+  }
 
   for (var i = 0; i < options.length; i++) {
     var button = document.createElement('button');
     button.textContent = options[i];
+    button.dataset.action = options.charCodeAt(i);
+    button.addEventListener('click', this.buttonAction.bind(this));
     this.win.appendChild(button);
-    if (options.charCodeAt(i) == def) {
+    if (options.charCodeAt(i) == def || this.focus == undefined) {
       this.focus = button;
     }
   }
 
-  this.win.appendChild(cancelButton);
+  if (this.cancelButton.dataset.action != undefined) {
+    this.win.appendChild(this.cancelButton);
+  }
 
   this.overlay = document.createElement('x-overlay');
+};
+
+ChoiceWindow.prototype.buttonAction = function(evt) {
+  pm(evt.target.dataset.action);
+  this.close();
+};
+
+ChoiceWindow.prototype.close = function() {
+  document.body.removeChild(this.win);
+  document.body.removeChild(this.overlay);
 };
 
 ChoiceWindow.prototype.display = function(block) {
   document.body.appendChild(this.win);
   document.body.appendChild(this.overlay);
   this.focus.focus();
+};
+
+ChoiceWindow.prototype.keyDown = function(evt) {
+  if (evt.which == 27) {
+    pm(this.cancelButton.dataset.action);
+    this.close();
+  }
+};
+
+ChoiceWindow.prototype.keyPress = function(evt) {
+  if (this.options.indexOf(String.fromCharCode(evt.which)) != -1) {
+    pm(evt.which);
+    this.close();
+  }
 };
 
 /**
@@ -1290,13 +1334,20 @@ var handleMessage = function(event) {
      *          -- This uses the top line in the tty window-port, other
      *             ports might use a popup.
      */
-    //TODO(jeffbailey): Validate the input here
-    var choiceWindow = new ChoiceWindow(msg[1], msg[2], msg[3]);
-    choiceWindow.display();
-    //plineput(msg[1]);
-    //awaitingInput = true;
-    //processInput();
-    //gameScreen.focus();
+    // TODO(jeffbailey): handle these cases, but it's no worse than it was
+    // before this way.
+    if (msg[2] != ""
+        || msg[2].indexOf('\x1b') != -1
+        || msg[2].indexOf('#') != -1) {
+      var choiceWindow = new ChoiceWindow(msg[1], msg[2], msg[3]);
+      choiceWindow.display();
+    } else {
+      //TODO(jeffbailey): Validate the input here
+      plineput(msg[1]);
+      awaitingInput = true;
+      processInput();
+      gameScreen.focus();
+    }
     break;
   case NaclMsg.GETLIN: // 32
     var getlineWin = new InputWindow(msg[1], pm);
