@@ -515,6 +515,40 @@ DisplayWindow.prototype.rowSelect = function(element, method) {
   element.classList.add('tile-menutable-selected');
 };
 
+var ChoiceWindow = function(content, options, def) {
+  this.win = document.createElement('x-modal');
+  this.win.className = 'tile-dialog';
+
+  var caption = document.createElement('div');
+  caption.textContent = content;
+  this.win.appendChild(caption);
+
+  var cancelButton = document.createElement('button');
+  cancelButton.textContent = 'Cancel';
+  cancelButton.style.float = 'right';
+
+  this.focus = cancelButton;
+
+  for (var i = 0; i < options.length; i++) {
+    var button = document.createElement('button');
+    button.textContent = options[i];
+    this.win.appendChild(button);
+    if (options.charCodeAt(i) == def) {
+      this.focus = button;
+    }
+  }
+
+  this.win.appendChild(cancelButton);
+
+  this.overlay = document.createElement('x-overlay');
+};
+
+ChoiceWindow.prototype.display = function(block) {
+  document.body.appendChild(this.win);
+  document.body.appendChild(this.overlay);
+  this.focus.focus();
+};
+
 /**
  * displayCancel is optional.
  */
@@ -1238,11 +1272,31 @@ var handleMessage = function(event) {
     gameScreen.focus();
     break;
   case NaclMsg.YN_FUNCTION: // 31
+    // 1: text 2: choices "yn" 3: ascii value of default choice
+    /*          -- Print a prompt made up of ques, choices and default.
+     *             Read a single character response that is contained in
+     *             choices or default.  If choices is NULL, all possible
+     *             inputs are accepted and returned.  This overrides
+     *             everything else.  The choices are expected to be in
+     *             lower case.  Entering ESC always maps to 'q', or 'n',
+     *             in that order, if present in choices, otherwise it maps
+     *             to default.  Entering any other quit character (SPACE,
+     *             RETURN, NEWLINE) maps to default.
+     *          -- If the choices string contains ESC, then anything after
+     *             it is an acceptable response, but the ESC and whatever
+     *             follows is not included in the prompt.
+     *          -- If the choices string contains a '#' then accept a count.
+     *             Place this value in the global "yn_number" and return '#'.
+     *          -- This uses the top line in the tty window-port, other
+     *             ports might use a popup.
+     */
     //TODO(jeffbailey): Validate the input here
-    plineput(msg[1]);
-    awaitingInput = true;
-    processInput();
-    gameScreen.focus();
+    var choiceWindow = new ChoiceWindow(msg[1], msg[2], msg[3]);
+    choiceWindow.display();
+    //plineput(msg[1]);
+    //awaitingInput = true;
+    //processInput();
+    //gameScreen.focus();
     break;
   case NaclMsg.GETLIN: // 32
     var getlineWin = new InputWindow(msg[1], pm);
