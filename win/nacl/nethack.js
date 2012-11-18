@@ -1095,6 +1095,30 @@ function tile_clear_nhwindow(msg) {
     }
 }
 
+function tile_display_nhwindow(msg) {
+  // msg[1]: winid
+  // We'll handle root windows ourselves.
+  if (msg[1] < 4) {
+    if (msg[2] == '1') {
+      pm('ACK');
+    }
+    if (msg[1] == NHWin.MAP) {
+      displayMap();
+      unboldStatus();
+    }
+    return;
+  }
+  win_array[msg[1]].display(msg[2]);
+}
+
+function tile_destroy_nhwindow(msg) {
+  // This shouldn't close it for non-modal windows.  Instead
+  // we'll let all the windows close themselves and leave the windows
+  // to decide if they lock down the interface for other interaction
+  // or not.
+  win_array[msg[1]] = null;
+}
+
 // NaclMsg.INIT_NHWINDOWS
 tile_func_array[NaclMsg.ASKNAME] = tile_askname;
 tile_func_array[NaclMsg.PLAYER_SELECTION] = tile_player_selection;
@@ -1105,6 +1129,8 @@ tile_func_array[NaclMsg.EXIT_NHWINDOWS] = tile_exit_nhwindows;
 tile_func_array[NaclMsg.CREATE_NHWINDOW] = tile_create_nhwindow;
 // NaclMsg.CREATE_NHWINDOW_BY_ID
 tile_func_array[NaclMsg.CLEAR_NHWINDOW] = tile_clear_nhwindow;
+tile_func_array[NaclMsg.DISPLAY_NHWINDOW] = tile_display_nhwindow;
+tile_func_array[NaclMsg.DESTROY_NHWINDOW] = tile_destroy_nhwindow;
 
 var handleMessage = function(event) {
   // Make sure it's the right kind of event we got
@@ -1119,28 +1145,6 @@ var handleMessage = function(event) {
   }
 
   switch(msg[0]) {
-  case NaclMsg.DISPLAY_NHWINDOW: // 10
-    // msg[1]: winid
-    // We'll handle root windows ourselves.
-    if (msg[1] < 4) {
-      if (msg[2] == '1') {
-        pm('ACK');
-      }
-      if (msg[1] == NHWin.MAP) {
-        displayMap();
-        unboldStatus();
-      }
-      break;
-    }
-    win_array[msg[1]].display(msg[2]);
-    break;
-  case NaclMsg.DESTROY_NHWINDOW: // 11
-    // This shouldn't close it for non-modal windows.  Instead
-    // we'll let all the windows close themselves and leave the windows
-    // to decide if they lock down the interface for other interaction
-    // or not.
-    win_array[msg[1]] = null;
-    break;
   case NaclMsg.CURS: // 12
     // Window, X, Y
     saveCurs(msg[2], msg[3]);
