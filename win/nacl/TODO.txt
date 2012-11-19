@@ -39,6 +39,7 @@
  * Make modal windows draggable.
  * Add shortcuts to menu items
  * Do not let PICK_ONE screens proceed it one item hasn't been picked.
+ * GETLIN needs to scroll if text is longer than the input box.
 
 -- Hacks to clean up later
 
