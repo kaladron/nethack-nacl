@@ -40,6 +40,9 @@
  * Add shortcuts to menu items
  * Do not let PICK_ONE screens proceed it one item hasn't been picked.
  * GETLIN needs to scroll if text is longer than the input box.
+ * Multi-drop window that takes up more than one page scrolls to the bottom
+   on focusing the OK button.  Have it start at the top.
+ * In the multi-drop window, hitting a letter from the keyboard should cause a scroll so that the toggling is visible.
 
 -- Hacks to clean up later
 
