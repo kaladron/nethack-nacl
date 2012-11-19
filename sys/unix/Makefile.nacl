@@ -40,6 +40,9 @@ $(GAME):
 	$(MAKE) -C obj32 NACL_PACKAGES_BITSIZE=32
 	$(MAKE) -C obj64 NACL_PACKAGES_BITSIZE=64
 
+debug:
+	$(MAKE) DEBUG=-DDEBUG all
+
 all:	$(GAME) $(VARDAT) dungeon spec_levs check-dlb extension
 	@echo "Done."
 
