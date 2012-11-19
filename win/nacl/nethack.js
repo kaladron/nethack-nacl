@@ -1197,61 +1197,42 @@ function tile_destroy_nhwindow(msg) {
   win_array[msg[1]] = null;
 }
 
-// NaclMsg.INIT_NHWINDOWS
-tile_func_array[NaclMsg.ASKNAME] = tile_askname;
-tile_func_array[NaclMsg.PLAYER_SELECTION] = tile_player_selection;
-// NaclMsg.GET_NH_EVENT
-tile_func_array[NaclMsg.EXIT_NHWINDOWS] = tile_exit_nhwindows;
-// NaclMsg.SUSPEND_NHWINDOWS
-// NaclMsg.RESUME_NHWINDOWS
-tile_func_array[NaclMsg.CREATE_NHWINDOW] = tile_create_nhwindow;
-// NaclMsg.CREATE_NHWINDOW_BY_ID
-tile_func_array[NaclMsg.CLEAR_NHWINDOW] = tile_clear_nhwindow;
-tile_func_array[NaclMsg.DISPLAY_NHWINDOW] = tile_display_nhwindow;
-tile_func_array[NaclMsg.DESTROY_NHWINDOW] = tile_destroy_nhwindow;
-
-var handleMessage = function(event) {
-  // Make sure it's the right kind of event we got
-  // Check to make sure it starts with PREFIX
-  console.log(event.data.substr(PREFIX.length));
-  var msg = JSON.parse(event.data.substr(PREFIX.length));
-
-  // A port is welcome to just leave anything they don't want to handle
-  // as undefined.
-  if (tile_func_array[msg[0]]) {
-    tile_func_array[msg[0]](msg);
-  }
-
-  switch(msg[0]) {
-  case NaclMsg.CURS: // 12
+function tile_curs(msg) {
     // Window, X, Y
     saveCurs(msg[2], msg[3]);
-    break;
-  case NaclMsg.PUTSTR: // 13
+}
+
+function tile_putstr(msg) {
     win_array[msg[1]].putStr(msg[3]);
-    break;
-  case NaclMsg.DISPLAY_FILE: // 14
+}
+
+function tile_display_file(msg) {
     var fileWin = new FileWindow(msg[1]);
     fileWin.display();
-    break;
-  case NaclMsg.START_MENU: // 15
+}
+
+function tile_start_menu(msg) {
     // 1: Window Number
     win_array[msg[1]] = new DisplayWindow();
-    break;
-  case NaclMsg.ADD_MENU: // 16
+}
+
+function tile_add_menu(msg) {
     // 1: Window Number, 2: tile, 3: identifier, 4: accelerator
     // 5: group accel, 6: attribute, 7: string, 8: presel
     win_array[msg[1]].addMenu(msg);
-    break;
-  case NaclMsg.END_MENU: // 17
+}
+
+function tile_end_menu(msg) {
     // 1: Window ID, 2: Prompt
     win_array[msg[1]].setPrompt(msg[2]);
-    break;
-  case NaclMsg.SELECT_MENU: // 18
+}
+
+function tile_select_menu(msg) {
     // 1: Window, 2: How
     win_array[msg[1]].selectMenu(msg[2]);
-    break;
-  case NaclMsg.UPDATE_INVENTORY: // 19
+}
+
+function tile_update_inventory(msg) {
     // Body Armor: 25, 63
     // Cloak: 100, 63
     // Helmet: 62, 11
@@ -1284,17 +1265,46 @@ var handleMessage = function(event) {
     putInventoryTile(6, 91, msg[13]);
     putInventoryTile(117, 11, msg[14]);
     putInventoryTile(8, 11, msg[15]);
-    break;
-  case NaclMsg.MARK_SYNCH: // 20
-    // All items in the UI are synchronous.
-    break;
-  case NaclMsg.WAIT_SYNCH: // 21
-    // All items in the UI are synchronous.
-    break;
-  case NaclMsg.CLIPAROUND: // 22
-    throw "Not Implemented!";
-  case NaclMsg.CLIPAROUND_PROPER: // 23
-    throw "Not Implemented!";
+}
+
+// NaclMsg.INIT_NHWINDOWS
+tile_func_array[NaclMsg.ASKNAME] = tile_askname;
+tile_func_array[NaclMsg.PLAYER_SELECTION] = tile_player_selection;
+// NaclMsg.GET_NH_EVENT
+tile_func_array[NaclMsg.EXIT_NHWINDOWS] = tile_exit_nhwindows;
+// NaclMsg.SUSPEND_NHWINDOWS
+// NaclMsg.RESUME_NHWINDOWS
+tile_func_array[NaclMsg.CREATE_NHWINDOW] = tile_create_nhwindow;
+// NaclMsg.CREATE_NHWINDOW_BY_ID
+tile_func_array[NaclMsg.CLEAR_NHWINDOW] = tile_clear_nhwindow;
+tile_func_array[NaclMsg.DISPLAY_NHWINDOW] = tile_display_nhwindow;
+tile_func_array[NaclMsg.DESTROY_NHWINDOW] = tile_destroy_nhwindow;
+tile_func_array[NaclMsg.CURS] = tile_curs;
+tile_func_array[NaclMsg.PUTSTR] = tile_putstr;
+tile_func_array[NaclMsg.DISPLAY_FILE] = tile_display_file;
+tile_func_array[NaclMsg.START_MENU] = tile_start_menu;
+tile_func_array[NaclMsg.ADD_MENU] = tile_add_menu;
+tile_func_array[NaclMsg.END_MENU] = tile_end_menu;
+tile_func_array[NaclMsg.SELECT_MENU] = tile_select_menu;
+tile_func_array[NaclMsg.UPDATE_INVENTORY] = tile_update_inventory;
+// NaclMsg.MARK_SYNCH
+// NaclMsg.WAIT_SYNCH
+// NaclMsg.CLIPAROUND
+// NaclMsg.CLIPAROUND_PROPER
+
+var handleMessage = function(event) {
+  // Make sure it's the right kind of event we got
+  // Check to make sure it starts with PREFIX
+  console.log(event.data.substr(PREFIX.length));
+  var msg = JSON.parse(event.data.substr(PREFIX.length));
+
+  // A port is welcome to just leave anything they don't want to handle
+  // as undefined.
+  if (tile_func_array[msg[0]]) {
+    tile_func_array[msg[0]](msg);
+  }
+
+  switch(msg[0]) {
   case NaclMsg.PRINT_GLYPH: // 24
     saveGlyph(msg[2], msg[3], msg[4], msg[5]);
     break;
