@@ -666,6 +666,9 @@ var ExtCmdWindow = function(msg) {
   caption.textContent = "Extended Commands";
   this.win.appendChild(caption);
 
+  this.filterText = "";
+  this.buttons = new Array();
+
   // Start at 1 to skip the message name
   for (var i = 1; i < msg.length; i++) {
     var div = document.createElement('div');
@@ -676,6 +679,7 @@ var ExtCmdWindow = function(msg) {
     // Keep this last because of the increment
     button.title = msg[++i];
     button.className = 'tile-extcmdbutton';
+    this.buttons.push(button);
     div.appendChild(button);
     this.win.appendChild(div);
   }
@@ -684,6 +688,7 @@ var ExtCmdWindow = function(msg) {
   this.cancelButton.textContent = 'Cancel';
   this.cancelButton.addEventListener('click', this.cancelButtonAction.bind(this));
   this.win.appendChild(this.cancelButton);
+  this.win.addEventListener('keypress', this.filterKeypressAction.bind(this));
   this.overlay = document.createElement('x-overlay');
 };
 
@@ -702,6 +707,38 @@ ExtCmdWindow.prototype.cancelButtonAction = function() {
   pm('-1');
   this.close();
 };
+
+ExtCmdWindow.prototype.filterKeypressAction = function(evt) {
+  var c = String.fromCharCode(evt.which);
+  if (c < 'A' || c > 'z' || c > 'Z' && c < 'a')
+    return;
+
+  this.filterText += c;
+  var filter = this.filterText.toLowerCase();
+
+  // Filter out buttons by letters being typed.
+  var numVisible = 0;
+  var lastVisible;
+  for (var i = 0; i < this.buttons.length; ++i) {
+    var button = this.buttons[i]
+    if (button.textContent.substr(0, filter.length).toLowerCase() != filter) {
+      button.style.display = "None";
+      continue;
+    }
+    numVisible += 1;
+    lastVisible = button;
+  }
+
+  if (numVisible == 0) {
+    this.cancelButtonAction();
+  }
+
+  if (numVisible != 1)
+    return;
+
+  pm(lastVisible.dataset.index);
+  this.close();
+}
 
 ExtCmdWindow.prototype.close = function() {
   document.body.removeChild(this.win);
