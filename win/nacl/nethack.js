@@ -1317,6 +1317,49 @@ function tile_yn_function(msg) {
   }
 }
 
+function tile_getlin(msg) {
+  var getlineWin = new InputWindow(msg[1], pm);
+  getlineWin.display();
+}
+
+function tile_get_ext_cmd(msg) {
+  var extCmdWin = new ExtCmdWindow(msg);
+  extCmdWin.display();
+}
+
+function tile_update_stats(msg) {
+  setStatus('plname', msg[1]);
+  setStatus('rank', msg[2]);
+  setStatus('dnamelvl', msg[3]);
+  setStatus('str', msg[5]);
+  setStatus('dex', msg[6]);
+  setStatus('con', msg[7]);
+  setStatus('int', msg[8]);
+  setStatus('wis', msg[9]);
+  setStatus('cha', msg[10]);
+  hp = msg[11];
+  setStatus('hp', msg[11]);
+  maxhp = msg[12];
+  setStatus('maxhp', msg[12]);
+  setStatus('ac', msg[13]);
+  setStatus('power', msg[14]);
+  setStatus('maxpower', msg[15]);
+  setStatus('gold', msg[16]);
+  setStatus('level', msg[17]);
+  setStatus('xp', msg[18]);
+  // Time changes too often to be bolded.
+  document.getElementById('time').textContent = msg[19];
+  setAlignment(msg[20]);
+  setHunger(msg[21], msg[22]);
+  setConfusion(msg[23]);
+  setBlind(msg[24]);
+  setStunned(msg[25]);
+  setHallucination(msg[26]);
+  setSick(msg[27], msg[28]);
+  setEncumbered(msg[29], msg[30]);
+  firstTime = false;
+}
+
 // NaclMsg.INIT_NHWINDOWS
 tile_func_array[NaclMsg.ASKNAME] = tile_askname;
 tile_func_array[NaclMsg.PLAYER_SELECTION] = tile_player_selection;
@@ -1347,6 +1390,15 @@ tile_func_array[NaclMsg.RAW_PRINT_BOLD] = tile_raw_print; // TODO(jeffbailey)
 tile_func_array[NaclMsg.NHGETCH] = tile_nhgetch;
 tile_func_array[NaclMsg.NH_POSKEY] = tile_nhgetch; // TODO(jeffbailey)
 tile_func_array[NaclMsg.YN_FUNCTION] = tile_yn_function;
+tile_func_array[NaclMsg.GETLIN] = tile_getlin;
+tile_func_array[NaclMsg.GET_EXT_CMD] = tile_get_ext_cmd;
+// NaclMsg.NUMBER_PAD
+// NaclMsg.DELAY_OUTPUT
+// NaclMsg.START_SCREEN
+// NaclMsg.END_SCREEN
+// NaclMsg.OUTRIP
+// NaclMsg.DELETE_NHWINDOW_BY_REFERENCE
+tile_func_array[NaclMsg.UPDATE_STATS] = tile_update_stats;
 
 var handleMessage = function(event) {
   // Make sure it's the right kind of event we got
@@ -1358,61 +1410,6 @@ var handleMessage = function(event) {
   // as undefined.
   if (tile_func_array[msg[0]]) {
     tile_func_array[msg[0]](msg);
-  }
-
-  switch(msg[0]) {
-  case NaclMsg.GETLIN: // 32
-    var getlineWin = new InputWindow(msg[1], pm);
-    getlineWin.display();
-    break;
-  case NaclMsg.GET_EXT_CMD: // 33
-    var extCmdWin = new ExtCmdWindow(msg);
-    extCmdWin.display();
-    break;
-  case NaclMsg.NUMBER_PAD: // 34
-    throw "Not Implemented!";
-  case NaclMsg.DELAY_OUTPUT: // 35
-    throw "Not Implemented!";
-  case NaclMsg.START_SCREEN: // 36
-    throw "Not Implemented!";
-  case NaclMsg.END_SCREEN: // 37
-    throw "Not Implemented!";
-  case NaclMsg.OUTRIP: // 38
-    throw "Not Implemented!";
-  case NaclMsg.DELETE_NHWINDOW_BY_REFERENCE: // 39
-    throw "Not Implemented!";
-  case NaclMsg.UPDATE_STATS: // 40
-    setStatus('plname', msg[1]);
-    setStatus('rank', msg[2]);
-    setStatus('dnamelvl', msg[3]);
-    setStatus('str', msg[5]);
-    setStatus('dex', msg[6]);
-    setStatus('con', msg[7]);
-    setStatus('int', msg[8]);
-    setStatus('wis', msg[9]);
-    setStatus('cha', msg[10]);
-    hp = msg[11];
-    setStatus('hp', msg[11]);
-    maxhp = msg[12];
-    setStatus('maxhp', msg[12]);
-    setStatus('ac', msg[13]);
-    setStatus('power', msg[14]);
-    setStatus('maxpower', msg[15]);
-    setStatus('gold', msg[16]);
-    setStatus('level', msg[17]);
-    setStatus('xp', msg[18]);
-    // Time changes too often to be bolded.
-    document.getElementById('time').textContent = msg[19];
-    setAlignment(msg[20]);
-    setHunger(msg[21], msg[22]);
-    setConfusion(msg[23]);
-    setBlind(msg[24]);
-    setStunned(msg[25]);
-    setHallucination(msg[26]);
-    setSick(msg[27], msg[28]);
-    setEncumbered(msg[29], msg[30]);
-    firstTime = false;
-    break;
   }
 }
 
