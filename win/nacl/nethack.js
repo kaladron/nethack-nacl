@@ -1198,73 +1198,123 @@ function tile_destroy_nhwindow(msg) {
 }
 
 function tile_curs(msg) {
-    // Window, X, Y
-    saveCurs(msg[2], msg[3]);
+  // Window, X, Y
+  saveCurs(msg[2], msg[3]);
 }
 
 function tile_putstr(msg) {
-    win_array[msg[1]].putStr(msg[3]);
+  win_array[msg[1]].putStr(msg[3]);
 }
 
 function tile_display_file(msg) {
-    var fileWin = new FileWindow(msg[1]);
-    fileWin.display();
+  var fileWin = new FileWindow(msg[1]);
+  fileWin.display();
 }
 
 function tile_start_menu(msg) {
-    // 1: Window Number
-    win_array[msg[1]] = new DisplayWindow();
+  // 1: Window Number
+  win_array[msg[1]] = new DisplayWindow();
 }
 
 function tile_add_menu(msg) {
-    // 1: Window Number, 2: tile, 3: identifier, 4: accelerator
-    // 5: group accel, 6: attribute, 7: string, 8: presel
-    win_array[msg[1]].addMenu(msg);
+  // 1: Window Number, 2: tile, 3: identifier, 4: accelerator
+  // 5: group accel, 6: attribute, 7: string, 8: presel
+  win_array[msg[1]].addMenu(msg);
 }
 
 function tile_end_menu(msg) {
-    // 1: Window ID, 2: Prompt
-    win_array[msg[1]].setPrompt(msg[2]);
+  // 1: Window ID, 2: Prompt
+  win_array[msg[1]].setPrompt(msg[2]);
 }
 
 function tile_select_menu(msg) {
-    // 1: Window, 2: How
-    win_array[msg[1]].selectMenu(msg[2]);
+  // 1: Window, 2: How
+  win_array[msg[1]].selectMenu(msg[2]);
 }
 
 function tile_update_inventory(msg) {
-    // Body Armor: 25, 63
-    // Cloak: 100, 63
-    // Helmet: 62, 11
-    // Shield: 120, 91 
-    // Gloves, 6, 142
-    // Footwear, 110, 188
-    // Undershirt, 120, 142
-    // Amulet: 89, 38 
-    // Lt. Ring: 120, 111
-    // Rt. Ring: 6, 111
-    // Blindfold: 25, 38
-    // Weapon: 6, 91
-    // Swap Weapon: 117, 11 
-    // Quiver: 8, 11
-    // Skin: 10, 110
-    // Not in the worn struct:
-    inventoryCtx.clearRect(0, 0, 141, 212);
-    putInventoryTile(25, 63, msg[1]);
-    putInventoryTile(100, 63, msg[2]);
-    putInventoryTile(62, 11, msg[3]);
-    putInventoryTile(120, 91, msg[4]);
-    putInventoryTile(6, 142, msg[5]);
-    putInventoryTile(110, 188, msg[6]);
-    putInventoryTile(120, 142, msg[7]);
-    putInventoryTile(10, 110, msg[8]); // Maybe wrong
-    putInventoryTile(89, 38, msg[9]);
-    putInventoryTile(120, 111, msg[10]);
-    putInventoryTile(6, 111, msg[11]);
-    putInventoryTile(25, 38, msg[12]);
-    putInventoryTile(6, 91, msg[13]);
-    putInventoryTile(117, 11, msg[14]);
-    putInventoryTile(8, 11, msg[15]);
+  // Body Armor: 25, 63
+  // Cloak: 100, 63
+  // Helmet: 62, 11
+  // Shield: 120, 91 
+  // Gloves, 6, 142
+  // Footwear, 110, 188
+  // Undershirt, 120, 142
+  // Amulet: 89, 38 
+  // Lt. Ring: 120, 111
+  // Rt. Ring: 6, 111
+  // Blindfold: 25, 38
+  // Weapon: 6, 91
+  // Swap Weapon: 117, 11 
+  // Quiver: 8, 11
+  // Skin: 10, 110
+  // Not in the worn struct:
+  inventoryCtx.clearRect(0, 0, 141, 212);
+  putInventoryTile(25, 63, msg[1]);
+  putInventoryTile(100, 63, msg[2]);
+  putInventoryTile(62, 11, msg[3]);
+  putInventoryTile(120, 91, msg[4]);
+  putInventoryTile(6, 142, msg[5]);
+  putInventoryTile(110, 188, msg[6]);
+  putInventoryTile(120, 142, msg[7]);
+  putInventoryTile(10, 110, msg[8]); // Maybe wrong
+  putInventoryTile(89, 38, msg[9]);
+  putInventoryTile(120, 111, msg[10]);
+  putInventoryTile(6, 111, msg[11]);
+  putInventoryTile(25, 38, msg[12]);
+  putInventoryTile(6, 91, msg[13]);
+  putInventoryTile(117, 11, msg[14]);
+  putInventoryTile(8, 11, msg[15]);
+}
+
+function tile_print_glyph(msg) {
+  saveGlyph(msg[2], msg[3], msg[4], msg[5]);
+}
+
+function tile_raw_print(msg) {
+  plineput(msg[1]);
+  pm('ack');
+}
+
+function tile_nhgetch(msg) {
+  awaitingInput = true;
+  processInput();
+  gameScreen.focus();
+}
+
+function tile_yn_function(msg) {
+  // 1: text 2: choices "yn" 3: ascii value of default choice
+  /*          -- Print a prompt made up of ques, choices and default.
+   *             Read a single character response that is contained in
+   *             choices or default.  If choices is NULL, all possible
+   *             inputs are accepted and returned.  This overrides
+   *             everything else.  The choices are expected to be in
+   *             lower case.  Entering ESC always maps to 'q', or 'n',
+   *             in that order, if present in choices, otherwise it maps
+   *             to default.  Entering any other quit character (SPACE,
+   *             RETURN, NEWLINE) maps to default.
+   *          -- If the choices string contains ESC, then anything after
+   *             it is an acceptable response, but the ESC and whatever
+   *             follows is not included in the prompt.
+   *          -- If the choices string contains a '#' then accept a count.
+   *             Place this value in the global "yn_number" and return '#'.
+   *          -- This uses the top line in the tty window-port, other
+   *             ports might use a popup.
+   */
+  // TODO(jeffbailey): handle these cases, but it's no worse than it was
+  // before this way.
+  if (msg[2] != ""
+      || msg[2].indexOf('\x1b') != -1
+      || msg[2].indexOf('#') != -1) {
+    var choiceWindow = new ChoiceWindow(msg[1], msg[2], msg[3]);
+    choiceWindow.display();
+  } else {
+    //TODO(jeffbailey): Validate the input here
+    plineput(msg[1]);
+    awaitingInput = true;
+    processInput();
+    gameScreen.focus();
+  }
 }
 
 // NaclMsg.INIT_NHWINDOWS
@@ -1291,6 +1341,12 @@ tile_func_array[NaclMsg.UPDATE_INVENTORY] = tile_update_inventory;
 // NaclMsg.WAIT_SYNCH
 // NaclMsg.CLIPAROUND
 // NaclMsg.CLIPAROUND_PROPER
+tile_func_array[NaclMsg.PRINT_GLYPH] = tile_print_glyph;
+tile_func_array[NaclMsg.RAW_PRINT] = tile_raw_print;
+tile_func_array[NaclMsg.RAW_PRINT_BOLD] = tile_raw_print; // TODO(jeffbailey)
+tile_func_array[NaclMsg.NHGETCH] = tile_nhgetch;
+tile_func_array[NaclMsg.NH_POSKEY] = tile_nhgetch; // TODO(jeffbailey)
+tile_func_array[NaclMsg.YN_FUNCTION] = tile_yn_function;
 
 var handleMessage = function(event) {
   // Make sure it's the right kind of event we got
@@ -1305,60 +1361,6 @@ var handleMessage = function(event) {
   }
 
   switch(msg[0]) {
-  case NaclMsg.PRINT_GLYPH: // 24
-    saveGlyph(msg[2], msg[3], msg[4], msg[5]);
-    break;
-  case NaclMsg.RAW_PRINT: // 25
-    plineput(msg[1]);
-    pm('ack');
-    break;
-  case NaclMsg.PRINT_GLYPH: // 24
-    saveGlyph(msg[2], msg[3], msg[4], msg[5]);
-    break;
-  case NaclMsg.RAW_PRINT: // 25
-    plineput(msg[1]);
-    pm('ack');
-    break;
-  case NaclMsg.NHGETCH: // 27
-  case NaclMsg.NH_POSKEY: // 28
-    awaitingInput = true;
-    processInput();
-    gameScreen.focus();
-    break;
-  case NaclMsg.YN_FUNCTION: // 31
-    // 1: text 2: choices "yn" 3: ascii value of default choice
-    /*          -- Print a prompt made up of ques, choices and default.
-     *             Read a single character response that is contained in
-     *             choices or default.  If choices is NULL, all possible
-     *             inputs are accepted and returned.  This overrides
-     *             everything else.  The choices are expected to be in
-     *             lower case.  Entering ESC always maps to 'q', or 'n',
-     *             in that order, if present in choices, otherwise it maps
-     *             to default.  Entering any other quit character (SPACE,
-     *             RETURN, NEWLINE) maps to default.
-     *          -- If the choices string contains ESC, then anything after
-     *             it is an acceptable response, but the ESC and whatever
-     *             follows is not included in the prompt.
-     *          -- If the choices string contains a '#' then accept a count.
-     *             Place this value in the global "yn_number" and return '#'.
-     *          -- This uses the top line in the tty window-port, other
-     *             ports might use a popup.
-     */
-    // TODO(jeffbailey): handle these cases, but it's no worse than it was
-    // before this way.
-    if (msg[2] != ""
-        || msg[2].indexOf('\x1b') != -1
-        || msg[2].indexOf('#') != -1) {
-      var choiceWindow = new ChoiceWindow(msg[1], msg[2], msg[3]);
-      choiceWindow.display();
-    } else {
-      //TODO(jeffbailey): Validate the input here
-      plineput(msg[1]);
-      awaitingInput = true;
-      processInput();
-      gameScreen.focus();
-    }
-    break;
   case NaclMsg.GETLIN: // 32
     var getlineWin = new InputWindow(msg[1], pm);
     getlineWin.display();
