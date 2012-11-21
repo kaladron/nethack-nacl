@@ -2,7 +2,7 @@
  * Wire up menus
  * Cliparound
  * Options dialog for new tiles
- * Options dialog for .nethackrc contents
+ * Sync .nethackrc contents to cloud
  * TTY Game Over, give a game over screen with reload button
  * Navigation away from page shouldn't give a warning unless there's
    important game state.
