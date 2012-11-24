@@ -6,7 +6,6 @@
  * TTY Game Over, give a game over screen with reload button
  * Navigation away from page shouldn't give a warning unless there's
    important game state.
- * Keyboard accellerators on EXT_CMD window
  * menu boxes shouldn't scroll the heading and the buttons.
  * Arrows should go between items in a menu box, tab should go between
    buttons.
