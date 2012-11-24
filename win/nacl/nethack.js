@@ -201,6 +201,7 @@ var attributeCache = {};
 
 var FileWindow = function(file) {
   this.menu_win = document.createElement('x-modal');
+  this.menu_win.tabIndex = -1;
   this.menu_win.className = 'tile-dialog';
 
   var pre = document.createElement('pre');
@@ -258,6 +259,7 @@ FileWindow.prototype.close = function() {
  */
 var DisplayWindow = function() {
   this.menu_win = document.createElement('x-modal');
+  this.menu_win.tabIndex = -1;
   this.menu_win.className = 'tile-dialog';
 
   this.titleDiv = document.createElement('div');
@@ -520,6 +522,7 @@ var ChoiceWindow = function(content, options, def) {
   this.def = def;
 
   this.win = document.createElement('x-modal');
+  this.win.tabIndex = -1;
   this.win.className = 'tile-dialog';
   this.win.addEventListener('keypress', this.keyPress.bind(this));
   this.win.addEventListener('keydown', this.keyDown.bind(this));
@@ -601,6 +604,7 @@ var InputWindow = function(content, callback, displayCancel) {
 
   this.callback = callback;
   this.win = document.createElement('x-modal');
+  this.win.tabIndex = -1;
   this.win.className = 'tile-dialog';
   
   var caption = document.createElement('div');
@@ -660,6 +664,7 @@ InputWindow.prototype.close = function() {
 
 var ExtCmdWindow = function(msg) {
   this.win = document.createElement('x-modal');
+  this.win.tabIndex = -1;
   this.win.className = 'tile-dialog';
   
   var caption = document.createElement('div');
@@ -870,7 +875,7 @@ var startGame = function() {
   gameScreen = document.getElementById('tile-gamescreen');
   gameScreen.addEventListener('keydown', handleKeyDown);
   gameScreen.addEventListener('keypress', handleKeyPress);
-  gameScreen.tabIndex = 1;
+  gameScreen.tabIndex = -1;
 
   // Create the object for Nethack.
   nethackEmbed = document.createElement('object');
