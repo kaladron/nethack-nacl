@@ -7,8 +7,7 @@
  * Navigation away from page shouldn't give a warning unless there's
    important game state.
  * menu boxes shouldn't scroll the heading and the buttons.
- * Arrows should go between items in a menu box, tab should go between
-   buttons.
+ * Arrows should go between items in a menu box.
  * Focus on any element on the page that isn't otherwise wanting focus should
    put it back on the map.
  * Make it more obvious when a window is non-blocking.
