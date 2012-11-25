@@ -219,6 +219,7 @@ var FileWindow = function(file) {
   this.button.textContent = 'OK';
   this.button.addEventListener('click', this.okButtonAction.bind(this));
   this.menu_win.appendChild(this.button);
+  this.menu_win.addEventListener('modalhide', this.okButtonAction.bind(this));
 
   this.overlay = document.createElement('x-overlay');
 };
@@ -261,6 +262,7 @@ var DisplayWindow = function() {
   this.menu_win = document.createElement('x-modal');
   this.menu_win.tabIndex = -1;
   this.menu_win.className = 'tile-dialog';
+  this.menu_win.addEventListener('modalhide', this.handleEscapeKey.bind(this));
 
   this.titleDiv = document.createElement('div');
   this.menu_win.appendChild(this.titleDiv);
@@ -280,6 +282,7 @@ var DisplayWindow = function() {
   this.button.textContent = 'OK';
   this.button.addEventListener('click', this.okButton.bind(this));
   this.buttonBox.appendChild(this.button);
+  this.escapeKeyAction = this.okButton;
 
   this.block = false;
   this.overlay = document.createElement('x-overlay');
@@ -288,6 +291,10 @@ var DisplayWindow = function() {
   this.seenAccel = false;
 
   this.playerSelection = false;
+};
+
+DisplayWindow.prototype.handleEscapeKey = function() {
+  this.escapeKeyAction();
 };
 
 DisplayWindow.prototype.setPlayerSelection = function() {
@@ -299,6 +306,7 @@ DisplayWindow.prototype.displayRandomButton = function() {
   button.textContent = 'Random';
   button.addEventListener('click', this.handleRandomButton.bind(this));
   this.buttonBox.appendChild(button);
+  this.escapeKeyAction = this.handleRandomButton;
 };
 
 DisplayWindow.prototype.handleRandomButton = function() {
@@ -428,6 +436,9 @@ DisplayWindow.prototype.selectMenu = function(how) {
 
   if (how == PICK_NONE) return;
 
+  // Grey out OK button
+  this.button.disabled = true;
+
   if (this.seenAccel == false) {
     var rows = document.querySelectorAll('tr[data-identifier]');
     for (var i=0, accel = 97; i < rows.length; i++, accel++) {
@@ -439,6 +450,7 @@ DisplayWindow.prototype.selectMenu = function(how) {
     var button = document.createElement('button');
     button.textContent = 'Cancel';
     button.addEventListener('click', this.handleCancelButton.bind(this));
+    this.escapeKeyAction = this.handleCancelButton;
     this.buttonBox.appendChild(button);
   }
 
@@ -466,13 +478,19 @@ DisplayWindow.prototype.keyPress = function(evt) {
   if (evt.which == 44 && this.how == 2) {
     selector = 'tr[data-identifier]';
     method = ROWSELECT.select;
+    this.button.disabled = false;
   } else if (evt.which == 45 && this.how == 2) {
     selector = 'tr[data-identifier]';
     method = ROWSELECT.deselect;
+    this.button.disabled = false;
   } else {
     selector = 'tr[data-accelerator="' + evt.which + '"]';
     method = ROWSELECT.toggle;
+    this.button.disabled = false;
   }
+
+  // TODO(jeffbailey): when all the rows are deselected, the OK
+  // button should grey out again.
 
   var rows = document.querySelectorAll(selector);
 
@@ -545,7 +563,12 @@ var ChoiceWindow = function(content, options, def) {
 
   if (this.cancelButton.dataset.action != undefined) {
     this.cancelButton.addEventListener('click', this.buttonAction.bind(this));
+    this.win.addEventListener('modalhide', this.buttonAction.bind(this));
     this.focus = this.cancelButton;
+  } else {
+    // There's no default cancel, eat the escape key.
+    // TODO(jeffbailey): This doesn't work
+    this.win.addEventListener('modalhide', function(e) { e.preventDefault();});
   }
 
   for (var i = 0; i < options.length; i++) {
@@ -627,7 +650,11 @@ var InputWindow = function(content, callback, displayCancel) {
     cancelButton.type = 'button';
     cancelButton.textContent = 'Cancel';
     cancelButton.addEventListener('click', this.cancelButtonAction.bind(this));
+    this.win.addEventListener('modalhide', this.cancelButtonAction.bind(this));
     this.win.appendChild(cancelButton);
+  } else {
+    // TODO(jeffbailey): This doesn't work
+    this.win.addEventListener('modalhide', function(e) { e.preventDefault();});
   }
 
   this.overlay = document.createElement('x-overlay');
@@ -692,6 +719,7 @@ var ExtCmdWindow = function(msg) {
   this.cancelButton = document.createElement('button');
   this.cancelButton.textContent = 'Cancel';
   this.cancelButton.addEventListener('click', this.cancelButtonAction.bind(this));
+  this.win.addEventListener('modalhide', this.cancelButtonAction.bind(this));
   this.win.appendChild(this.cancelButton);
   this.win.addEventListener('keypress', this.filterKeypressAction.bind(this));
   this.overlay = document.createElement('x-overlay');
