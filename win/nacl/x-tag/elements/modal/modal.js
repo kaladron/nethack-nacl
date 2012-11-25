@@ -13,12 +13,11 @@
 		document.head.appendChild(meta);
 	}
 
-	//TODO(jeffbailey): Fix this correctly upstream.
-	//window.addEventListener('keyup', function(event){
-	//	if(event.keyCode == 27) xtag.query(document, 'x-modal').forEach(function(modal){
-	//		if (!modal.getAttribute('data-modal-hidden')) xtag.fireEvent(modal, 'modalhide');
-	//	});
-	//});
+	window.addEventListener('keyup', function(event){
+		if(event.keyCode == 27) xtag.query(document, 'x-modal').forEach(function(modal){
+			if (modal.getAttribute('hide') == null) xtag.fireEvent(modal, 'modalhide');
+		});
+	});
 
 	if (oldiOS || oldDroid) {
 		window.addEventListener('scroll', function(event){
@@ -41,7 +40,8 @@
 		},
 		events: {
 			'modalhide:preventable': function(){
-				this.setAttribute('data-modal-hidden', true);
+				//TODO(jeffbailey): More upstream work needed
+				//this.setAttribute('hide', '');
 			}
 		}
 	});

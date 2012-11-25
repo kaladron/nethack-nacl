@@ -18,7 +18,7 @@ x-modal {
 	-webkit-transform: translate(-50%, -50%);
 }
 
-x-modal[data-modal-hidden="true"]{
+x-modal[hide]{
 	display: none;
 }
 
