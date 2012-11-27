@@ -320,7 +320,25 @@ DisplayWindow.prototype.display = function(block) {
   if (block == 1) {
     this.block = true;
   }
+
+  if (!this.block) {
+    this.menu_win.style.webkitTransform = "inherit";
+    this.menu_win.style.left = "inherit";
+    this.menu_win.style.right = "50px";
+    this.menu_win.style.top = "5px";
+  }
+
+  this.menu_win.scrollTop = 0;
+  this.menu_win.scrollLeft = 0;
+  this.focusButton();
+};
+
+DisplayWindow.prototype.focusButton = function() {
+  var scrollTop = this.menu_win.scrollTop;
+  var scrollLeft = this.menu_win.scrollLeft;
   this.button.focus();
+  this.menu_win.scrollTop = scrollTop;
+  this.menu_win.scrollLeft = scrollLeft;
 };
 
 DisplayWindow.prototype.handleCancelButton = function() {
@@ -425,10 +443,11 @@ DisplayWindow.prototype.setPrompt = function(text) {
   this.titleDiv.appendChild(h1);
 };
 
+var PICK_NONE = 0;     /* user picks nothing (display only) */
+var PICK_ONE = 1;      /* only pick one */
+var PICK_ANY = 2;      /* can pick any amount */
+
 DisplayWindow.prototype.selectMenu = function(how) {
-  var PICK_NONE = 0;     /* user picks nothing (display only) */
-  var PICK_ONE = 1;      /* only pick one */
-  var PICK_ANY = 2;      /* can pick any amount */
   this.block = 1; // Ensure that response is sent.
   this.display(0);
 
@@ -475,18 +494,21 @@ DisplayWindow.prototype.keyPress = function(evt) {
 
   var selector;
   var method;
-  if (evt.which == 44 && this.how == 2) {
+  if (evt.which == 44 && this.how == PICK_ANY) {
     selector = 'tr[data-identifier]';
     method = ROWSELECT.select;
     this.button.disabled = false;
-  } else if (evt.which == 45 && this.how == 2) {
+    this.focusButton();
+  } else if (evt.which == 45 && this.how == PICK_ANY) {
     selector = 'tr[data-identifier]';
     method = ROWSELECT.deselect;
-    this.button.disabled = false;
+    this.button.disabled = true;
+    this.focusButton();
   } else {
     selector = 'tr[data-accelerator="' + evt.which + '"]';
     method = ROWSELECT.toggle;
     this.button.disabled = false;
+    this.focusButton();
   }
 
   // TODO(jeffbailey): when all the rows are deselected, the OK
@@ -500,13 +522,11 @@ DisplayWindow.prototype.keyPress = function(evt) {
 };
 
 DisplayWindow.prototype.handleSelect = function(evt) {
-  // TODO(jeffbailey): Allow enter key to work after selecting.
-  // Disabled because it causes a scroll on long windows.
-  //this.button.focus();
-
   if (evt.currentTarget.dataset.identifier == undefined) return;
 
   this.rowSelect(evt.currentTarget, ROWSELECT.toggle);
+  this.button.disabled = false;
+  this.focusButton();
 }
 
 DisplayWindow.prototype.rowSelect = function(element, method) {
