@@ -1603,13 +1603,13 @@ function setHunger(hunger, hungerText) {
 function statusHideShow(elementName, state) {
   var element = document.getElementById(elementName);
   boldStatus(elementName, state);
-  switch(state) {
-  case 0:
+  // TODO(jeffbailey): Confusion isn't just 1/0, which means that it
+  // may be leaking information to the UI about how long the confusion
+  // will last.  If that's true, the UI glue needs to mask that.
+  if (state == 0) {
     element.classList.add('tile-hidden');
-    break;
-  case 1:
+  } else {
     element.classList.remove('tile-hidden');
-    break;
   }
 }
 
