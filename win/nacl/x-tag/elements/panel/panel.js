@@ -5,7 +5,7 @@
 		mixins: ['request'],
 		onCreate: function(){
 			this.dataready = this.dataready || function(request){
-				this.innerHTML = request.responseText;
+				this.textContent = request.responseText;
 			}
 		}
 	});
