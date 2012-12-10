@@ -201,6 +201,7 @@ var attributeCache = {};
 
 var FileWindow = function(file) {
   this.menu_win = document.createElement('x-modal');
+  this.menu_win.setAttribute('esc-hide', 'true');
   this.menu_win.tabIndex = -1;
   this.menu_win.className = 'tile-dialog';
 
@@ -260,6 +261,7 @@ FileWindow.prototype.close = function() {
  */
 var DisplayWindow = function() {
   this.menu_win = document.createElement('x-modal');
+  this.menu_win.setAttribute('esc-hide', 'true');
   this.menu_win.tabIndex = -1;
   this.menu_win.className = 'tile-dialog';
   this.menu_win.addEventListener('modalhide', this.handleEscapeKey.bind(this));
@@ -560,6 +562,7 @@ var ChoiceWindow = function(content, options, def) {
   this.def = def;
 
   this.win = document.createElement('x-modal');
+  this.win.setAttribute('esc-hide', 'true');
   this.win.tabIndex = -1;
   this.win.className = 'tile-dialog';
   this.win.addEventListener('keypress', this.keyPress.bind(this));
@@ -587,8 +590,7 @@ var ChoiceWindow = function(content, options, def) {
     this.focus = this.cancelButton;
   } else {
     // There's no default cancel, eat the escape key.
-    // TODO(jeffbailey): This doesn't work
-    this.win.addEventListener('modalhide', function(e) { e.preventDefault();});
+    this.win.removeAttribute('esc-hide');
   }
 
   for (var i = 0; i < options.length; i++) {
@@ -647,6 +649,7 @@ var InputWindow = function(content, callback, displayCancel) {
 
   this.callback = callback;
   this.win = document.createElement('x-modal');
+  this.win.setAttribute('esc-hide', 'true');
   this.win.tabIndex = -1;
   this.win.className = 'tile-dialog';
   
@@ -673,8 +676,7 @@ var InputWindow = function(content, callback, displayCancel) {
     this.win.addEventListener('modalhide', this.cancelButtonAction.bind(this));
     this.win.appendChild(cancelButton);
   } else {
-    // TODO(jeffbailey): This doesn't work
-    this.win.addEventListener('modalhide', function(e) { e.preventDefault();});
+    this.win.removeAttribute('esc-hide');
   }
 
   this.overlay = document.createElement('x-overlay');
@@ -711,6 +713,7 @@ InputWindow.prototype.close = function() {
 
 var ExtCmdWindow = function(msg) {
   this.win = document.createElement('x-modal');
+  this.win.setAttribute('esc-hide', 'true');
   this.win.tabIndex = -1;
   this.win.className = 'tile-dialog';
   
