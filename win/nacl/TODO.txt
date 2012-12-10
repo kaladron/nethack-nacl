@@ -22,7 +22,6 @@
  * Make sure that explosions paint correctly.
  * Support options specifying fonts to use, colours, etc. per doc/window.doc
  * Implement exit_nhwindows to clear the screen and/or close the tab.
- * Modal Window Escape: Figure out how to prevent the default close.
  * Move keyboard handling to new-style http://www.w3.org/TR/2012/WD-DOM-Level-3-Events-20120614/#legacy-key-attributes
  * Support group accellerators in menu boxes.
  * Convert to Chrome Packaged App
@@ -33,3 +32,4 @@
  * Add shortcuts to menu items
  * GETLIN needs to scroll if text is longer than the input box.
  * In the multi-drop window, hitting a letter from the keyboard should cause a scroll so that the toggling is visible.
+ * Hitting space on a disabled button is causing the click action to fire.
