@@ -45,8 +45,8 @@
         Array.prototype.slice
         .call(styles)
         .join('')
-        .match(/moz|webkit|ms/) || (styles.OLink===''&&['o'])
-      )[0];
+        .match(/-(moz|webkit|ms)-/) || (styles.OLink==='' && ['','o'])
+      )[1];
 
     var dom = ('WebKit|Moz|MS|O')
         .match(new RegExp('(' + pre + ')', 'i'))[1];
@@ -119,6 +119,9 @@
     mutation: win.MutationObserver || 
       win.WebKitMutationObserver || 
       win.MozMutationObserver,
+    _matchSelector: document.documentElement.matchesSelector ||
+      document.documentElement.mozMatchesSelector ||
+      document.documentElement.webkitMatchesSelector,
     tagOptions: {
       content: '',
       mixins: [],
@@ -307,6 +310,17 @@
     toggleClass: function(element, className){
       return !xtag.hasClass(element, className) ? 
         xtag.addClass(element,className) : xtag.removeClass(element, className);
+    },
+
+    /**
+    * matchSelector helper
+    *
+    * @param {element} element The element to test.
+    * @param {string} selector The CSS selector to use for the test.
+    * @return {boolean}
+    */
+    matchSelector: function(element, selector){
+      return xtag._matchSelector.call(element, selector);
     },
     
     /**
@@ -518,10 +532,10 @@
       var action = fn, onAdd = {};
       if (key.match(':')){
 
-        var split = key.split(':');
+        var split = key.match(/(\w+(?:\([^\)]+\))?)/g);
         for (var i = split.length - 1; i > 0; i--) {
 
-          split[i].replace(/(\w*)(?:\(([^\)]*)\))?/, function(match, name, value){
+          split[i].replace(/(\w*)(?:\(([^\)]*)\))?/, function(match, name, value){            
             var lastPseudo = action,
             pseudo = xtag.pseudos[name],
             split = {
@@ -529,10 +543,10 @@
               name: name,
               value: value
             };
-
+            if (!pseudo) throw "pseudo not found: " + name;
             if (pseudo.onAdd) onAdd[name] = split;
             action = function(e){
-              e.customElement = element;              
+              if (e) e.customElement = element;              
               var args = xtag.toArray(arguments);
               args[1] = element;
               return pseudo.listener.apply(this, 

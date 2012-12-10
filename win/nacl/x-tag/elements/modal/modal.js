@@ -14,7 +14,7 @@
 	}
 
 	window.addEventListener('keyup', function(event){
-		if(event.keyCode == 27) xtag.query(document, 'x-modal').forEach(function(modal){
+		if(event.keyCode == 27) xtag.query(document, 'x-modal[esc-hide]').forEach(function(modal){
 			if (modal.getAttribute('hide') == null) xtag.fireEvent(modal, 'modalhide');
 		});
 	});
@@ -40,8 +40,8 @@
 		},
 		events: {
 			'modalhide:preventable': function(){
-				//TODO(jeffbailey): More upstream work needed
-				//this.setAttribute('hide', '');
+				console.log("hiddding");
+				this.setAttribute('hide', '');
 			}
 		}
 	});
