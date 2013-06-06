@@ -311,14 +311,16 @@ ifneq ($(NACL_PACKAGES_BITSIZE),)
 ifeq ($(NACL_PACKAGES_BITSIZE),32)
 CC = i686-nacl-gcc
 CXX = i686-nacl-g++
-INCLUDES = -I${NACL_SDK_ROOT}/toolchain/$(NACL_OS_TYPE)_x86_glibc/i686-nacl/usr/include/ncurses
+INCLUDES = -I${NACL_SDK_ROOT}/toolchain/$(NACL_OS_TYPE)_x86_glibc/i686-nacl/usr/include/ncurses \
+	   -I${NACL_SDK_ROOT}/include
 GAME     = nethack_x86-32.nexe
 endif
 
 ifeq ($(NACL_PACKAGES_BITSIZE),64)
 CC = x86_64-nacl-gcc
 CXX = x86_64-nacl-g++
-INCLUDES = -I${NACL_SDK_ROOT}/toolchain/$(NACL_OS_TYPE)_x86_glibc/x86_64-nacl/usr/include/ncurses
+INCLUDES = -I${NACL_SDK_ROOT}/toolchain/$(NACL_OS_TYPE)_x86_glibc/x86_64-nacl/usr/include/ncurses \
+	   -I${NACL_SDK_ROOT}/include
 GAME     = nethack_x86-64.nexe
 endif
 
